@@ -3,6 +3,7 @@ package dasa;
 import dasa.funcionarios.TecnicoLaboratorio;
 import dasa.funcionarios.Enfermeiro;
 import dasa.modelo.*;
+import dasa.setores.Recepcao;
 
 import java.util.*;
 
@@ -39,35 +40,6 @@ public class SistemaLaboratorio {
         }
     }
 
-    /**
-     * Inicializa a lista com 3 técnicos pré-definidos
-     */
-    private static void inicializarTecnicos() {
-        tecnicos = new ArrayList<>();
-        tecnicos.add(new TecnicoLaboratorio("João Silva", 12345));
-        tecnicos.add(new TecnicoLaboratorio("Maria Santos", 67890));
-        tecnicos.add(new TecnicoLaboratorio("Pedro Oliveira", 11223));
-    }
-
-    /**
-     * Inicializa a lista com 6 enfermeiros pré-definidos (2 para cada especialidade)
-     */
-    private static void inicializarEnfermeiros() {
-        enfermeiros = new ArrayList<>();
-
-        // Enfermeiros especializados em Hemograma Completo
-        enfermeiros.add(new Enfermeiro("Ana Carolina Silva", 741321, "Hemograma Completo"));
-        enfermeiros.add(new Enfermeiro("Roberto Fernandes", 741322, "Hemograma Completo"));
-
-        // Enfermeiros especializados em Exame de Urina
-        enfermeiros.add(new Enfermeiro("Mariana Costa", 852431, "Exame de Urina"));
-        enfermeiros.add(new Enfermeiro("Carlos Eduardo", 852432, "Exame de Urina"));
-
-        // Enfermeiros especializados em Exame de Glicemia
-        enfermeiros.add(new Enfermeiro("Juliana Santos", 963541, "Exame de Glicemia"));
-        enfermeiros.add(new Enfermeiro("Fernando Lima", 963542, "Exame de Glicemia"));
-    }
-
     private static void exibirBoasVindas() {
         System.out.println("=================================================");
         System.out.println("    BEM-VINDO AO LABORATÓRIO DASA");
@@ -83,6 +55,16 @@ public class SistemaLaboratorio {
             tecnico.apresentar();
             System.out.println();
         }
+    }
+
+    /**
+     * Inicializa a lista com 3 técnicos pré-definidos
+     */
+    private static void inicializarTecnicos() {
+        tecnicos = new ArrayList<>();
+        tecnicos.add(new TecnicoLaboratorio("João Silva", 12345));
+        tecnicos.add(new TecnicoLaboratorio("Maria Santos", 67890));
+        tecnicos.add(new TecnicoLaboratorio("Pedro Oliveira", 11223));
     }
 
     /**
@@ -119,10 +101,32 @@ public class SistemaLaboratorio {
     }
 
     /**
+     * Inicializa a lista com 6 enfermeiros pré-definidos (2 para cada especialidade)
+     */
+    private static void inicializarEnfermeiros() {
+        enfermeiros = new ArrayList<>();
+
+        // Enfermeiros especializados em Hemograma Completo
+        enfermeiros.add(new Enfermeiro("Ana Carolina Silva", 741321, "Hemograma Completo"));
+        enfermeiros.add(new Enfermeiro("Roberto Fernandes", 741322, "Hemograma Completo"));
+
+        // Enfermeiros especializados em Exame de Urina
+        enfermeiros.add(new Enfermeiro("Mariana Costa", 852431, "Exame de Urina"));
+        enfermeiros.add(new Enfermeiro("Carlos Eduardo", 852432, "Exame de Urina"));
+
+        // Enfermeiros especializados em Exame de Glicemia
+        enfermeiros.add(new Enfermeiro("Juliana Santos", 963541, "Exame de Glicemia"));
+        enfermeiros.add(new Enfermeiro("Fernando Lima", 963542, "Exame de Glicemia"));
+    }
+
+    /**
      * Exibe o menu principal e processa as opções
      * @param tecnico Técnico logado no sistema
      */
     private static void exibirMenuPrincipal(TecnicoLaboratorio tecnico) {
+        // Cria instâncias das classes de funcionalidade
+        Recepcao recepcao = new Recepcao(scanner);
+
         while (true) {
             try {
                 System.out.println();
@@ -138,7 +142,7 @@ public class SistemaLaboratorio {
 
                 switch (opcao) {
                     case 1:
-                        System.out.println("Em desenvolvimento");
+                        recepcao.exibirMenuRecepcao();
                         break;
                     case 2:
                         System.out.println("Em desenvolvimento");
