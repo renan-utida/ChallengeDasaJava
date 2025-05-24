@@ -13,7 +13,7 @@ public class TecnicoLaboratorio extends Funcionario {
 
     // Construtor com parâmetros
     public TecnicoLaboratorio(String nome, int crbm) {
-        super(nome, String.valueOf(crbm));
+        super(nome, crbm);
         this.crbm = crbm;
     }
 
@@ -24,7 +24,7 @@ public class TecnicoLaboratorio extends Funcionario {
 
     public void setCrbm(int crbm) {
         this.crbm = crbm;
-        this.registro = String.valueOf(crbm); // Mantém sincronizado com a classe pai
+        this.registro = crbm; // Mantém sincronizado com a classe pai
     }
 
     // Sobrescrita do metodo apresentar (Polimorfismo)

@@ -5,14 +5,14 @@ package dasa.funcionarios;
  */
 public class Funcionario {
     protected String nome;
-    protected String registro;
+    protected int registro;
 
     // Construtor padrão
     public Funcionario() {
     }
 
     // Construtor com parâmetros
-    public Funcionario(String nome, String registro) {
+    public Funcionario(String nome, int registro) {
         this.nome = nome;
         this.registro = registro;
     }
@@ -26,11 +26,11 @@ public class Funcionario {
         this.nome = nome;
     }
 
-    public String getRegistro() {
+    public int getRegistro() {
         return registro;
     }
 
-    public void setRegistro(String registro) {
+    public void setRegistro(int registro) {
         this.registro = registro;
     }
 

@@ -130,7 +130,7 @@ public class Paciente {
     /**
      * Converte o paciente para string para salvar no arquivo
      */
-    private String paraStringArquivo() {
+    public String paraStringArquivo() {
         return id + "|" + nomeCompleto + "|" + cpf + "|" + dataNascimento + "|" +
                 dataExame + "|" + convenio + "|" + preferencial + "|" + jejum + "|" +
                 exame + "|" + status + "|" + enfermeiroResponsavel + "|" + responsavelColeta;

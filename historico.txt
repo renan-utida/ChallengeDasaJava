@@ -1,13 +1,13 @@
 ID: #1
-Data Retirada (24/05/2025 01:59)
-	Paciente: Jorge Augusto
+Data Retirada (24/05/2025 18:50)
+	Paciente: Gabriel Jesus
 	Exame: Hemograma Completo
-	2 - Tubo de Coleta Grande
+	2 - Tubo de Coleta Pequeno
 	1 - Tubo de Coleta Médio
-	1 - Tubo de Coleta Pequeno
-	1 - Agulha 3mm
+	2 - Tubo de Coleta Grande
 	1 - Agulha 2mm
-	1 - Seringa 20ml
+	1 - Agulha 5mm
+	1 - Seringa 10ml
 	Insumos coletados por Pedro Oliveira - 11223
-	Enfermeiro responsável pelo atendimento: Ana Carolina Silva - 741321
+	Enfermeiro responsável pelo atendimento: Roberto Fernandes - 741322
 ======================================================================

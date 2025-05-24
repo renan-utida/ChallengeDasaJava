@@ -14,7 +14,7 @@ public class Enfermeiro extends Funcionario {
 
     // Construtor com parâmetros
     public Enfermeiro(String nome, int coren, String especialidade) {
-        super(nome, String.valueOf(coren));
+        super(nome, coren);
         this.coren = coren;
         this.especialidade = especialidade;
     }
@@ -26,7 +26,7 @@ public class Enfermeiro extends Funcionario {
 
     public void setCoren(int coren) {
         this.coren = coren;
-        this.registro = String.valueOf(coren); // Mantém sincronizado com a classe pai
+        this.registro = coren; // Mantém sincronizado com a classe pai
     }
 
     public String getEspecialidade() {
