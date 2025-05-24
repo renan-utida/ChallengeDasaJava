@@ -2,7 +2,7 @@ package dasa;
 
 import dasa.funcionarios.TecnicoLaboratorio;
 import dasa.funcionarios.Enfermeiro;
-import dasa.modelo.*;
+import dasa.modelo.Estoque;
 import dasa.setores.Recepcao;
 import dasa.setores.Almoxarifado;
 import dasa.setores.Enfermaria;

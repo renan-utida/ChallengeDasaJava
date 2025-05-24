@@ -24,7 +24,8 @@ public class Recepcao {
                 System.out.println("=== RECEPÇÃO ===");
                 System.out.println("1 - Cadastrar Paciente");
                 System.out.println("2 - Visualizar Todos Pacientes Registrados");
-                System.out.println("3 - Voltar");
+                System.out.println("3 - Relatório Resumido de Pacientes");
+                System.out.println("4 - Voltar");
                 System.out.print("Opção: ");
 
                 int opcao = scanner.nextInt();
@@ -38,9 +39,12 @@ public class Recepcao {
                         visualizarPacientes();
                         break;
                     case 3:
+                        relatorioResumido();
+                        break;
+                    case 4:
                         return; // Volta ao menu anterior
                     default:
-                        System.out.println("ERRO: Opção inválida! Digite um número de 1 a 3.");
+                        System.out.println("ERRO: Opção inválida! Digite um número de 1 a 4.");
                 }
 
             } catch (InputMismatchException e) {
@@ -275,6 +279,78 @@ public class Recepcao {
             for (Paciente paciente : pacientes) {
                 paciente.exibirDados();
             }
+        }
+    }
+
+    /**
+     * Demonstra o uso de sobrecarga - Relatório resumido de pacientes
+     */
+    private void relatorioResumido() {
+        try {
+            System.out.println();
+            System.out.println("=== RELATÓRIO DE PACIENTES ===");
+            System.out.println("1 - Relatório Resumido (uma linha por paciente)");
+            System.out.println("2 - Relatório por Categoria");
+            System.out.print("Escolha o tipo de relatório: ");
+
+            int opcao = scanner.nextInt();
+            scanner.nextLine();
+
+            List<Paciente> pacientes = Paciente.carregarPacientes();
+
+            if (pacientes.isEmpty()) {
+                System.out.println("Não há pacientes registrados.");
+                return;
+            }
+
+            switch (opcao) {
+                case 1:
+                    // Demonstra sobrecarga exibirDados(boolean)
+                    System.out.println();
+                    System.out.println("=== RELATÓRIO RESUMIDO ===");
+                    for (Paciente paciente : pacientes) {
+                        paciente.exibirDados(true); // Sobrecarga com boolean
+                    }
+                    break;
+
+                case 2:
+                    // Demonstra sobrecarga exibirDados(String)
+                    System.out.println();
+                    System.out.println("Escolha a categoria:");
+                    System.out.println("1 - Dados Básicos");
+                    System.out.println("2 - Informações Médicas");
+                    System.out.println("3 - Dados Administrativos");
+                    System.out.print("Categoria: ");
+
+                    int categoria = scanner.nextInt();
+                    scanner.nextLine();
+
+                    String tipoRelatorio = "";
+                    switch (categoria) {
+                        case 1: tipoRelatorio = "basico"; break;
+                        case 2: tipoRelatorio = "medico"; break;
+                        case 3: tipoRelatorio = "administrativo"; break;
+                        default:
+                            System.out.println("Categoria inválida!");
+                            return;
+                    }
+
+                    System.out.println();
+                    System.out.println("=== RELATÓRIO POR CATEGORIA ===");
+                    for (Paciente paciente : pacientes) {
+                        paciente.exibirDados(tipoRelatorio); // Sobrecarga com String
+                    }
+                    break;
+
+                default:
+                    System.out.println("Opção inválida!");
+            }
+
+        } catch (InputMismatchException e) {
+            System.out.println("ERRO: Digite apenas números!");
+            scanner.nextLine();
+        } catch (Exception e) {
+            System.out.println("ERRO: " + e.getMessage());
         }
     }
 }

@@ -44,15 +44,4 @@ public class Enfermeiro extends Funcionario {
         System.out.println("\tNome do(a) Enfermeiro(a): " + nome);
         System.out.println("\tEspecialidade: " + especialidade);
     }
-
-    // Metodo específico do enfermeiro (sobrecarga)
-    public void apresentar(boolean comDetalhes) {
-        if (comDetalhes) {
-            System.out.println("=== DADOS DO ENFERMEIRO ===");
-            apresentar();
-            System.out.println("Registro: " + registro);
-        } else {
-            apresentar();
-        }
-    }
 }

@@ -177,10 +177,58 @@ public class Paciente {
         System.out.println("\tPreferencial: " + (preferencial ? "Sim" : "Não"));
         System.out.println("\tJejum (min. 8 horas): " + (jejum ? "Sim" : "Não"));
         System.out.println("\tExame: " + exame);
-        System.out.println("\tData de Realização do Exame: " + dataExame);
+        System.out.println("\tData de Realização de Entrada do Exame: " + dataExame);
         System.out.println("\tEnfermeiro Responsável: " + enfermeiroResponsavel);
         System.out.println("\tResponsável Coleta de Insumos: " + responsavelColeta);
         System.out.println("========================================================");
+    }
+
+    /**
+     * Sobrecarga: Exibe dados do paciente de forma resumida ou completa
+     * @param resumido true para exibição resumida, false para completa
+     */
+    public void exibirDados(boolean resumido) {
+        if (resumido) {
+            // Exibição resumida - apenas dados essenciais
+            System.out.println("ID: #" + id + " | " + nomeCompleto + " | " + exame + " | Status: " + status);
+        } else {
+            // Exibição completa - chama o metodo principal
+            exibirDados();
+        }
+    }
+
+    /**
+     * Sobrecarga: Exibe dados do paciente filtrados por categoria
+     * @param categoria "basico", "medico", "administrativo"
+     */
+    public void exibirDados(String categoria) {
+        System.out.println("ID: #" + id + " - " + nomeCompleto);
+        System.out.println("Status: " + status);
+
+        switch (categoria.toLowerCase()) {
+            case "basico":
+                System.out.println("\tCPF: " + getCpfFormatado());
+                System.out.println("\tData Nascimento: " + dataNascimento);
+                break;
+
+            case "medico":
+                System.out.println("\tExame: " + exame);
+                System.out.println("\tJejum (min. 8 horas): " + (jejum ? "Sim" : "Não"));
+                System.out.println("\tData de Realização de Entrada: " + dataExame);
+                System.out.println("\tEnfermeiro Responsável: " + enfermeiroResponsavel);
+                break;
+
+            case "administrativo":
+                System.out.println("\tConvenio: " + (convenio ? "Sim" : "Não"));
+                System.out.println("\tPreferencial: " + (preferencial ? "Sim" : "Não"));
+                System.out.println("\tResponsável Coleta: " + responsavelColeta);
+                break;
+
+            default:
+                exibirDados(); // Exibição completa como fallback
+                return;
+        }
+        System.out.println("========================================");
     }
 
     // Getters e Setters
