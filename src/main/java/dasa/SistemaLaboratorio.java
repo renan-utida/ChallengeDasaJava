@@ -5,6 +5,7 @@ import dasa.funcionarios.Enfermeiro;
 import dasa.modelo.*;
 import dasa.setores.Recepcao;
 import dasa.setores.Almoxarifado;
+import dasa.setores.Enfermaria;
 
 import java.util.*;
 
@@ -128,6 +129,7 @@ public class SistemaLaboratorio {
         // Cria instâncias das classes de funcionalidade
         Recepcao recepcao = new Recepcao(scanner);
         Almoxarifado almoxarifado = new Almoxarifado(scanner, estoque, enfermeiros, tecnicoLogado);
+        Enfermaria enfermaria = new Enfermaria(scanner, enfermeiros);
 
         while (true) {
             try {
@@ -150,7 +152,7 @@ public class SistemaLaboratorio {
                         almoxarifado.exibirMenuAlmoxarifado();
                         break;
                     case 3:
-                        System.out.println("Em desenvolvimento");
+                        enfermaria.exibirMenuEnfermaria();
                         break;
                     case 4:
                         System.out.println();
