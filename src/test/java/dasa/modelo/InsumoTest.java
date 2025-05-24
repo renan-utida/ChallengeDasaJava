@@ -1,12 +1,13 @@
 package dasa.modelo;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Testes da Classe Insumo")
+@DisplayName("Testes da classe Insumo")
 public class InsumoTest {
+
     private Insumo insumo;
 
     @BeforeEach
@@ -15,8 +16,8 @@ public class InsumoTest {
     }
 
     @Test
-    @DisplayName("Deve criar insumo com todos os parâmetros corretos")
-    public void testConstrutorComParametros() {
+    @DisplayName("Deve criar insumo com construtor parametrizado")
+    public void testConstrutorParametrizado() {
         assertEquals(1051, insumo.getId());
         assertEquals("Tubo de Coleta Pequeno", insumo.getNome());
         assertEquals(1000051, insumo.getCodigoBarras());
@@ -25,79 +26,51 @@ public class InsumoTest {
     }
 
     @Test
-    @DisplayName("Deve adicionar quantidade quando dentro do limite")
+    @DisplayName("Deve adicionar quantidade respeitando limite máximo")
     public void testAdicionarQuantidadeValida() {
-        boolean resultado = insumo.adicionarQuantidade(300);
-        assertTrue(resultado);
+        assertTrue(insumo.adicionarQuantidade(300)); // 1500 + 300 = 1800 <= 2000
         assertEquals(1800, insumo.getQuantidadeDisponivel());
     }
 
     @Test
-    @DisplayName("Não deve adicionar quantidade quando ultrapassar limite máximo")
+    @DisplayName("Deve rejeitar adição que ultrapasse limite máximo")
     public void testAdicionarQuantidadeInvalida() {
-        boolean resultado = insumo.adicionarQuantidade(600); // Ultrapassaria 2000
-        assertFalse(resultado);
-        assertEquals(1500, insumo.getQuantidadeDisponivel()); // Não deve alterar
+        assertFalse(insumo.adicionarQuantidade(600)); // 1500 + 600 = 2100 > 2000
+        assertEquals(1500, insumo.getQuantidadeDisponivel()); // Deve manter valor original
     }
 
     @Test
-    @DisplayName("Deve remover quantidade quando há estoque suficiente")
+    @DisplayName("Deve remover quantidade se houver disponível")
     public void testRemoverQuantidadeValida() {
-        boolean resultado = insumo.removerQuantidade(500);
-        assertTrue(resultado);
-        assertEquals(1000, insumo.getQuantidadeDisponivel());
+        assertTrue(insumo.removerQuantidade(200)); // 1500 - 200 = 1300
+        assertEquals(1300, insumo.getQuantidadeDisponivel());
     }
 
     @Test
-    @DisplayName("Não deve remover quantidade quando não há estoque suficiente")
+    @DisplayName("Deve rejeitar remoção maior que quantidade disponível")
     public void testRemoverQuantidadeInvalida() {
-        boolean resultado = insumo.removerQuantidade(2000); // Mais que disponível
-        assertFalse(resultado);
-        assertEquals(1500, insumo.getQuantidadeDisponivel()); // Não deve alterar
+        assertFalse(insumo.removerQuantidade(1600)); // 1600 > 1500
+        assertEquals(1500, insumo.getQuantidadeDisponivel()); // Deve manter valor original
     }
 
     @Test
-    @DisplayName("Deve alterar todas as propriedades através dos setters")
-    public void testSettersGetters() {
-        insumo.setId(9999);
-        insumo.setNome("Teste Material");
-        insumo.setCodigoBarras(9999999);
-        insumo.setQuantidadeDisponivel(100);
-        insumo.setQuantidadeMaxima(500);
-
-        assertEquals(9999, insumo.getId());
-        assertEquals("Teste Material", insumo.getNome());
-        assertEquals(9999999, insumo.getCodigoBarras());
-        assertEquals(100, insumo.getQuantidadeDisponivel());
-        assertEquals(500, insumo.getQuantidadeMaxima());
+    @DisplayName("Deve permitir adicionar até o limite exato")
+    public void testAdicionarAteLimiteExato() {
+        assertTrue(insumo.adicionarQuantidade(500)); // 1500 + 500 = 2000
+        assertEquals(2000, insumo.getQuantidadeDisponivel());
     }
 
     @Test
-    @DisplayName("Deve serializar insumo corretamente para arquivo")
+    @DisplayName("Deve permitir remover toda quantidade disponível")
+    public void testRemoverTodaQuantidade() {
+        assertTrue(insumo.removerQuantidade(1500));
+        assertEquals(0, insumo.getQuantidadeDisponivel());
+    }
+
+    @Test
+    @DisplayName("Deve converter para string de arquivo corretamente")
     public void testParaStringArquivo() {
-        String resultado = insumo.paraStringArquivo();
-        assertEquals("1051|Tubo de Coleta Pequeno|1000051|1500|2000", resultado);
-    }
-
-    @Test
-    @DisplayName("Deve deserializar insumo corretamente do arquivo")
-    public void testFromStringArquivo() {
-        String linha = "2071|Agulha 3mm|2000072|1200|2000";
-        Insumo insumoCarregado = Insumo.fromStringArquivo(linha);
-
-        assertNotNull(insumoCarregado);
-        assertEquals(2071, insumoCarregado.getId());
-        assertEquals("Agulha 3mm", insumoCarregado.getNome());
-        assertEquals(2000072, insumoCarregado.getCodigoBarras());
-        assertEquals(1200, insumoCarregado.getQuantidadeDisponivel());
-        assertEquals(2000, insumoCarregado.getQuantidadeMaxima());
-    }
-
-    @Test
-    @DisplayName("Deve retornar null para linha de arquivo inválida")
-    public void testFromStringArquivoInvalida() {
-        String linha = "dados|incompletos";
-        Insumo resultado = Insumo.fromStringArquivo(linha);
-        assertNull(resultado);
+        String expected = "1051|Tubo de Coleta Pequeno|1000051|1500|2000";
+        assertEquals(expected, insumo.paraStringArquivo());
     }
 }

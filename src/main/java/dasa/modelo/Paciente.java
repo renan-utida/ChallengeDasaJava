@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class Paciente {
     private static int contadorId = 1;
-    private static final String ARQUIVO_PACIENTES = "pacientes.txt";
+    private static String ARQUIVO_PACIENTES = "pacientes.txt";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private int id;

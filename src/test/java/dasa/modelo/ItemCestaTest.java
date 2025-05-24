@@ -1,12 +1,13 @@
 package dasa.modelo;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Testes da Classe ItemCesta")
+@DisplayName("Testes da classe ItemCesta")
 public class ItemCestaTest {
+
     private ItemCesta itemCesta;
     private Insumo insumo;
 
@@ -17,27 +18,46 @@ public class ItemCestaTest {
     }
 
     @Test
-    @DisplayName("Deve criar item da cesta com insumo e quantidade corretos")
-    public void testConstrutorComParametros() {
+    @DisplayName("Deve criar item cesta com construtor parametrizado")
+    public void testConstrutorParametrizado() {
         assertEquals(insumo, itemCesta.getInsumo());
         assertEquals(5, itemCesta.getQuantidade());
     }
 
     @Test
-    @DisplayName("Deve alterar insumo e quantidade através dos setters")
-    public void testSettersGetters() {
+    @DisplayName("Deve definir e obter insumo corretamente")
+    public void testSetterGetterInsumo() {
         Insumo novoInsumo = new Insumo(2071, "Agulha 3mm", 2000072, 1200, 2000);
         itemCesta.setInsumo(novoInsumo);
-        itemCesta.setQuantidade(10);
-
         assertEquals(novoInsumo, itemCesta.getInsumo());
+    }
+
+    @Test
+    @DisplayName("Deve definir e obter quantidade corretamente")
+    public void testSetterGetterQuantidade() {
+        itemCesta.setQuantidade(10);
         assertEquals(10, itemCesta.getQuantidade());
     }
 
     @Test
-    @DisplayName("Deve formatar item da cesta corretamente no toString")
+    @DisplayName("Deve retornar string formatada no toString")
     public void testToString() {
-        String resultado = itemCesta.toString();
-        assertEquals("5 - Tubo de Coleta Pequeno", resultado);
+        String expected = "5 - Tubo de Coleta Pequeno";
+        assertEquals(expected, itemCesta.toString());
+    }
+
+    @Test
+    @DisplayName("Deve aceitar quantidade zero")
+    public void testQuantidadeZero() {
+        itemCesta.setQuantidade(0);
+        assertEquals(0, itemCesta.getQuantidade());
+    }
+
+    @Test
+    @DisplayName("Deve aceitar quantidade maior")
+    public void testQuantidadeMaior() {
+        itemCesta.setQuantidade(100);
+        assertEquals(100, itemCesta.getQuantidade());
+        assertEquals("100 - Tubo de Coleta Pequeno", itemCesta.toString());
     }
 }

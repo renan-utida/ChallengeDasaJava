@@ -1,41 +1,62 @@
 package dasa.funcionarios;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Testes da classe Funcionario")
 public class FuncionarioTest {
+
     private Funcionario funcionario;
 
     @BeforeEach
     public void setUp() {
-        funcionario = new Funcionario("João Silva", "12345");
+        funcionario = new Funcionario();
     }
 
     @Test
-    @DisplayName("Deve criar funcionário com parâmetros corretos")
-    public void testConstrutorComParametros() {
-        assertEquals("João Silva", funcionario.getNome());
-        assertEquals("12345", funcionario.getRegistro());
+    @DisplayName("Deve criar funcionário com construtor padrão")
+    public void testConstrutorPadrao() {
+        assertNotNull(funcionario);
+        assertNull(funcionario.getNome());
+        assertEquals(0, funcionario.getRegistro());
     }
 
     @Test
-    @DisplayName("Deve criar funcionário vazio com construtor padrão")
-    public void testConstrutorVazio() {
-        Funcionario funcionarioVazio = new Funcionario();
-        assertNull(funcionarioVazio.getNome());
-        assertNull(funcionarioVazio.getRegistro());
+    @DisplayName("Deve criar funcionário com construtor parametrizado")
+    public void testConstrutorParametrizado() {
+        Funcionario func = new Funcionario("João Silva", 12345);
+
+        assertEquals("João Silva", func.getNome());
+        assertEquals(12345, func.getRegistro());
     }
 
     @Test
-    @DisplayName("Deve alterar nome e registro através dos setters")
-    public void testSettersGetters() {
+    @DisplayName("Deve definir e obter nome corretamente")
+    public void testSetterGetterNome() {
         funcionario.setNome("Maria Santos");
-        funcionario.setRegistro("67890");
-
         assertEquals("Maria Santos", funcionario.getNome());
-        assertEquals("67890", funcionario.getRegistro());
+    }
+
+    @Test
+    @DisplayName("Deve definir e obter registro corretamente")
+    public void testSetterGetterRegistro() {
+        funcionario.setRegistro(67890);
+        assertEquals(67890, funcionario.getRegistro());
+    }
+
+    @Test
+    @DisplayName("Deve aceitar nome com acentos")
+    public void testNomeComAcentos() {
+        funcionario.setNome("José António");
+        assertEquals("José António", funcionario.getNome());
+    }
+
+    @Test
+    @DisplayName("Deve aceitar registro com valor zero")
+    public void testRegistroZero() {
+        funcionario.setRegistro(0);
+        assertEquals(0, funcionario.getRegistro());
     }
 }

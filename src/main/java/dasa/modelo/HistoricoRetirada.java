@@ -11,7 +11,7 @@ import java.util.*;
  * Classe para gerenciar o histórico de retiradas de insumos
  */
 public class HistoricoRetirada {
-    private static final String ARQUIVO_HISTORICO = "historico.txt";
+    private static String ARQUIVO_HISTORICO = "historico.txt";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     /**

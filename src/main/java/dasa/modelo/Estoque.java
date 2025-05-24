@@ -8,7 +8,7 @@ import java.util.List;
  * Classe para gerenciar o estoque de insumos do laboratório
  */
 public class Estoque {
-    private static final String ARQUIVO_ESTOQUE = "estoque.txt";
+    private static String ARQUIVO_ESTOQUE = "estoque.txt";
     private static final int QUANTIDADE_INICIAL = 1500;
     private static final int QUANTIDADE_MAXIMA = 2000;
     private List<Insumo> insumos;
