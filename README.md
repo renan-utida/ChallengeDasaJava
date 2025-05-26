@@ -259,7 +259,7 @@ graph TD
     C --> C2[👥 Ver Pacientes]
     C --> C3[📊 Relatórios]
     
-    D --> D1[📱 Scan & Go - Retirar Insumos]
+    D --> D1[📱 Retirar Insumos]
     D --> D2[📋 Ver Estoque]
     D --> D3[➕ Adicionar Estoque]
     D --> D4[📝 Histórico Retiradas]
