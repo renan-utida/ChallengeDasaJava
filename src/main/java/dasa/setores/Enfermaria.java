@@ -172,12 +172,12 @@ public class Enfermaria {
         System.out.println("Status: " + paciente.getStatus());
         System.out.println("\tNome Completo: " + paciente.getNomeCompleto());
         System.out.println("\tCPF: " + paciente.getCpf());
-        System.out.println("\tData Nascimento: " + paciente.getDataNascimento());
+        System.out.println("\tData Nascimento: " + paciente.getDataNascimentoFormatada());
         System.out.println("\tConvenio: " + (paciente.isConvenio() ? "Sim" : "Não"));
         System.out.println("\tPreferencial: " + (paciente.isPreferencial() ? "Sim" : "Não"));
         System.out.println("\tJejum (min. 8 horas): " + (paciente.isJejum() ? "Sim" : "Não"));
         System.out.println("\tExame: " + paciente.getExame());
-        System.out.println("\tData de Realização de Entrada do Exame: " + paciente.getDataExame());
+        System.out.println("\tData de Realização de Entrada do Exame: " + paciente.getDataExameFormatada());
         System.out.println("\tEnfermeiro Responsável: " + paciente.getEnfermeiroResponsavel());
         System.out.println("\tResponsável Coleta de Insumos: " + paciente.getResponsavelColeta());
         System.out.println("===============================================");

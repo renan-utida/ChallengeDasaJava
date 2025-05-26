@@ -57,10 +57,22 @@ public class ExameTest {
     }
 
     @Test
-    @DisplayName("Deve aceitar ID como string")
-    public void testIdComoString() {
-        exame.setId(001);
-        assertEquals(001, exame.getId());
-        assertTrue(Integer.class.isInstance(exame.getId()));
+    @DisplayName("Deve aceitar ID como inteiro")
+    void testIdComoInteiro() {
+        exame.setId(789);
+        assertEquals(789, exame.getId());
+        assertTrue(exame.getId() instanceof Integer);
+    }
+
+    @Test
+    @DisplayName("Deve validar IDs de 3 dígitos")
+    void testIdsTresDigitos() {
+        int[] idsValidos = {123, 456, 789, 100, 999};
+
+        for (int id : idsValidos) {
+            exame.setId(id);
+            assertEquals(id, exame.getId());
+            assertTrue(exame.getId() >= 100 && exame.getId() <= 999);
+        }
     }
 }

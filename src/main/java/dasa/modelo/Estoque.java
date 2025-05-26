@@ -208,7 +208,7 @@ public class Estoque {
     /**
      * Busca insumos que contenham determinado tipo no nome
      */
-    private List<Insumo> buscarInsumosPorTipo(String tipo) {
+    public List<Insumo> buscarInsumosPorTipo(String tipo) {
         List<Insumo> insumosTipo = new ArrayList<>();
         for (Insumo insumo : insumos) {
             if (insumo.getNome().startsWith(tipo)) {

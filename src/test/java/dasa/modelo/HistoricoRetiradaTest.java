@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Testes da classe HistoricoRetirada")
-class HistoricoRetiradaTest {
+public class HistoricoRetiradaTest {
 
     private Paciente paciente;
     private TecnicoLaboratorio tecnico;
@@ -22,7 +22,7 @@ class HistoricoRetiradaTest {
     private static final String ARQUIVO_TESTE = "historico-teste.txt";
 
     @BeforeEach
-    void setUp() throws Exception {
+    public void setUp() throws Exception {
         // Muda o arquivo para teste via reflexão
         Field arquivoField = HistoricoRetirada.class.getDeclaredField("ARQUIVO_HISTORICO");
         arquivoField.setAccessible(true);
@@ -46,7 +46,7 @@ class HistoricoRetiradaTest {
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         // Limpa arquivo de teste
         File arquivo = new File(ARQUIVO_TESTE);
         if (arquivo.exists()) {
@@ -61,7 +61,7 @@ class HistoricoRetiradaTest {
 
     @Test
     @DisplayName("Deve salvar retirada no histórico de teste")
-    void testSalvarRetirada() {
+    public void testSalvarRetirada() {
         // Verifica que arquivo não existe inicialmente
         File arquivo = new File(ARQUIVO_TESTE);
         assertFalse(arquivo.exists());
@@ -77,7 +77,7 @@ class HistoricoRetiradaTest {
 
     @Test
     @DisplayName("Deve exibir histórico sem erros quando arquivo existe")
-    void testExibirHistoricoComDados() {
+    public void testExibirHistoricoComDados() {
         // Primeiro salva uma retirada
         HistoricoRetirada.salvarRetirada(paciente, itens, tecnico, enfermeiro);
 
@@ -89,7 +89,7 @@ class HistoricoRetiradaTest {
 
     @Test
     @DisplayName("Deve tratar arquivo inexistente graciosamente")
-    void testExibirHistoricoArquivoInexistente() {
+    public void testExibirHistoricoArquivoInexistente() {
         // Garante que arquivo não existe
         File arquivo = new File(ARQUIVO_TESTE);
         if (arquivo.exists()) {
@@ -103,7 +103,7 @@ class HistoricoRetiradaTest {
 
     @Test
     @DisplayName("Deve salvar múltiplas retiradas no mesmo arquivo")
-    void testSalvarMultiplasRetiradas() {
+    public void testSalvarMultiplasRetiradas() {
         assertDoesNotThrow(() -> {
             // Primeira retirada
             HistoricoRetirada.salvarRetirada(paciente, itens, tecnico, enfermeiro);
@@ -123,7 +123,7 @@ class HistoricoRetiradaTest {
 
     @Test
     @DisplayName("Deve manter integridade dos dados salvos")
-    void testIntegridadeDados() {
+    public void testIntegridadeDados() {
         // Cria dados específicos para teste
         TecnicoLaboratorio tecnicoTeste = new TecnicoLaboratorio("Técnico Teste", 99999);
         Enfermeiro enfermeiroTeste = new Enfermeiro("Enfermeiro Teste", 888888, "Hemograma Completo");
@@ -139,7 +139,7 @@ class HistoricoRetiradaTest {
 
     @Test
     @DisplayName("Deve criar arquivo quando não existe")
-    void testCriarArquivoSeNaoExiste() {
+    public void testCriarArquivoSeNaoExiste() {
         File arquivo = new File(ARQUIVO_TESTE);
 
         // Garante que arquivo não existe

@@ -5,9 +5,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.FileWriter;
 import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Testes da classe Paciente")
@@ -58,7 +58,8 @@ public class PacienteTest {
         assertNotNull(paciente);
         assertEquals("João Silva", paciente.getNomeCompleto());
         assertEquals(12345678901L, paciente.getCpf());
-        assertEquals("01/01/1990", paciente.getDataNascimento());
+        assertEquals(LocalDate.of(1990, 1, 1), paciente.getDataNascimento());
+        assertEquals("01/01/1990", paciente.getDataNascimentoFormatada());
         assertTrue(paciente.isConvenio());
         assertFalse(paciente.isPreferencial());
         assertTrue(paciente.isJejum());
@@ -130,5 +131,37 @@ public class PacienteTest {
         var pacientes = Paciente.carregarPacientes();
         assertEquals(1, pacientes.size());
         assertEquals("João Silva", pacientes.get(0).getNomeCompleto());
+    }
+
+    @Test
+    @DisplayName("Deve trabalhar com LocalDate para data de nascimento")
+    public void testDataNascimentoLocalDate() {
+        LocalDate novaData = LocalDate.of(1985, 12, 25);
+        paciente.setDataNascimento(novaData);
+
+        assertEquals(novaData, paciente.getDataNascimento());
+        assertEquals("25/12/1985", paciente.getDataNascimentoFormatada());
+    }
+
+    @Test
+    @DisplayName("Deve trabalhar com LocalDateTime para data do exame")
+    public void testDataExameLocalDateTime() {
+        LocalDateTime novaDataHora = LocalDateTime.of(2024, 6, 15, 14, 30);
+        paciente.setDataExame(novaDataHora);
+
+        assertEquals(novaDataHora, paciente.getDataExame());
+        assertEquals("15/06/2024 14:30", paciente.getDataExameFormatada());
+    }
+
+    @Test
+    @DisplayName("Deve manter compatibilidade com métodos formatados")
+    public void testCompatibilidadeFormatacao() {
+        // Testa se os métodos auxiliares funcionam corretamente
+        assertNotNull(paciente.getDataNascimentoFormatada());
+        assertNotNull(paciente.getDataExameFormatada());
+
+        // Testa formato correto
+        assertTrue(paciente.getDataNascimentoFormatada().matches("\\d{2}/\\d{2}/\\d{4}"));
+        assertTrue(paciente.getDataExameFormatada().matches("\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}"));
     }
 }

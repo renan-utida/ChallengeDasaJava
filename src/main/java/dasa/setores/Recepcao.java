@@ -242,10 +242,8 @@ public class Recepcao {
                 }
 
                 System.out.print("Digite o ID do exame desejado: ");
-                String input = scanner.nextLine().trim();
-
-                // Converter para int
-                int idEscolhido = Integer.parseInt(input);
+                int idEscolhido = scanner.nextInt();
+                scanner.nextLine(); // Consome quebra de linha
 
                 // Busca o exame pelo ID
                 for (Exame exame : examesDisponiveis) {
@@ -257,6 +255,10 @@ public class Recepcao {
                 System.out.println("ERRO: ID inválido!");
                 return null; // Retorna ao menu da recepção
 
+            } catch (InputMismatchException e) {
+                System.out.println("ERRO: Digite apenas números para o ID do exame!");
+                scanner.nextLine(); // Limpa buffer
+                return null;
             } catch (Exception e) {
                 System.out.println("ERRO: " + e.getMessage());
                 return null;

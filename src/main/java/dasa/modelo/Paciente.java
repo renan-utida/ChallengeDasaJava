@@ -1,8 +1,10 @@
 package dasa.modelo;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,13 +14,14 @@ import java.util.List;
 public class Paciente {
     private static int contadorId = 1;
     private static String ARQUIVO_PACIENTES = "pacientes.txt";
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private int id;
     private String nomeCompleto;
     private long cpf;
-    private String dataNascimento;
-    private String dataExame;
+    private LocalDate dataNascimento;
+    private LocalDateTime dataExame;
     private boolean convenio;
     private boolean preferencial;
     private boolean jejum;
@@ -28,13 +31,13 @@ public class Paciente {
     private String responsavelColeta;
 
     // Construtor
-    public Paciente(String nomeCompleto, long cpf, String dataNascimento,
+    public Paciente(String nomeCompleto, long cpf, String dataNascimentoStr,
                     boolean convenio, boolean preferencial, boolean jejum, String exame) {
         this.id = obterProximoId();
         this.nomeCompleto = nomeCompleto;
         this.cpf = cpf;
-        this.dataNascimento = dataNascimento;
-        this.dataExame = LocalDateTime.now().format(formatter);
+        this.dataNascimento = LocalDate.parse(dataNascimentoStr, dateFormatter);;
+        this.dataExame = LocalDateTime.now();
         this.convenio = convenio;
         this.preferencial = preferencial;
         this.jejum = jejum;
@@ -45,14 +48,14 @@ public class Paciente {
     }
 
     // Construtor para carregar do arquivo
-    public Paciente(int id, String nomeCompleto, long cpf, String dataNascimento,
-                    String dataExame, boolean convenio, boolean preferencial, boolean jejum,
+    public Paciente(int id, String nomeCompleto, long cpf, String dataNascimentoStr,
+                    String dataExameStr, boolean convenio, boolean preferencial, boolean jejum,
                     String exame, String status, String enfermeiroResponsavel, String responsavelColeta) {
         this.id = id;
         this.nomeCompleto = nomeCompleto;
         this.cpf = cpf;
-        this.dataNascimento = dataNascimento;
-        this.dataExame = dataExame;
+        this.dataNascimento = LocalDate.parse(dataNascimentoStr, dateFormatter);
+        this.dataExame = LocalDateTime.parse(dataExameStr, dateTimeFormatter);
         this.convenio = convenio;
         this.preferencial = preferencial;
         this.jejum = jejum;
@@ -131,8 +134,8 @@ public class Paciente {
      * Converte o paciente para string para salvar no arquivo
      */
     public String paraStringArquivo() {
-        return id + "|" + nomeCompleto + "|" + cpf + "|" + dataNascimento + "|" +
-                dataExame + "|" + convenio + "|" + preferencial + "|" + jejum + "|" +
+        return id + "|" + nomeCompleto + "|" + cpf + "|" + dataNascimento.format(dateFormatter) + "|" +
+                dataExame.format(dateTimeFormatter) + "|" + convenio + "|" + preferencial + "|" + jejum + "|" +
                 exame + "|" + status + "|" + enfermeiroResponsavel + "|" + responsavelColeta;
     }
 
@@ -147,8 +150,8 @@ public class Paciente {
                         Integer.parseInt(dados[0]), // id
                         dados[1], // nomeCompleto
                         Long.parseLong(dados[2]), // cpf
-                        dados[3], // dataNascimento
-                        dados[4], // dataExame
+                        dados[3], // dataNascimento (string que será convertida)
+                        dados[4], // dataExame (string que será convertida)
                         Boolean.parseBoolean(dados[5]), // convenio
                         Boolean.parseBoolean(dados[6]), // preferencial
                         Boolean.parseBoolean(dados[7]), // jejum
@@ -172,12 +175,12 @@ public class Paciente {
         System.out.println("Status: " + status);
         System.out.println("\tNome Completo: " + nomeCompleto);
         System.out.println("\tCPF: " + getCpfFormatado());
-        System.out.println("\tData Nascimento: " + dataNascimento);
+        System.out.println("\tData Nascimento: " + dataNascimento.format(dateFormatter));
         System.out.println("\tConvenio: " + (convenio ? "Sim" : "Não"));
         System.out.println("\tPreferencial: " + (preferencial ? "Sim" : "Não"));
         System.out.println("\tJejum (min. 8 horas): " + (jejum ? "Sim" : "Não"));
         System.out.println("\tExame: " + exame);
-        System.out.println("\tData de Realização de Entrada do Exame: " + dataExame);
+        System.out.println("\tData de Realização de Entrada do Exame: " + dataExame.format(dateTimeFormatter));
         System.out.println("\tEnfermeiro Responsável: " + enfermeiroResponsavel);
         System.out.println("\tResponsável Coleta de Insumos: " + responsavelColeta);
         System.out.println("========================================================");
@@ -208,13 +211,13 @@ public class Paciente {
         switch (categoria.toLowerCase()) {
             case "basico":
                 System.out.println("\tCPF: " + getCpfFormatado());
-                System.out.println("\tData Nascimento: " + dataNascimento);
+                System.out.println("\tData Nascimento: " + dataNascimento.format(dateFormatter));
                 break;
 
             case "medico":
                 System.out.println("\tExame: " + exame);
                 System.out.println("\tJejum (min. 8 horas): " + (jejum ? "Sim" : "Não"));
-                System.out.println("\tData de Realização de Entrada: " + dataExame);
+                System.out.println("\tData de Realização de Entrada: " + dataExame.format(dateTimeFormatter));
                 System.out.println("\tEnfermeiro Responsável: " + enfermeiroResponsavel);
                 break;
 
@@ -242,13 +245,19 @@ public class Paciente {
 
     public void setCpf(long cpf) { this.cpf = cpf; }
 
-    public String getDataNascimento() { return dataNascimento; }
+    public LocalDate getDataNascimento() { return dataNascimento; }
 
-    public void setDataNascimento(String dataNascimento) { this.dataNascimento = dataNascimento; }
+    public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
 
-    public String getDataExame() { return dataExame; }
+    // Metodo auxiliar para manter compatibilidade com string
+    public String getDataNascimentoFormatada() { return dataNascimento.format(dateFormatter); }
 
-    public void setDataExame(String dataExame) { this.dataExame = dataExame; }
+    public LocalDateTime getDataExame() { return dataExame; }
+
+    public void setDataExame(LocalDateTime dataExame) { this.dataExame = dataExame; }
+
+    // Metodo auxiliar para manter compatibilidade com string
+    public String getDataExameFormatada() { return dataExame.format(dateTimeFormatter); }
 
     public boolean isConvenio() { return convenio; }
 
