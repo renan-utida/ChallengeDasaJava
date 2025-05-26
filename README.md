@@ -269,10 +269,6 @@ graph TD
     
     D1 --> F[💾 Atualização SAP Simulada]
     F --> G[📊 Auditoria e Histórico]
-    
-    style A fill:#e1f5fe
-    style D1 fill:#f3e5f5
-    style F fill:#e8f5e8
 ```
 
 ## **📊 Benefícios da Solução**
