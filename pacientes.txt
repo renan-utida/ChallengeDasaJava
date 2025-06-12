@@ -1,5 +1,6 @@
 1|Gabriel Jesus|33333333333|12/06/1995|24/05/2025 18:45|true|false|true|Hemograma Completo|Atendido|Roberto Fernandes - 741322|Pedro Oliveira - 11223
 2|Lucas Barbosa|12345678901|23/10/2002|24/05/2025 18:45|true|false|false|Exame de Urina|Em espera|Em espera|Em espera
-3|Patricia Silva|36925814702|05/01/1972|24/05/2025 18:46|true|true|true|Exame de Glicemia|Em espera|Em espera|Em espera
+3|Patricia Silva|36925814702|05/01/1972|24/05/2025 18:46|true|true|true|Exame de Glicemia|Atendido|Juliana Santos - 963541|Maria Santos - 67890
 4|Vilma Oliveira|12378945632|14/05/1955|24/05/2025 18:47|true|true|true|Exame de Glicemia|Em espera|Em espera|Em espera
 5|Larissa|44567896532|29/12/2006|24/05/2025 18:47|false|false|true|Hemograma Completo|Em espera|Em espera|Em espera
+6|Bruno Fernandes|12345678956|20/10/1985|12/06/2025 10:05|true|true|false|Hemograma Completo|Em espera|Em espera|Em espera

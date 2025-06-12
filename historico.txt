@@ -11,3 +11,12 @@ Data Retirada (24/05/2025 18:50)
 	Insumos coletados por Pedro Oliveira - 11223
 	Enfermeiro responsável pelo atendimento: Roberto Fernandes - 741322
 ======================================================================
+ID: #3
+Data Retirada (12/06/2025 10:12)
+	Paciente: Patricia Silva
+	Exame: Exame de Glicemia
+	5 - Tubo sem Anticoagulante Grande
+	4 - Tubo sem Anticoagulante Pequeno
+	Insumos coletados por Maria Santos - 67890
+	Enfermeiro responsável pelo atendimento: Juliana Santos - 963541
+======================================================================

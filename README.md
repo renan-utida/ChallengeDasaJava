@@ -123,9 +123,9 @@ Este projeto foi desenvolvido como resposta ao **Desafio 1 - Baixa visibilidade 
 
 ```java
 // Hierarquia clara com especialização
-public class Funcionario { ... }                              // 👨‍💼 Classe pai
-public class TecnicoLaboratorio extends Funcionario { ... }   // 🔬 Especialização
-public class Enfermeiro extends Funcionario { ... }           // 👩‍⚕️ Especialização
+public class Funcionario {  }                              // 👨‍💼 Classe pai
+public class TecnicoLaboratorio extends Funcionario {  }   // 🔬 Especialização
+public class Enfermeiro extends Funcionario {  }           // 👩‍⚕️ Especialização
 ```
 
 ### **🎭 Polimorfismo Completo**
@@ -143,9 +143,9 @@ public void apresentar() {
 **Sobrecarga (Overload):**
 ```java
 // Três formas diferentes de exibir dados do paciente
-public void exibirDados() { ... }                 // 📋 Exibição completa
-public void exibirDados(boolean resumido) { ... } // 📄 Exibição resumida
-public void exibirDados(String categoria) { ... } // 🏷️ Por categoria específica
+public void exibirDados() {  }                 // 📋 Exibição completa
+public void exibirDados(boolean resumido) {  } // 📄 Exibição resumida
+public void exibirDados(String categoria) {  } // 🏷️ Por categoria específica
 ```
 
 ### **🔒 Encapsulamento Rigoroso**
@@ -387,6 +387,7 @@ Data Retirada (25/05/2024 14:45)
         <maven.compiler.target>23</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -408,6 +409,7 @@ Data Retirada (25/05/2024 14:45)
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
