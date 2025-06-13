@@ -1,5 +1,5 @@
 ID: #1
-Data Retirada (24/05/2025 18:50)
+Data Retirada (13/06/2025 19:29)
 	Paciente: Gabriel Jesus
 	Exame: Hemograma Completo
 	2 - Tubo de Coleta Pequeno
@@ -11,12 +11,25 @@ Data Retirada (24/05/2025 18:50)
 	Insumos coletados por Pedro Oliveira - 11223
 	Enfermeiro responsável pelo atendimento: Roberto Fernandes - 741322
 ======================================================================
-ID: #3
-Data Retirada (12/06/2025 10:12)
-	Paciente: Patricia Silva
+ID: #10
+Data Retirada (13/06/2025 19:30)
+	Paciente: Lucas Borges
 	Exame: Exame de Glicemia
-	5 - Tubo sem Anticoagulante Grande
-	4 - Tubo sem Anticoagulante Pequeno
-	Insumos coletados por Maria Santos - 67890
+	1 - Seringa 5ml
+	1 - Tira Reagente Tipo A
+	1 - Tira Reagente Tipo B
+	1 - Tira Reagente Tipo C
+	3 - Agulha 3mm
+	Insumos coletados por Pedro Oliveira - 11223
 	Enfermeiro responsável pelo atendimento: Juliana Santos - 963541
+======================================================================
+ID: #8
+Data Retirada (13/06/2025 19:32)
+	Paciente: Pedro
+	Exame: Exame de Glicemia
+	2 - Seringa 20ml
+	3 - Tira Reagente Tipo C
+	5 - Tubo sem Anticoagulante Pequeno
+	Insumos coletados por Pedro Oliveira - 11223
+	Enfermeiro responsável pelo atendimento: Fernando Lima - 963542
 ======================================================================

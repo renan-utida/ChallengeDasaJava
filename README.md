@@ -1,4 +1,4 @@
-# **🏥 Sistema de Escaneamento e Controle Automático de Insumos - DASA**
+# **🏥 Sistema de Escaneamento e Controle Automático de Insumos (SECAI) - DASA**
 
 ## **📋 Sobre o Projeto**
 
@@ -16,7 +16,7 @@ Este projeto foi desenvolvido como resposta ao **Desafio 1 - Baixa visibilidade 
 
 **Nossa Solução:**
 
-- ✅ Sistema de escaneamento portátil em tempo real
+- ✅ Sistema de Escaneamento e Controle Automático de Insumos (SECAI)
 - ✅ Apontamento no momento exato do consumo
 - ✅ Integração simulada com SAP
 - ✅ Visibilidade completa do inventário
@@ -439,7 +439,7 @@ public class SuiteDeTestesGeral {
 ## **🤝 Contribuição e Licença**
 Este projeto foi desenvolvido como parte de um desafio acadêmico para a DASA, demonstrando aplicação prática de conceitos de Programação Orientada a Objetos em Java.
 
-## **👨‍💻 Desenvolvedores**
+## **👨‍💻 Desenvolvedores - ICERS**
 
 - **Renan Dias Utida - RM 558540**
 - **Camila Pedroza da Cunha - RM 558768**

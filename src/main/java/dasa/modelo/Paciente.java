@@ -30,6 +30,45 @@ public class Paciente {
     private String enfermeiroResponsavel;
     private String responsavelColeta;
 
+    // Bloco estático para inicializar o contador
+    static {
+        inicializarContador();
+    }
+
+    // Inicializa o contador baseado no último ID do arquivo
+    private static void inicializarContador() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(ARQUIVO_PACIENTES))) {
+            String linha;
+            int maiorId = 0;
+
+            while ((linha = reader.readLine()) != null) {
+                if (!linha.trim().isEmpty()) {
+                    String[] dados = linha.split("\\|");
+                    if (dados.length >= 1) {
+                        try {
+                            int id = Integer.parseInt(dados[0]);
+                            if (id > maiorId) {
+                                maiorId = id;
+                            }
+                        } catch (NumberFormatException e) {
+                            // Ignora linhas com ID inválido
+                        }
+                    }
+                }
+            }
+
+            if (maiorId > 0) {
+                contadorId = maiorId + 1;
+            }
+
+        } catch (FileNotFoundException e) {
+            // Arquivo ainda não existe, mantém contador = 1
+            System.out.println("ℹ️ Arquivo de pacientes não encontrado. Iniciando do ID 1.");
+        } catch (IOException e) {
+            System.out.println("⚠️ Erro ao ler arquivo. Iniciando do ID 1.");
+        }
+    }
+
     // Construtor
     public Paciente(String nomeCompleto, long cpf, String dataNascimentoStr,
                     boolean convenio, boolean preferencial, boolean jejum, String exame) {
