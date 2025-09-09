@@ -10,7 +10,7 @@
 4091|Recipiente Estéril Pequeno|4000091|1500|2000
 4092|Recipiente Estéril Médio|4000092|1500|2000
 4093|Recipiente Estéril Grande|4000093|1500|2000
-5001|Tira Reagente Tipo A|5000001|1499|2000
+5001|Tira Reagente Tipo A|5000001|1497|2000
 5002|Tira Reagente Tipo B|5000002|1499|2000
 5003|Tira Reagente Tipo C|5000003|1496|2000
 6011|Lâmina Análise Simples|6000011|1500|2000

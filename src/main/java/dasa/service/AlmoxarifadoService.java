@@ -154,6 +154,28 @@ public class AlmoxarifadoService {
     }
 
     /**
+     * Lista pacientes por status
+     */
+    public List<Paciente> listarPacientesPorStatus(String status) {
+        if (status == null || status.trim().isEmpty()) {
+            throw new IllegalArgumentException("Status não pode estar vazio!");
+        }
+
+        return pacienteDao.listarPorStatus(status);
+    }
+
+    /**
+     * Busca paciente por ID
+     */
+    public Paciente buscarPacientePorId(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID inválido!");
+        }
+
+        return pacienteDao.buscarPorId(id);
+    }
+
+    /**
      * Lista todo o historico de retiradas
      */
     public List<Map<String, Object>> listarHistoricoCompleto() {

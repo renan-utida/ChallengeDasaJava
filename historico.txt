@@ -33,3 +33,11 @@ Data Retirada (13/06/2025 19:32)
 	Insumos coletados por Pedro Oliveira - 11223
 	Enfermeiro responsável pelo atendimento: Fernando Lima - 963542
 ======================================================================
+ID: #15
+Data Retirada (09/09/2025 16:39)
+	Paciente: Marcos Antonio
+	Exame: Exame de Glicemia
+	2 - Tira Reagente Tipo A
+	Insumos coletados por João Silva - 12345
+	Enfermeiro responsável pelo atendimento: Fernando Lima - 963542
+======================================================================
