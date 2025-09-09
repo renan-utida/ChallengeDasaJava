@@ -2,9 +2,11 @@ package dasa.service;
 
 import dasa.controller.dao.*;
 import dasa.controller.dao.jdbc.*;
-import dasa.modelo.*;
 import dasa.funcionarios.TecnicoLaboratorio;
 import dasa.funcionarios.Enfermeiro;
+import dasa.modelo.Insumo;
+import dasa.modelo.ItemCesta;
+import dasa.modelo.Paciente;
 
 import java.time.LocalDateTime;
 import java.util.*;
