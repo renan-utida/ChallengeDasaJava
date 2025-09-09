@@ -90,6 +90,34 @@ public class JdbcInsumoDao implements InsumoDao {
     }
 
     @Override
+    public List<Insumo> listarPorExame(String nomeExame) {
+        List<Insumo> insumosExame = new ArrayList<>();
+
+        switch (nomeExame) {
+            case "Hemograma Completo":
+                insumosExame.addAll(listarPorTipo("Tubo de Coleta"));
+                insumosExame.addAll(listarPorTipo("Agulha"));
+                insumosExame.addAll(listarPorTipo("Seringa"));
+                break;
+
+            case "Exame de Urina":
+                insumosExame.addAll(listarPorTipo("Recipiente Estéril"));
+                insumosExame.addAll(listarPorTipo("Tira Reagente"));
+                insumosExame.addAll(listarPorTipo("Lâmina Análise"));
+                break;
+
+            case "Exame de Glicemia":
+                insumosExame.addAll(listarPorTipo("Tubo sem Anticoagulante"));
+                insumosExame.addAll(listarPorTipo("Agulha"));
+                insumosExame.addAll(listarPorTipo("Seringa"));
+                insumosExame.addAll(listarPorTipo("Tira Reagente"));
+                break;
+        }
+
+        return insumosExame;
+    }
+
+    @Override
     public void atualizarQuantidade(int id, int novaQuantidade) {
         String sql = "UPDATE dasa_insumos SET quantidade_disponivel = ? WHERE id = ?";
 

@@ -9,6 +9,7 @@ public interface InsumoDao {
     Insumo buscarPorCodigoBarras(int codigoBarras);
     List<Insumo> listarTodos();
     List<Insumo> listarPorTipo(String tipo);
+    List<Insumo> listarPorExame(String nomeExame);
 
     // UPDATE (apenas quantidade)
     void atualizarQuantidade(int id, int novaQuantidade);
