@@ -1,6 +1,6 @@
 package dasa.controller.dao;
 
-import dasa.modelo.Paciente;
+import dasa.model.domain.Paciente;
 import java.util.List;
 
 public interface PacienteDao {
@@ -9,14 +9,11 @@ public interface PacienteDao {
 
     // READ
     Paciente buscarPorId(int id);
-    Paciente buscarPorCpf(long cpf);
+    Paciente buscarPorCpf(String cpf);
     List<Paciente> listarTodos();
-    List<Paciente> listarPorStatus(String status);
-    List<Paciente> listarPorEnfermeiro(int coren);
 
     // UPDATE
     void atualizar(Paciente paciente);
-    void atualizarStatus(int id, String status, int enfermeiroCoren, int tecnicoCrbm);
 
     // DELETE
     void excluir(int id);

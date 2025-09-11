@@ -2,11 +2,9 @@ package dasa.service;
 
 import dasa.controller.dao.*;
 import dasa.controller.dao.jdbc.*;
-import dasa.funcionarios.TecnicoLaboratorio;
-import dasa.funcionarios.Enfermeiro;
-import dasa.modelo.Insumo;
-import dasa.modelo.ItemCesta;
-import dasa.modelo.Paciente;
+import dasa.model.funcionarios.TecnicoLaboratorio;
+import dasa.model.funcionarios.Enfermeiro;
+import dasa.model.domain.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -14,22 +12,22 @@ import java.util.*;
 public class AlmoxarifadoService {
 
     private InsumoDao insumoDao;
-    private PacienteDao pacienteDao;
+    private AtendimentoDao atendimentoDao;
     private FuncionarioDao funcionarioDao;
     private HistoricoDao historicoDao;
 
     public AlmoxarifadoService() {
         this.insumoDao = new JdbcInsumoDao();
-        this.pacienteDao = new JdbcPacienteDao();
+        this.atendimentoDao = new JdbcAtendimentoDao();
         this.funcionarioDao = new JdbcFuncionarioDao();
         this.historicoDao = new JdbcHistoricoRetiradaDao();
     }
 
     // Construtor para injeção de dependência
-    public AlmoxarifadoService(InsumoDao insumoDao, PacienteDao pacienteDao,
+    public AlmoxarifadoService(InsumoDao insumoDao, AtendimentoDao atendimentoDao,
                                FuncionarioDao funcionarioDao, HistoricoDao historicoDao) {
         this.insumoDao = insumoDao;
-        this.pacienteDao = pacienteDao;
+        this.atendimentoDao = atendimentoDao;
         this.funcionarioDao = funcionarioDao;
         this.historicoDao = historicoDao;
     }
@@ -37,7 +35,7 @@ public class AlmoxarifadoService {
     /**
      * Processa a retirada completa de insumos
      */
-    public void processarRetirada(int pacienteId, List<ItemCesta> itens,
+    public void processarRetirada(int atendimentoId, List<ItemCesta> itens,
                                   int tecnicoCrbm, int enfermeiroCoren) {
 
         // Validações
@@ -45,14 +43,14 @@ public class AlmoxarifadoService {
             throw new IllegalArgumentException("Lista de itens não pode estar vazia!");
         }
 
-        // Verifica se o paciente existe e está em espera
-        Paciente paciente = pacienteDao.buscarPorId(pacienteId);
-        if (paciente == null) {
-            throw new IllegalArgumentException("Paciente não encontrado!");
+        // Verifica se o atendimento existe e está em espera
+        Atendimento atendimento = atendimentoDao.buscarPorId(atendimentoId);
+        if (atendimento == null) {
+            throw new IllegalArgumentException("Atendimento não encontrado!");
         }
 
-        if (!paciente.getStatus().equals("Em espera")) {
-            throw new IllegalArgumentException("Paciente não está com status 'Em espera'!");
+        if (!atendimento.getStatus().equals("Em espera")) {
+            throw new IllegalArgumentException("Atendimento não está com status 'Em espera'!");
         }
 
         // Verifica se técnico e enfermeiro existem
@@ -67,11 +65,11 @@ public class AlmoxarifadoService {
         }
 
         // Valida se enfermeiro tem a especialidade correta
-        if (!enfermeiro.getEspecialidade().equals(paciente.getExame())) {
+        if (!enfermeiro.getEspecialidade().equals(atendimento.getExame())) {
             throw new IllegalArgumentException(
                     "Enfermeiro não tem especialidade para este exame! " +
                             "Especialidade do enfermeiro: " + enfermeiro.getEspecialidade() +
-                            ", Exame do paciente: " + paciente.getExame()
+                            ", Exame do paciente: " + atendimento.getExame()
             );
         }
 
@@ -103,10 +101,30 @@ public class AlmoxarifadoService {
 
         // Salva o histórico
         LocalDateTime dataRetirada = LocalDateTime.now();
-        historicoDao.salvarRetirada(pacienteId, dataRetirada, tecnicoCrbm, enfermeiroCoren, itens);
+        historicoDao.salvarRetirada(atendimentoId, dataRetirada, tecnicoCrbm, enfermeiroCoren, itens);
 
         // Atualiza status do paciente
-        pacienteDao.atualizarStatus(pacienteId, "Atendido", enfermeiroCoren, tecnicoCrbm);
+        atendimentoDao.atualizarStatus(atendimentoId, "Atendido", enfermeiroCoren, tecnicoCrbm);
+    }
+
+    /**
+     * Lista atendimentos por status
+     */
+    public List<Atendimento> listarAtendimentosPorStatus(String status) {
+        if (status == null || status.trim().isEmpty()) {
+            throw new IllegalArgumentException("Status não pode estar vazio!");
+        }
+        return atendimentoDao.listarPorStatus(status);
+    }
+
+    /**
+     * Busca atendimento por ID
+     */
+    public Atendimento buscarAtendimentoPorId(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID inválido!");
+        }
+        return atendimentoDao.buscarPorId(id);
     }
 
     /**
@@ -151,28 +169,6 @@ public class AlmoxarifadoService {
         }
 
         return insumoDao.listarPorExame(nomeExame);
-    }
-
-    /**
-     * Lista pacientes por status
-     */
-    public List<Paciente> listarPacientesPorStatus(String status) {
-        if (status == null || status.trim().isEmpty()) {
-            throw new IllegalArgumentException("Status não pode estar vazio!");
-        }
-
-        return pacienteDao.listarPorStatus(status);
-    }
-
-    /**
-     * Busca paciente por ID
-     */
-    public Paciente buscarPacientePorId(int id) {
-        if (id <= 0) {
-            throw new IllegalArgumentException("ID inválido!");
-        }
-
-        return pacienteDao.buscarPorId(id);
     }
 
     /**

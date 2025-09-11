@@ -1,6 +1,6 @@
 package dasa.controller.dao;
 
-import dasa.modelo.Insumo;
+import dasa.model.domain.Insumo;
 import java.util.List;
 
 public interface InsumoDao {

@@ -2,7 +2,7 @@ package dasa.service;
 
 import dasa.controller.dao.InsumoDao;
 import dasa.controller.dao.jdbc.JdbcInsumoDao;
-import dasa.modelo.Insumo;
+import dasa.model.domain.Insumo;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

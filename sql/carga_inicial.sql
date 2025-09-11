@@ -1,3 +1,5 @@
+    SET ECHO ON
+
 -- =====================================================
 -- SCRIPT DE CARGA INICIAL - SISTEMA DASA
 -- =====================================================
@@ -5,6 +7,7 @@
 -- Limpar dados existentes
 DELETE FROM dasa_itens_retirada;
 DELETE FROM dasa_historico_retiradas;
+DELETE FROM dasa_atendimentos;
 DELETE FROM dasa_pacientes;
 DELETE FROM dasa_insumos;
 DELETE FROM dasa_enfermeiros;

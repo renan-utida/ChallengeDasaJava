@@ -1,6 +1,6 @@
 package dasa.controller.dao;
 
-import dasa.modelo.Exame;
+import dasa.model.domain.Exame;
 import java.util.List;
 
 public interface ExameDao {

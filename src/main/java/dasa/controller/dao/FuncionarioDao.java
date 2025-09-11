@@ -1,7 +1,7 @@
 package dasa.controller.dao;
 
-import dasa.funcionarios.TecnicoLaboratorio;
-import dasa.funcionarios.Enfermeiro;
+import dasa.model.funcionarios.TecnicoLaboratorio;
+import dasa.model.funcionarios.Enfermeiro;
 import java.util.List;
 
 public interface FuncionarioDao {

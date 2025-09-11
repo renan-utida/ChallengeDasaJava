@@ -1,11 +1,9 @@
 package dasa.service;
 
-import dasa.controller.dao.FuncionarioDao;
-import dasa.controller.dao.PacienteDao;
-import dasa.controller.dao.jdbc.JdbcFuncionarioDao;
-import dasa.controller.dao.jdbc.JdbcPacienteDao;
-import dasa.funcionarios.Enfermeiro;
-import dasa.modelo.Paciente;
+import dasa.controller.dao.*;
+import dasa.controller.dao.jdbc.*;
+import dasa.model.funcionarios.Enfermeiro;
+import dasa.model.domain.Atendimento;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,17 +11,17 @@ import java.util.List;
 public class EnfermariaService {
 
     private FuncionarioDao funcionarioDao;
-    private PacienteDao pacienteDao;
+    private AtendimentoDao atendimentoDao;
 
     public EnfermariaService() {
         this.funcionarioDao = new JdbcFuncionarioDao();
-        this.pacienteDao = new JdbcPacienteDao();
+        this.atendimentoDao = new JdbcAtendimentoDao();
     }
 
     // Construtor para injeção de dependência
-    public EnfermariaService(FuncionarioDao funcionarioDao, PacienteDao pacienteDao) {
+    public EnfermariaService(FuncionarioDao funcionarioDao, AtendimentoDao atendimentoDao) {
         this.funcionarioDao = funcionarioDao;
-        this.pacienteDao = pacienteDao;
+        this.atendimentoDao = atendimentoDao;
     }
 
     /**
@@ -42,28 +40,28 @@ public class EnfermariaService {
     }
 
     /**
-     * Lista pacientes atendidos por um enfermeiro
+     * Lista atendimentos realizados por um enfermeiro
      */
-    public List<Paciente> listarPacientesPorEnfermeiro(int coren) {
+    public List<Atendimento> listarAtendimentosPorEnfermeiro(int coren) {
         // Verifica se o enfermeiro existe
         Enfermeiro enfermeiro = funcionarioDao.buscarEnfermeiroPorCoren(coren);
         if (enfermeiro == null) {
             throw new IllegalArgumentException("Enfermeiro não encontrado com COREN: " + coren);
         }
 
-        return pacienteDao.listarPorEnfermeiro(coren);
+        return atendimentoDao.listarPorEnfermeiro(coren);
     }
 
     /**
      * Lista enfermeiros que já atenderam pacientes
      */
-    public List<Enfermeiro> listarEnfermeirosQueAtenderam() {
+     public List<Enfermeiro> listarEnfermeirosQueAtenderam() {
         List<Enfermeiro> todosEnfermeiros = funcionarioDao.listarTodosEnfermeiros();
         List<Enfermeiro> enfermeirosQueAtenderam = new ArrayList<>();
 
         for (Enfermeiro enfermeiro : todosEnfermeiros) {
-            List<Paciente> pacientesAtendidos = pacienteDao.listarPorEnfermeiro(enfermeiro.getCoren());
-            if (!pacientesAtendidos.isEmpty()) {
+            List<Atendimento> atendimentosRealizados = atendimentoDao.listarPorEnfermeiro(enfermeiro.getCoren());
+            if (!atendimentosRealizados.isEmpty()) {
                 enfermeirosQueAtenderam.add(enfermeiro);
             }
         }
@@ -91,7 +89,7 @@ public class EnfermariaService {
      * Conta total de atendimentos por enfermeiro
      */
     public int contarAtendimentosPorEnfermeiro(int coren) {
-        return listarPacientesPorEnfermeiro(coren).size();
+        return listarAtendimentosPorEnfermeiro(coren).size();
     }
 
     // Validação privada

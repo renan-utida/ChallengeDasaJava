@@ -12,7 +12,7 @@ public class Paciente {
 
     private int id;
     private String nomeCompleto;
-    private long cpf;
+    private String cpf;
     private LocalDate dataNascimento;
     private LocalDateTime dataExame;
     private boolean convenio;
@@ -24,7 +24,7 @@ public class Paciente {
     private String responsavelColeta;
 
     // Construtor para novo paciente
-    public Paciente(String nomeCompleto, long cpf, String dataNascimentoStr,
+    public Paciente(String nomeCompleto, String cpf, String dataNascimentoStr,
                     boolean convenio, boolean preferencial, boolean jejum, String exame) {
         this.nomeCompleto = nomeCompleto;
         this.cpf = cpf;
@@ -40,7 +40,7 @@ public class Paciente {
     }
 
     // Construtor completo (para carregar do banco)
-    public Paciente(int id, String nomeCompleto, long cpf, String dataNascimentoStr,
+    public Paciente(int id, String nomeCompleto, String cpf, String dataNascimentoStr,
                     String dataExameStr, boolean convenio, boolean preferencial, boolean jejum,
                     String exame, String status, String enfermeiroResponsavel, String responsavelColeta) {
         this.id = id;
@@ -68,9 +68,9 @@ public class Paciente {
      * Formata CPF para exibição
      */
     public String getCpfFormatado() {
-        String cpfStr = String.format("%011d", cpf);
-        return cpfStr.substring(0, 3) + "." + cpfStr.substring(3, 6) + "." +
-                cpfStr.substring(6, 9) + "-" + cpfStr.substring(9, 11);
+        if (cpf == null || cpf.length() != 11) return cpf;
+        return cpf.substring(0, 3) + "." + cpf.substring(3, 6) + "." +
+                cpf.substring(6, 9) + "-" + cpf.substring(9, 11);
     }
 
     /**
@@ -147,8 +147,8 @@ public class Paciente {
     public String getNomeCompleto() { return nomeCompleto; }
     public void setNomeCompleto(String nomeCompleto) { this.nomeCompleto = nomeCompleto; }
 
-    public long getCpf() { return cpf; }
-    public void setCpf(long cpf) { this.cpf = cpf; }
+    public String getCpf() { return cpf; }
+    public void setCpf(String cpf) { this.cpf = cpf; }
 
     public LocalDate getDataNascimento() { return dataNascimento; }
     public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }

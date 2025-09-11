@@ -2,8 +2,8 @@ package dasa.controller.dao.jdbc;
 
 import dasa.config.OracleConnectionFactory;
 import dasa.controller.dao.FuncionarioDao;
-import dasa.funcionarios.TecnicoLaboratorio;
-import dasa.funcionarios.Enfermeiro;
+import dasa.model.funcionarios.TecnicoLaboratorio;
+import dasa.model.funcionarios.Enfermeiro;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ public class JdbcFuncionarioDao implements FuncionarioDao {
 
     @Override
     public List<Enfermeiro> listarTodosEnfermeiros() {
-        String sql = "SELECT * FROM dasa_enfermeiros ORDER BY nome";
+        String sql = "SELECT * FROM dasa_enfermeiros ORDER BY especialidade";
         List<Enfermeiro> enfermeiros = new ArrayList<>();
 
         try (Connection conn = OracleConnectionFactory.getConnection();

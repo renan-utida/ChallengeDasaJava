@@ -1,8 +1,9 @@
 package dasa.view.ui.console.setores;
 
+import dasa.model.domain.Atendimento;
 import dasa.service.EnfermariaService;
-import dasa.funcionarios.Enfermeiro;
-import dasa.modelo.Paciente;
+import dasa.model.funcionarios.Enfermeiro;
+import dasa.model.domain.Paciente;
 import java.util.*;
 
 /**
@@ -23,7 +24,7 @@ public class ConsoleEnfermaria {
                 System.out.println();
                 System.out.println("=== ENFERMARIA ===");
                 System.out.println("1 - Listar todos os Enfermeiros");
-                System.out.println("2 - Exames por enfermeiro específico");
+                System.out.println("2 - Exames feitos por enfermeiro específico");
                 System.out.println("3 - Estatísticas de atendimento");
                 System.out.println("4 - Voltar");
                 System.out.print("Opção: ");
@@ -54,7 +55,7 @@ public class ConsoleEnfermaria {
     }
 
     private void listarEnfermeiros() {
-        System.out.println("\n=== TODOS OS ENFERMEIROS ===");
+        System.out.println("\n=== TODOS OS ENFERMEIROS CADASTRADOS ===");
 
         List<Enfermeiro> enfermeiros = service.listarTodosEnfermeiros();
 
@@ -90,11 +91,11 @@ public class ConsoleEnfermaria {
             int coren = scanner.nextInt();
             scanner.nextLine();
 
-            List<Paciente> pacientes = service.listarPacientesPorEnfermeiro(coren);
+            List<Atendimento> atendimentos = service.listarAtendimentosPorEnfermeiro(coren);
 
-            System.out.println("\n=== PACIENTES ATENDIDOS ===");
-            for (Paciente p : pacientes) {
-                p.exibirDados();
+            System.out.println("\n=== ATENDIMENTOS REALIZADOS ===");
+            for (Atendimento a : atendimentos) {
+                a.exibirDados();
             }
 
         } catch (IllegalArgumentException e) {

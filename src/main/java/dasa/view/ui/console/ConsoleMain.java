@@ -2,7 +2,7 @@ package dasa.view.ui.console;
 
 import dasa.service.*;
 import dasa.view.ui.console.setores.*;
-import dasa.funcionarios.TecnicoLaboratorio;
+import dasa.model.funcionarios.TecnicoLaboratorio;
 import java.util.*;
 
 /**

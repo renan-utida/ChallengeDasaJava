@@ -2,7 +2,7 @@ package dasa.controller.dao.jdbc;
 
 import dasa.config.OracleConnectionFactory;
 import dasa.controller.dao.InsumoDao;
-import dasa.modelo.Insumo;
+import dasa.model.domain.Insumo;
 
 import java.sql.*;
 import java.util.ArrayList;

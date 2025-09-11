@@ -2,19 +2,16 @@ package dasa.controller.dao.jdbc;
 
 import dasa.config.OracleConnectionFactory;
 import dasa.controller.dao.HistoricoDao;
-import dasa.modelo.ItemCesta;
+import dasa.model.domain.ItemCesta;
 
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JdbcHistoricoRetiradaDao implements HistoricoDao {
 
     @Override
-    public void salvarRetirada(int pacienteId, LocalDateTime dataRetirada,
+    public void salvarRetirada(int atendimentoId, LocalDateTime dataRetirada,
                                int tecnicoCrbm, int enfermeiroCoren,
                                List<ItemCesta> itens) {
 
@@ -28,11 +25,11 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
 
             // 1. Inserir na tabela de histórico
             String sqlHistorico = "INSERT INTO dasa_historico_retiradas " +
-                    "(paciente_id, data_retirada, tecnico_crbm, enfermeiro_coren) " +
+                    "(atendimento_id, data_retirada, tecnico_crbm, enfermeiro_coren) " +
                     "VALUES (?, ?, ?, ?)";
 
             psHistorico = conn.prepareStatement(sqlHistorico);
-            psHistorico.setInt(1, pacienteId);
+            psHistorico.setInt(1, atendimentoId);
             psHistorico.setTimestamp(2, Timestamp.valueOf(dataRetirada));
             psHistorico.setInt(3, tecnicoCrbm);
             psHistorico.setInt(4, enfermeiroCoren);
@@ -40,13 +37,13 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
 
             // 2. Inserir os itens da retirada
             String sqlItens = "INSERT INTO dasa_itens_retirada " +
-                    "(paciente_id, data_retirada, insumo_id, quantidade) " +
+                    "(atendimento_id, data_retirada, insumo_id, quantidade) " +
                     "VALUES (?, ?, ?, ?)";
 
             psItens = conn.prepareStatement(sqlItens);
 
             for (ItemCesta item : itens) {
-                psItens.setInt(1, pacienteId);
+                psItens.setInt(1, atendimentoId);
                 psItens.setTimestamp(2, Timestamp.valueOf(dataRetirada));
                 psItens.setInt(3, item.getInsumo().getId());
                 psItens.setInt(4, item.getQuantidade());
@@ -83,14 +80,15 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
 
     @Override
     public List<Map<String, Object>> listarHistoricoCompleto() {
-        String sql = "SELECT h.paciente_id, h.data_retirada, " +
+        String sql = "SELECT h.atendimento_id, h.data_retirada, " +
                 "p.nome_completo as paciente_nome, " +
                 "e.nome as exame_nome, " +
-                "t.nome || ' - ' || t.crbm as tecnico_info, " +
-                "enf.nome || ' - ' || enf.coren as enfermeiro_info " +
+                "t.nome as tecnico_nome, t.crbm as tecnico_crbm, " +
+                "enf.nome as enfermeiro_nome, enf.coren as enfermeiro_coren " +
                 "FROM dasa_historico_retiradas h " +
-                "JOIN dasa_pacientes p ON h.paciente_id = p.id " +
-                "JOIN dasa_exames e ON p.exame_id = e.id " +
+                "JOIN dasa_atendimentos a ON h.atendimento_id = a.id " +
+                "JOIN dasa_pacientes p ON a.paciente_id = p.id " +
+                "JOIN dasa_exames e ON a.exame_id = e.id " +
                 "JOIN dasa_tecnicos t ON h.tecnico_crbm = t.crbm " +
                 "JOIN dasa_enfermeiros enf ON h.enfermeiro_coren = enf.coren " +
                 "ORDER BY h.data_retirada DESC";
@@ -103,16 +101,24 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
 
             while (rs.next()) {
                 Map<String, Object> registro = new HashMap<>();
-                registro.put("paciente_id", rs.getInt("paciente_id"));
+                registro.put("atendimento_id", rs.getInt("atendimento_id"));
                 registro.put("data_retirada", rs.getTimestamp("data_retirada").toLocalDateTime());
                 registro.put("paciente_nome", rs.getString("paciente_nome"));
                 registro.put("exame_nome", rs.getString("exame_nome"));
-                registro.put("tecnico_info", rs.getString("tecnico_info"));
-                registro.put("enfermeiro_info", rs.getString("enfermeiro_info"));
+
+                // Formata as informações corretamente
+                String tecnicoInfo = "Insumos coletados por " + rs.getString("tecnico_nome") +
+                        " - " + rs.getInt("tecnico_crbm");
+                String enfermeiroInfo = "Enfermeiro responsável pelo atendimento: " +
+                        rs.getString("enfermeiro_nome") +
+                        " - " + rs.getInt("enfermeiro_coren");
+
+                registro.put("tecnico_info", tecnicoInfo);
+                registro.put("enfermeiro_info", enfermeiroInfo);
 
                 // Buscar os itens desta retirada
                 registro.put("itens", buscarItensRetirada(
-                        rs.getInt("paciente_id"),
+                        rs.getInt("atendimento_id"),
                         rs.getTimestamp("data_retirada").toLocalDateTime()
                 ));
 
@@ -125,18 +131,19 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
     }
 
     @Override
-    public List<Map<String, Object>> listarHistoricoPorPaciente(int pacienteId) {
-        String sql = "SELECT h.paciente_id, h.data_retirada, " +
+    public List<Map<String, Object>> listarHistoricoPorAtendimento(int atendimentoId) {
+        String sql = "SELECT h.atendimento_id, h.data_retirada, " +
                 "p.nome_completo as paciente_nome, " +
                 "e.nome as exame_nome, " +
                 "t.nome || ' - ' || t.crbm as tecnico_info, " +
                 "enf.nome || ' - ' || enf.coren as enfermeiro_info " +
                 "FROM dasa_historico_retiradas h " +
-                "JOIN dasa_pacientes p ON h.paciente_id = p.id " +
-                "JOIN dasa_exames e ON p.exame_id = e.id " +
+                "JOIN dasa_atendimentos a ON h.atendimento_id = a.id " +
+                "JOIN dasa_pacientes p ON a.paciente_id = p.id " +
+                "JOIN dasa_exames e ON a.exame_id = e.id " +
                 "JOIN dasa_tecnicos t ON h.tecnico_crbm = t.crbm " +
                 "JOIN dasa_enfermeiros enf ON h.enfermeiro_coren = enf.coren " +
-                "WHERE h.paciente_id = ? " +
+                "WHERE h.atendimento_id = ? " +
                 "ORDER BY h.data_retirada DESC";
 
         List<Map<String, Object>> historico = new ArrayList<>();
@@ -144,12 +151,12 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
         try (Connection conn = OracleConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, pacienteId);
+            ps.setInt(1, atendimentoId);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Map<String, Object> registro = new HashMap<>();
-                    registro.put("paciente_id", rs.getInt("paciente_id"));
+                    registro.put("atendimento_id", rs.getInt("atendimento_id"));
                     registro.put("data_retirada", rs.getTimestamp("data_retirada").toLocalDateTime());
                     registro.put("paciente_nome", rs.getString("paciente_nome"));
                     registro.put("exame_nome", rs.getString("exame_nome"));
@@ -158,7 +165,7 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
 
                     // Buscar os itens desta retirada
                     registro.put("itens", buscarItensRetirada(
-                            rs.getInt("paciente_id"),
+                            rs.getInt("atendimento_id"),
                             rs.getTimestamp("data_retirada").toLocalDateTime()
                     ));
 
@@ -173,14 +180,15 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
 
     @Override
     public List<Map<String, Object>> listarHistoricoPorData(LocalDateTime dataInicio, LocalDateTime dataFim) {
-        String sql = "SELECT h.paciente_id, h.data_retirada, " +
+        String sql = "SELECT h.atendimento_id, h.data_retirada, " +
                 "p.nome_completo as paciente_nome, " +
                 "e.nome as exame_nome, " +
                 "t.nome || ' - ' || t.crbm as tecnico_info, " +
                 "enf.nome || ' - ' || enf.coren as enfermeiro_info " +
                 "FROM dasa_historico_retiradas h " +
-                "JOIN dasa_pacientes p ON h.paciente_id = p.id " +
-                "JOIN dasa_exames e ON p.exame_id = e.id " +
+                "JOIN dasa_atendimentos a ON h.atendimento_id = a.id " +
+                "JOIN dasa_pacientes p ON a.paciente_id = p.id " +
+                "JOIN dasa_exames e ON a.exame_id = e.id " +
                 "JOIN dasa_tecnicos t ON h.tecnico_crbm = t.crbm " +
                 "JOIN dasa_enfermeiros enf ON h.enfermeiro_coren = enf.coren " +
                 "WHERE h.data_retirada BETWEEN ? AND ? " +
@@ -197,7 +205,7 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Map<String, Object> registro = new HashMap<>();
-                    registro.put("paciente_id", rs.getInt("paciente_id"));
+                    registro.put("atendimento_id", rs.getInt("atendimento_id"));
                     registro.put("data_retirada", rs.getTimestamp("data_retirada").toLocalDateTime());
                     registro.put("paciente_nome", rs.getString("paciente_nome"));
                     registro.put("exame_nome", rs.getString("exame_nome"));
@@ -206,7 +214,7 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
 
                     // Buscar os itens desta retirada
                     registro.put("itens", buscarItensRetirada(
-                            rs.getInt("paciente_id"),
+                            rs.getInt("atendimento_id"),
                             rs.getTimestamp("data_retirada").toLocalDateTime()
                     ));
 
@@ -220,29 +228,30 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
     }
 
     @Override
-    public Map<String, Object> obterDetalhesRetirada(int pacienteId, LocalDateTime dataRetirada) {
-        String sql = "SELECT h.paciente_id, h.data_retirada, " +
+    public Map<String, Object> obterDetalhesRetirada(int atendimentoId, LocalDateTime dataRetirada) {
+        String sql = "SELECT h.atendimento_id, h.data_retirada, " +
                 "p.nome_completo as paciente_nome, " +
                 "e.nome as exame_nome, " +
                 "t.nome || ' - ' || t.crbm as tecnico_info, " +
                 "enf.nome || ' - ' || enf.coren as enfermeiro_info " +
                 "FROM dasa_historico_retiradas h " +
-                "JOIN dasa_pacientes p ON h.paciente_id = p.id " +
-                "JOIN dasa_exames e ON p.exame_id = e.id " +
+                "JOIN dasa_atendimentos a ON h.atendimento_id = a.id " +
+                "JOIN dasa_pacientes p ON a.paciente_id = p.id " +
+                "JOIN dasa_exames e ON a.exame_id = e.id " +
                 "JOIN dasa_tecnicos t ON h.tecnico_crbm = t.crbm " +
                 "JOIN dasa_enfermeiros enf ON h.enfermeiro_coren = enf.coren " +
-                "WHERE h.paciente_id = ? AND h.data_retirada = ?";
+                "WHERE h.atendimento_id = ? AND h.data_retirada = ?";
 
         try (Connection conn = OracleConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, pacienteId);
+            ps.setInt(1, atendimentoId);
             ps.setTimestamp(2, Timestamp.valueOf(dataRetirada));
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Map<String, Object> detalhes = new HashMap<>();
-                    detalhes.put("paciente_id", rs.getInt("paciente_id"));
+                    detalhes.put("atendimento_id", rs.getInt("atendimento_id"));
                     detalhes.put("data_retirada", rs.getTimestamp("data_retirada").toLocalDateTime());
                     detalhes.put("paciente_nome", rs.getString("paciente_nome"));
                     detalhes.put("exame_nome", rs.getString("exame_nome"));
@@ -250,7 +259,7 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
                     detalhes.put("enfermeiro_info", rs.getString("enfermeiro_info"));
 
                     // Buscar os itens desta retirada
-                    detalhes.put("itens", buscarItensRetirada(pacienteId, dataRetirada));
+                    detalhes.put("itens", buscarItensRetirada(atendimentoId, dataRetirada));
 
                     return detalhes;
                 }
@@ -262,11 +271,11 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
     }
 
     // Método auxiliar para buscar itens de uma retirada específica
-    private List<Map<String, Object>> buscarItensRetirada(int pacienteId, LocalDateTime dataRetirada) {
+    private List<Map<String, Object>> buscarItensRetirada(int atendimentoId, LocalDateTime dataRetirada) {
         String sql = "SELECT ir.insumo_id, ir.quantidade, i.nome as insumo_nome " +
                 "FROM dasa_itens_retirada ir " +
                 "JOIN dasa_insumos i ON ir.insumo_id = i.id " +
-                "WHERE ir.paciente_id = ? AND ir.data_retirada = ? " +
+                "WHERE ir.atendimento_id = ? AND ir.data_retirada = ? " +
                 "ORDER BY i.nome";
 
         List<Map<String, Object>> itens = new ArrayList<>();
@@ -274,7 +283,7 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
         try (Connection conn = OracleConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, pacienteId);
+            ps.setInt(1, atendimentoId);
             ps.setTimestamp(2, Timestamp.valueOf(dataRetirada));
 
             try (ResultSet rs = ps.executeQuery()) {

@@ -2,7 +2,7 @@ package dasa.controller.dao.jdbc;
 
 import dasa.config.OracleConnectionFactory;
 import dasa.controller.dao.ExameDao;
-import dasa.modelo.Exame;
+import dasa.model.domain.Exame;
 
 import java.sql.*;
 import java.util.ArrayList;

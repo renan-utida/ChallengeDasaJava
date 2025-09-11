@@ -1,11 +1,11 @@
 package dasa.view.ui.console.setores;
 
-import dasa.service.AlmoxarifadoService;
-import dasa.service.EstoqueService;
-import dasa.funcionarios.TecnicoLaboratorio;
-import dasa.funcionarios.Enfermeiro;
-import dasa.modelo.*;
+import dasa.service.*;
+import dasa.model.domain. *;
+import dasa.model.funcionarios. *;
 import java.util.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Console UI para o Almoxarifado usando Services
@@ -15,6 +15,7 @@ public class ConsoleAlmoxarifado {
     private AlmoxarifadoService almoxarifadoService;
     private EstoqueService estoqueService;
     private TecnicoLaboratorio tecnicoLogado;
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     public ConsoleAlmoxarifado(Scanner scanner, AlmoxarifadoService almoxarifadoService,
                                EstoqueService estoqueService, TecnicoLaboratorio tecnicoLogado) {
@@ -66,59 +67,65 @@ public class ConsoleAlmoxarifado {
 
     private void retirarInsumos() {
         try {
-            // Lista pacientes em espera
-            List<Paciente> pacientesEmEspera = almoxarifadoService.listarPacientesPorStatus("Em espera");
+            // Lista atendimentos em espera
+            List<Atendimento> atendimentosEmEspera = almoxarifadoService.listarAtendimentosPorStatus("Em espera");
 
-            if (pacientesEmEspera.isEmpty()) {
-                System.out.println("Não há pacientes com status 'Em espera'.");
+
+            if (atendimentosEmEspera.isEmpty()) {
+                System.out.println("Não há atendimentos com status 'Em espera'.");
                 return;
             }
 
-            System.out.println("\n=== PACIENTES EM ESPERA ===");
-            for (Paciente p : pacientesEmEspera) {
-                p.exibirDados();
+            System.out.println("\n=== ATENDIMENTOS EM ESPERA ===");
+            for (Atendimento a : atendimentosEmEspera) {
+                a.exibirDados();
             }
 
-            System.out.print("ID do paciente: ");
-            int idPaciente = scanner.nextInt();
+            System.out.print("ID do atendimento a processar: ");
+            int idAtendimento  = scanner.nextInt();
             scanner.nextLine();
 
-            // Busca o paciente
-            Paciente paciente = null;
-            for (Paciente p : pacientesEmEspera) {
-                if (p.getId() == idPaciente) {
-                    paciente = p;
+            // Busca o atendimento
+            Atendimento atendimento = null;
+            for (Atendimento a : atendimentosEmEspera) {
+                if (a.getId() == idAtendimento) {
+                    atendimento = a;
                     break;
                 }
             }
 
-            if (paciente == null) {
+            if (atendimento == null) {
                 System.out.println("ERRO: ID inválido!");
                 return;
             }
 
-            System.out.println("\nExame: " + paciente.getExame());
+            System.out.println("\nExame: " + atendimento.getExame());
 
             // Coleta insumos
-            List<ItemCesta> cesta = coletarInsumos(paciente.getExame());
+            List<ItemCesta> cesta = coletarInsumos(atendimento.getExame());
 
             // Seleciona enfermeiro
-            Enfermeiro enfermeiro = selecionarEnfermeiro(paciente.getExame());
+            Enfermeiro enfermeiro = selecionarEnfermeiro(atendimento.getExame());
             if (enfermeiro == null) {
                 return;
             }
 
             // Processa retirada via service
             almoxarifadoService.processarRetirada(
-                    idPaciente, cesta,
+                    idAtendimento, cesta,
                     tecnicoLogado.getCrbm(),
                     enfermeiro.getCoren()
             );
 
-            System.out.println("\n✅ Retirada processada com sucesso!");
+            // Exibe confirmação detalhada
+            System.out.println("\n✅ Retirada processada com sucesso para exame " + atendimento.getExame() + "!");
+            for (ItemCesta item : cesta) {
+                System.out.println(item.toString());
+            }
             System.out.println("Insumos coletados por " + tecnicoLogado.getNome());
-            System.out.println("Enfermeiro responsável: " + enfermeiro.getNome());
-
+            System.out.println("Enfermeiro responsável pelo atendimento: " +
+                    enfermeiro.getNome() + " - " + enfermeiro.getCoren());
+            System.out.println("Disponibilidade de insumos atualizadas no SAP");
         } catch (IllegalArgumentException e) {
             System.out.println("ERRO: " + e.getMessage());
         } catch (Exception e) {
@@ -138,7 +145,7 @@ public class ConsoleAlmoxarifado {
                 insumo.exibirDados();
             }
 
-            System.out.print("\nID ou código de barras do insumo: ");
+            System.out.print("\nDigite o ID ou código de barras do insumo: ");
             int identificador = scanner.nextInt();
             scanner.nextLine();
 
@@ -148,18 +155,45 @@ public class ConsoleAlmoxarifado {
                 continue;
             }
 
-            System.out.print("Quantidade: ");
+            System.out.print("Digite a Quantidade: ");
             int quantidade = scanner.nextInt();
             scanner.nextLine();
 
+            if (quantidade <= 0) {
+                System.out.println("ERRO: Quantidade deve ser maior que zero!");
+                continue;
+            }
+
+            if (quantidade > insumoSelecionado.getQuantidadeDisponivel()) {
+                System.out.println("ERRO: Quantidade não disponível em estoque! Disponível: " +
+                        insumoSelecionado.getQuantidadeDisponivel());
+                continue;
+            }
+
             cesta.add(new ItemCesta(insumoSelecionado, quantidade));
-            System.out.println("✅ Adicionado à cesta!");
+            System.out.println("✅ " + quantidade + "x " + insumoSelecionado.getNome() + " adicionado à cesta!");
 
-            System.out.print("Adicionar mais insumos? (1-Sim, 2-Não): ");
-            int opcao = scanner.nextInt();
-            scanner.nextLine();
+            // Pergunta se deseja continuar com tratamento de exceção
+            while (true) {
+                System.out.print("Deseja adicionar mais Insumos à cesta (1 - Sim, 2 - Não): ");
+                try {
+                    int opcao = scanner.nextInt();
+                    scanner.nextLine();
 
-            continuar = (opcao == 1);
+                    if (opcao == 1) {
+                        continuar = true;
+                        break;
+                    } else if (opcao == 2) {
+                        continuar = false;
+                        break;
+                    } else {
+                        System.out.println("ERRO: Digite 1 para Sim ou 2 para Não!");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("ERRO: Digite apenas números!");
+                    scanner.nextLine();
+                }
+            }
         }
 
         return cesta;
@@ -174,7 +208,7 @@ public class ConsoleAlmoxarifado {
             System.out.println();
         }
 
-        System.out.print("COREN do enfermeiro: ");
+        System.out.print("Digite COREN do enfermeiro responsável: ");
         int coren = scanner.nextInt();
         scanner.nextLine();
 
@@ -191,16 +225,30 @@ public class ConsoleAlmoxarifado {
     private void verificarHistorico() {
         List<Map<String, Object>> historico = almoxarifadoService.listarHistoricoCompleto();
 
-        System.out.println("\n=== HISTÓRICO DE RETIRADAS ===");
+        System.out.println("\n=== HISTÓRICO DE RETIRADA DE INSUMOS ===");
 
         if (historico.isEmpty()) {
-            System.out.println("Nenhuma retirada realizada.");
+            System.out.println("Nenhuma retirada de insumos foi realizada ainda.");
         } else {
             for (Map<String, Object> retirada : historico) {
-                System.out.println("ID Paciente: #" + retirada.get("paciente_id"));
-                System.out.println("Data: " + retirada.get("data_retirada"));
-                System.out.println("Técnico CRBM: " + retirada.get("tecnico_crbm"));
-                System.out.println("Enfermeiro COREN: " + retirada.get("enfermeiro_coren"));
+                LocalDateTime dataRetirada = (LocalDateTime) retirada.get("data_retirada");
+
+                System.out.println("ID Atendimento: #" + retirada.get("atendimento_id"));
+                System.out.println("Data Retirada (" + dataRetirada.format(formatter) + ")");
+                System.out.println("\tPaciente: " + retirada.get("paciente_nome"));
+                System.out.println("\tExame: " + retirada.get("exame_nome"));
+
+                // Exibe itens
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> itens = (List<Map<String, Object>>) retirada.get("itens");
+                if (itens != null) {
+                    for (Map<String, Object> item : itens) {
+                        System.out.println("\t" + item.get("quantidade") + " - " + item.get("insumo_nome"));
+                    }
+                }
+
+                System.out.println("\t" + retirada.get("tecnico_info"));
+                System.out.println("\t" + retirada.get("enfermeiro_info"));
                 System.out.println("========================================");
             }
         }
@@ -228,11 +276,11 @@ public class ConsoleAlmoxarifado {
         try {
             verificarEstoque();
 
-            System.out.print("\nID ou código de barras: ");
+            System.out.print("\nDigite ID ou código de barras: ");
             int identificador = scanner.nextInt();
             scanner.nextLine();
 
-            System.out.print("Quantidade a adicionar: ");
+            System.out.print("Digite Quantidade a adicionar: ");
             int quantidade = scanner.nextInt();
             scanner.nextLine();
 
@@ -240,8 +288,8 @@ public class ConsoleAlmoxarifado {
 
             if (sucesso) {
                 Insumo insumo = almoxarifadoService.buscarInsumo(identificador);
-                System.out.println("✅ " + quantidade + " " + insumo.getNome() +
-                        " adicionado! Nova quantidade: " + insumo.getQuantidadeDisponivel());
+                System.out.println("\n✅ " + quantidade + " " + insumo.getNome() +
+                        " adicionado com sucesso! Nova quantidade: " + insumo.getQuantidadeDisponivel());
             }
 
         } catch (IllegalArgumentException e) {

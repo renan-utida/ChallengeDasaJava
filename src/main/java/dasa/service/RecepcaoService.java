@@ -1,36 +1,39 @@
 package dasa.service;
 
-import dasa.controller.dao.PacienteDao;
-import dasa.controller.dao.ExameDao;
-import dasa.controller.dao.jdbc.JdbcPacienteDao;
-import dasa.controller.dao.jdbc.JdbcExameDao;
-import dasa.modelo.Paciente;
-import dasa.modelo.Exame;
+import dasa.controller.dao.*;
+import dasa.controller.dao.jdbc.*;
+import dasa.model.domain.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class RecepcaoService {
 
     private PacienteDao pacienteDao;
+    private AtendimentoDao atendimentoDao;
     private ExameDao exameDao;
     private static final Pattern NOME_PATTERN = Pattern.compile("^[a-zA-ZÀ-ÿ\\u00f1\\u00d1\\s]+$");
 
     public RecepcaoService() {
         this.pacienteDao = new JdbcPacienteDao();
+        this.atendimentoDao = new JdbcAtendimentoDao();
         this.exameDao = new JdbcExameDao();
     }
 
     // Construtor para injeção de dependência (útil para testes)
-    public RecepcaoService(PacienteDao pacienteDao, ExameDao exameDao) {
+    public RecepcaoService(PacienteDao pacienteDao, AtendimentoDao atendimentoDao, ExameDao exameDao) {
         this.pacienteDao = pacienteDao;
+        this.atendimentoDao = atendimentoDao;
         this.exameDao = exameDao;
     }
 
     /**
      * Cadastra um novo paciente com todas as validações
      */
-    public Long cadastrarPaciente(String nomeCompleto, long cpf, String dataNascimento,
+    public Long cadastrarPaciente(String nomeCompleto, String cpf, String dataNascimento,
                                   boolean convenio, boolean preferencial, boolean jejum,
                                   String nomeExame) {
 
@@ -45,14 +48,57 @@ public class RecepcaoService {
             throw new IllegalArgumentException("CPF já cadastrado no sistema!");
         }
 
-        // Cria o paciente
-        Paciente novoPaciente = new Paciente(
-                nomeCompleto.trim(), cpf, dataNascimento,
-                convenio, preferencial, jejum, nomeExame
+        // Cria e salva o paciente (apenas dados básicos)
+        Paciente novoPaciente = new Paciente();
+        novoPaciente.setNomeCompleto(nomeCompleto.trim());
+        novoPaciente.setCpf(cpf);
+        novoPaciente.setDataNascimento(LocalDate.parse(dataNascimento,
+                DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        novoPaciente.setConvenio(convenio);
+        novoPaciente.setPreferencial(preferencial);
+
+        Long pacienteId = pacienteDao.salvar(novoPaciente);
+
+        // Cria o primeiro atendimento
+        Atendimento atendimento = new Atendimento(pacienteId.intValue(), nomeExame, jejum);
+        // Salva no banco
+        Long atendimentoId = atendimentoDao.salvar(atendimento);
+
+        return atendimentoId; // Retorna o ID do atendimento
+    }
+
+    /**
+     * Cadastra novo atendimento para paciente existente
+     */
+    public Long cadastrarNovoExameParaPaciente(int pacienteId, boolean jejum, String nomeExame) {
+        Paciente paciente = pacienteDao.buscarPorId(pacienteId);
+        if (paciente == null) {
+            throw new IllegalArgumentException("Paciente não encontrado!");
+        }
+
+        // Cria novo registro com os dados do paciente existente
+        Paciente novoExame = new Paciente(
+                paciente.getNomeCompleto(),
+                paciente.getCpf(),
+                paciente.getDataNascimentoFormatada(),
+                paciente.isConvenio(),
+                paciente.isPreferencial(),
+                jejum,
+                nomeExame
         );
 
-        // Salva no banco
-        return pacienteDao.salvar(novoPaciente);
+        validarExame(nomeExame);
+
+        // Cria novo atendimento
+        Atendimento atendimento = new Atendimento(pacienteId, nomeExame, jejum);
+        return atendimentoDao.salvar(atendimento);
+    }
+
+    /**
+     * Lista todos os atendimentos
+     */
+    public List<Atendimento> listarTodosAtendimentos() {
+        return atendimentoDao.listarTodos();
     }
 
     /**
@@ -63,18 +109,33 @@ public class RecepcaoService {
     }
 
     /**
-     * Lista pacientes por status
+     * Lista atendimentos por status
      */
-    public List<Paciente> listarPacientesPorStatus(String status) {
+    public List<Atendimento> listarAtendimentosPorStatus(String status) {
         if (status == null || status.trim().isEmpty()) {
             throw new IllegalArgumentException("Status não pode estar vazio!");
         }
 
         if (!status.equals("Em espera") && !status.equals("Atendido") && !status.equals("Cancelado")) {
-            throw new IllegalArgumentException("Status inválido! Use: Em espera, Atendido ou Cancelado");
+            throw new IllegalArgumentException("Status inválido!");
         }
 
-        return pacienteDao.listarPorStatus(status);
+        return atendimentoDao.listarPorStatus(status);
+    }
+
+    /**
+     * Lista histórico de atendimentos por CPF
+     */
+    public List<Atendimento> listarHistoricoExamesPorCpf(String cpf) {
+        Paciente paciente = pacienteDao.buscarPorCpf(cpf);
+        if (paciente == null) {
+            return new ArrayList<>();
+        }
+        return atendimentoDao.listarPorPaciente(paciente.getId());
+    }
+
+    public Paciente buscarPacientePorCpf(String cpf) {
+        return pacienteDao.buscarPorCpf(cpf);
     }
 
     /**
@@ -120,14 +181,20 @@ public class RecepcaoService {
         }
     }
 
-    private void validarCPF(long cpf) {
-        String cpfStr = String.valueOf(cpf);
-        if (cpfStr.length() != 11) {
+    private void validarCPF(String cpf) {
+        if (cpf == null || cpf.trim().isEmpty()) {
+            throw new IllegalArgumentException("CPF não pode estar vazio!");
+        }
+
+        // Remove pontos e traços se houver
+        cpf = cpf.replaceAll("[^0-9]", "");
+
+        if (cpf.length() != 11) {
             throw new IllegalArgumentException("CPF deve ter exatamente 11 dígitos!");
         }
 
         // Validação básica de CPF inválido (todos dígitos iguais)
-        if (cpfStr.matches("(\\d)\\1{10}")) {
+        if (cpf.matches("(\\d)\\1{10}")) {
             throw new IllegalArgumentException("CPF inválido!");
         }
     }

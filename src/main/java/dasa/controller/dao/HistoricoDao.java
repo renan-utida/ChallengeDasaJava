@@ -1,21 +1,21 @@
 package dasa.controller.dao;
 
-import dasa.modelo.ItemCesta;
+import dasa.model.domain.ItemCesta;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public interface HistoricoDao {
+
     // CREATE
-    void salvarRetirada(int pacienteId, LocalDateTime dataRetirada,
+    void salvarRetirada(int atendimentoId, LocalDateTime dataRetirada,
                         int tecnicoCrbm, int enfermeiroCoren,
                         List<ItemCesta> itens);
 
     // READ
     List<Map<String, Object>> listarHistoricoCompleto();
-    List<Map<String, Object>> listarHistoricoPorPaciente(int pacienteId);
+    List<Map<String, Object>> listarHistoricoPorAtendimento(int atendimentoId);
     List<Map<String, Object>> listarHistoricoPorData(LocalDateTime dataInicio, LocalDateTime dataFim);
 
     // Utility
-    Map<String, Object> obterDetalhesRetirada(int pacienteId, LocalDateTime dataRetirada);
+    Map<String, Object> obterDetalhesRetirada(int atendimentoId, LocalDateTime dataRetirada);
 }

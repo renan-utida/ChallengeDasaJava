@@ -48,7 +48,7 @@ public class Insumo {
      * Exibe os dados do insumo formatados
      */
     public void exibirDados() {
-        System.out.println("ID insumo: " + id + " - nome insumo: " + nome);
+        System.out.println("ID Insumo: " + id + " - Nome Insumo: " + nome);
         System.out.println("\tCódigo de Barras Produto: " + codigoBarras);
         System.out.println("\tQuantidade Disponível: " + quantidadeDisponivel);
         System.out.println("\tQuantidade Máxima: " + quantidadeMaxima);
