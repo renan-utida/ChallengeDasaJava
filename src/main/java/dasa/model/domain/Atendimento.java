@@ -47,6 +47,10 @@ public class Atendimento {
         if (paciente != null) {
             System.out.println("\tPaciente: " + paciente.getNomeCompleto());
             System.out.println("\tCPF: " + paciente.getCpfFormatado());
+            System.out.println("\tData Nascimento: " +
+                    paciente.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            System.out.println("\tConvênio: " + (paciente.isConvenio() ? "Sim" : "Não"));
+            System.out.println("\tPreferencial: " + (paciente.isPreferencial() ? "Sim" : "Não"));
         }
         System.out.println("\tExame: " + exame);
         System.out.println("\tJejum (min. 8 horas): " + (jejum ? "Sim" : "Não"));

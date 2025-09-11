@@ -79,7 +79,7 @@ public class JdbcAtendimentoDao implements AtendimentoDao {
                 "JOIN dasa_pacientes p ON a.paciente_id = p.id " +
                 "LEFT JOIN dasa_enfermeiros enf ON a.enfermeiro_coren = enf.coren " +
                 "LEFT JOIN dasa_tecnicos tec ON a.tecnico_crbm = tec.crbm " +
-                "ORDER BY a.id DESC";
+                "ORDER BY a.id ASC";
 
         List<Atendimento> atendimentos = new ArrayList<>();
 
@@ -104,7 +104,7 @@ public class JdbcAtendimentoDao implements AtendimentoDao {
                 "JOIN dasa_exames e ON a.exame_id = e.id " +
                 "JOIN dasa_pacientes p ON a.paciente_id = p.id " +
                 "WHERE a.paciente_id = ? " +
-                "ORDER BY a.data_exame DESC";
+                "ORDER BY a.data_exame ASC";
 
         List<Atendimento> atendimentos = new ArrayList<>();
 

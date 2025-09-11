@@ -91,7 +91,7 @@ public class JdbcHistoricoRetiradaDao implements HistoricoDao {
                 "JOIN dasa_exames e ON a.exame_id = e.id " +
                 "JOIN dasa_tecnicos t ON h.tecnico_crbm = t.crbm " +
                 "JOIN dasa_enfermeiros enf ON h.enfermeiro_coren = enf.coren " +
-                "ORDER BY h.data_retirada DESC";
+                "ORDER BY h.data_retirada ASC";
 
         List<Map<String, Object>> historico = new ArrayList<>();
 

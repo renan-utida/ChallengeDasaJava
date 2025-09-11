@@ -22,8 +22,8 @@ public class ConsoleRecepcao {
                 System.out.println();
                 System.out.println("=== RECEPÇÃO ===");
                 System.out.println("1 - Cadastrar Paciente/Atendimento");
-                System.out.println("2 - Visualizar Todos Atendimentos");
-                System.out.println("3 - Relatório de Atendimentos");
+                System.out.println("2 - Relatório de Atendimentos");
+                System.out.println("3 - Relatório de Pacientes");
                 System.out.println("4 - Histórico de Exames por Paciente");
                 System.out.println("5 - Voltar");
                 System.out.print("Opção: ");
@@ -36,10 +36,10 @@ public class ConsoleRecepcao {
                         menuCadastrar();
                         break;
                     case 2:
-                        visualizarAtendimentos();
+                        relatorioAtendimentos();
                         break;
                     case 3:
-                        relatorioAtendimentos();
+                        relatorioPacientes();
                         break;
                     case 4:
                         historicoExamesPaciente();
@@ -145,8 +145,8 @@ public class ConsoleRecepcao {
 
             System.out.println("\n=== PACIENTES CADASTRADOS ===");
             for (Paciente p : pacientes) {
-                System.out.printf("CPF: %s | Nome: %s | Status: %s\n",
-                        p.getCpfFormatado(), p.getNomeCompleto(), p.getStatus());
+                System.out.printf("CPF: %s | Nome: %s | Data de Nascimento: %s\n",
+                        p.getCpfFormatado(), p.getNomeCompleto(), p.getDataNascimento());
             }
 
             System.out.print("\nDigite o CPF do paciente (apenas números): ");
@@ -179,26 +179,11 @@ public class ConsoleRecepcao {
         }
     }
 
-    private void visualizarAtendimentos() {
-        System.out.println();
-        System.out.println("=== TODOS OS ATENDIMENTOS REGISTRADOS ===");
-
-        List<Atendimento> atendimentos = service.listarTodosAtendimentos();
-
-        if (atendimentos.isEmpty()) {
-            System.out.println("Não há atendimentos registrados.");
-        } else {
-            for (Atendimento atendimento : atendimentos) {
-                atendimento.exibirDados();
-            }
-        }
-    }
-
     private void relatorioAtendimentos() {
         try {
             System.out.println();
             System.out.println("=== RELATÓRIO DE ATENDIMENTOS ===");
-            System.out.println("1 - Todos os Atendimentos");
+            System.out.println("1 - Visualizar Todos Atendimentos");
             System.out.println("2 - Atendimentos Em Espera");
             System.out.println("3 - Atendimentos Realizados");
             System.out.println("4 - Voltar");
@@ -242,66 +227,69 @@ public class ConsoleRecepcao {
         }
     }
 
-//    private void relatorioResumido() {
-//        try {
-//            System.out.println();
-//            System.out.println("=== RELATÓRIO DE PACIENTES ===");
-//            System.out.println("1 - Relatório Resumido");
-//            System.out.println("2 - Relatório por Categoria");
-//            System.out.print("Escolha o tipo: ");
-//
-//            int opcao = scanner.nextInt();
-//            scanner.nextLine();
-//
-//            List<Paciente> pacientes = service.listarTodosPacientes();
-//
-//            if (pacientes.isEmpty()) {
-//                System.out.println("Não há pacientes registrados.");
-//                return;
-//            }
-//
-//            switch (opcao) {
-//                case 1:
-//                    System.out.println("\n=== RELATÓRIO RESUMIDO ===");
-//                    for (Paciente p : pacientes) {
-//                        p.exibirDados(true);
-//                    }
-//                    break;
-//
-//                case 2:
-//                    System.out.println("\nEscolha a categoria:");
-//                    System.out.println("1 - Dados Básicos");
-//                    System.out.println("2 - Informações Médicas");
-//                    System.out.println("3 - Dados Administrativos");
-//                    System.out.print("Categoria: ");
-//
-//                    int cat = scanner.nextInt();
-//                    scanner.nextLine();
-//
-//                    String tipo = "";
-//                    switch (cat) {
-//                        case 1: tipo = "basico"; break;
-//                        case 2: tipo = "medico"; break;
-//                        case 3: tipo = "administrativo"; break;
-//                        default:
-//                            System.out.println("Categoria inválida!");
-//                            return;
-//                    }
-//
-//                    System.out.println("\n=== RELATÓRIO POR CATEGORIA ===");
-//                    for (Paciente p : pacientes) {
-//                        p.exibirDados(tipo);
-//                    }
-//                    break;
-//
-//                default:
-//                    System.out.println("Opção inválida!");
-//            }
-//        } catch (InputMismatchException e) {
-//            System.out.println("ERRO: Digite apenas números!");
-//            scanner.nextLine();
-//        }
-//    }
+    private void relatorioPacientes() {
+        try {
+            System.out.println();
+            System.out.println("=== RELATÓRIO DE PACIENTES ===");
+            System.out.println("1 - Relatório Completo");
+            System.out.println("2 - Relatório por Categoria");
+            System.out.println("3 - Voltar");
+            System.out.print("Escolha o tipo: ");
+
+            int opcao = scanner.nextInt();
+            scanner.nextLine();
+
+            List<Paciente> pacientes = service.listarTodosPacientes();
+
+            if (pacientes.isEmpty()) {
+                System.out.println("Não há pacientes registrados.");
+                return;
+            }
+
+            switch (opcao) {
+                case 1:
+                    System.out.println("\n=== TODOS OS PACIENTES CADASTRADOS ===");
+                    for (Paciente p : pacientes) {
+                        p.exibirDados();
+                    }
+                    break;
+                case 2:
+                    System.out.println("\nEscolha a categoria:");
+                    System.out.println("1 - Dados Básicos");
+                    System.out.println("2 - Dados Administrativos");
+                    System.out.println("3 - Voltar");
+                    System.out.print("Categoria: ");
+
+                    int cat = scanner.nextInt();
+                    scanner.nextLine();
+
+                    String tipo = "";
+                    switch (cat) {
+                        case 1: tipo = "basico"; break;
+                        case 2: tipo = "administrativo"; break;
+                        case 3: return;
+                        default:
+                            System.out.println("Categoria inválida!");
+                            return;
+                    }
+
+                    System.out.println("\n=== RELATÓRIO POR CATEGORIA ===");
+                    for (Paciente p : pacientes) {
+                        p.exibirDados(tipo);
+                    }
+                    break;
+
+                case 3:
+                    return;
+
+                default:
+                    System.out.println("Opção inválida!");
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("ERRO: Digite apenas números!");
+            scanner.nextLine();
+        }
+    }
 
     private void historicoExamesPaciente() {
         try {
@@ -317,8 +305,8 @@ public class ConsoleRecepcao {
 
             System.out.println("\n=== PACIENTES CADASTRADOS ===");
             for (Paciente p : pacientes) {
-                System.out.printf("CPF: %s | Nome: %s | Status: %s\n",
-                        p.getCpfFormatado(), p.getNomeCompleto(), p.getStatus());
+                System.out.printf("CPF: %s | Nome: %s | Data de Nascimento: %s\n",
+                        p.getCpfFormatado(), p.getNomeCompleto(), p.getDataNascimento());
             }
 
             System.out.print("\nDigite o CPF do paciente (apenas números): ");

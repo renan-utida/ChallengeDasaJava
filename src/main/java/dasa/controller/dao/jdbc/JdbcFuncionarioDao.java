@@ -81,7 +81,7 @@ public class JdbcFuncionarioDao implements FuncionarioDao {
 
     @Override
     public List<Enfermeiro> listarTodosEnfermeiros() {
-        String sql = "SELECT * FROM dasa_enfermeiros ORDER BY especialidade";
+        String sql = "SELECT * FROM dasa_enfermeiros ORDER BY coren ASC";
         List<Enfermeiro> enfermeiros = new ArrayList<>();
 
         try (Connection conn = OracleConnectionFactory.getConnection();

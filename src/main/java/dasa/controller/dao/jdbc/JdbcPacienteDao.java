@@ -81,7 +81,7 @@ public class JdbcPacienteDao implements PacienteDao {
 
     @Override
     public List<Paciente> listarTodos() {
-        String sql = "SELECT * FROM dasa_pacientes ORDER BY nome_completo";
+        String sql = "SELECT * FROM dasa_pacientes ORDER BY id ASC";
         List<Paciente> pacientes = new ArrayList<>();
 
         try (Connection conn = OracleConnectionFactory.getConnection();
