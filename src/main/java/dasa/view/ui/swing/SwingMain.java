@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import dasa.view.ui.swing.setores.SwingAlmoxarifado;
+import dasa.view.ui.swing.setores.SwingEnfermaria;
 import dasa.view.ui.swing.setores.SwingRecepcao;
 
 public class SwingMain {
@@ -135,7 +136,7 @@ public class SwingMain {
         mainPanel.add(new SwingRecepcao(mainPanel, recepcaoService), "RECEPCAO");
         mainPanel.add(new SwingAlmoxarifado(mainPanel, almoxarifadoService,
                     estoqueService, tecnicoLogado), "ALMOXARIFADO");
-//        mainPanel.add(new SwingEnfermaria(mainPanel, enfermariaService), "ENFERMARIA");
+        mainPanel.add(new SwingEnfermaria(mainPanel, enfermariaService), "ENFERMARIA");
 
         frame.setContentPane(mainPanel);
         frame.setVisible(true);
