@@ -74,6 +74,16 @@ public class Paciente {
     }
 
     /**
+     * Formata data de nascimento para manter compatibilidade com string
+    */
+    public String getDataNascimentoFormatada() { return dataNascimento.format(dateFormatter); }
+
+    /**
+     * Formata data do exame para manter compatibilidade com string
+     */
+    public String getDataExameFormatada() { return dataExame.format(dateTimeFormatter); }
+
+    /**
      * Exibe os dados do paciente formatados
      */
     public void exibirDados() {
@@ -124,14 +134,8 @@ public class Paciente {
     public LocalDate getDataNascimento() { return dataNascimento; }
     public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
 
-    // Metodo auxiliar para manter compatibilidade com string
-    public String getDataNascimentoFormatada() { return dataNascimento.format(dateFormatter); }
-
     public LocalDateTime getDataExame() { return dataExame; }
     public void setDataExame(LocalDateTime dataExame) { this.dataExame = dataExame; }
-
-    // Metodo auxiliar para manter compatibilidade com string
-    public String getDataExameFormatada() { return dataExame.format(dateTimeFormatter); }
 
     public boolean isConvenio() { return convenio; }
     public void setConvenio(boolean convenio) { this.convenio = convenio; }
