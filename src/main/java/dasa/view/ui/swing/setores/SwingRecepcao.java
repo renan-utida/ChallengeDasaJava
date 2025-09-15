@@ -5,6 +5,7 @@ import dasa.model.domain.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class SwingRecepcao extends JPanel {
@@ -13,6 +14,12 @@ public class SwingRecepcao extends JPanel {
     private RecepcaoService service;
     private JTable tabelaAtendimentos;
     private DefaultTableModel modeloTabela;
+    private JTable tabelaPacientes;
+    private DefaultTableModel modeloPacientes;
+    private DefaultTableModel modeloPacientesBasicos;
+    private DefaultTableModel modeloPacientesAdmin;
+    private static final DateTimeFormatter formatadorData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter formatadorDataHora = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     public SwingRecepcao(JPanel mainPanel, RecepcaoService service) {
         this.mainPanel = mainPanel;
@@ -26,17 +33,12 @@ public class SwingRecepcao extends JPanel {
 
         // Cabeçalho
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(52, 152, 219));
+        headerPanel.setBackground(new Color(0, 90, 102));
 
         JLabel titulo = new JLabel("RECEPÇÃO");
         titulo.setFont(new Font("Arial", Font.BOLD, 24));
         titulo.setForeground(Color.WHITE);
         headerPanel.add(titulo);
-
-        JButton btnVoltar = new JButton("← Voltar");
-        btnVoltar.addActionListener(e ->
-                ((CardLayout) mainPanel.getLayout()).show(mainPanel, "MENU"));
-        headerPanel.add(btnVoltar);
 
         add(headerPanel, BorderLayout.NORTH);
 
@@ -45,9 +47,34 @@ public class SwingRecepcao extends JPanel {
 
         tabbedPane.addTab("Cadastrar Paciente", criarPainelCadastro());
         tabbedPane.addTab("Atendimentos", criarPainelAtendimentos());
+        tabbedPane.addTab("Pacientes", criarPainelPacientes());
         tabbedPane.addTab("Histórico por CPF", criarPainelHistorico());
 
         add(tabbedPane, BorderLayout.CENTER);
+
+        // Rodapé com botão Voltar
+        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        footerPanel.setBackground(new Color(0, 90, 102));
+        footerPanel.setPreferredSize(new Dimension(800, 40));
+
+        JLabel btnVoltar = new JLabel("← Voltar");
+        btnVoltar.setFont(new Font("Arial", Font.BOLD, 18));
+        btnVoltar.setForeground(Color.WHITE);
+        btnVoltar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnVoltar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ((CardLayout) mainPanel.getLayout()).show(mainPanel, "MENU");
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnVoltar.setForeground(new Color(200, 200, 200));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnVoltar.setForeground(Color.WHITE);
+            }
+        });
+
+        footerPanel.add(btnVoltar);
+        add(footerPanel, BorderLayout.SOUTH);
     }
 
     private JPanel criarPainelCadastro() {
@@ -60,6 +87,9 @@ public class SwingRecepcao extends JPanel {
         // Seção: Novo Paciente ou Existente
         JRadioButton rbNovoPaciente = new JRadioButton("Novo Paciente", true);
         JRadioButton rbPacienteExistente = new JRadioButton("Paciente Existente");
+        rbNovoPaciente.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        rbPacienteExistente.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         ButtonGroup group = new ButtonGroup();
         group.add(rbNovoPaciente);
         group.add(rbPacienteExistente);
@@ -76,9 +106,16 @@ public class SwingRecepcao extends JPanel {
         JCheckBox chkConvenio = new JCheckBox("Convênio");
         JCheckBox chkPreferencial = new JCheckBox("Preferencial");
         JCheckBox chkJejum = new JCheckBox("Em Jejum (min. 8 horas)");
+
+        // Cursor para checkboxes
+        chkConvenio.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        chkPreferencial.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        chkJejum.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         JComboBox<String> cmbExame = new JComboBox<>(new String[]{
                 "Hemograma Completo", "Exame de Urina", "Exame de Glicemia"
         });
+        cmbExame.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         int row = 1;
 
@@ -118,9 +155,8 @@ public class SwingRecepcao extends JPanel {
 
         // Botão Cadastrar
         JButton btnCadastrar = new JButton("Cadastrar Atendimento");
-        btnCadastrar.setBackground(new Color(52, 152, 219));
-        btnCadastrar.setForeground(Color.WHITE);
         btnCadastrar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnCadastrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         row++;
         gbc.gridy = row;
@@ -148,21 +184,18 @@ public class SwingRecepcao extends JPanel {
                 boolean jejum = chkJejum.isSelected();
 
                 if (rbNovoPaciente.isSelected()) {
-                    // Novo paciente
                     String nome = txtNome.getText().trim();
                     String dataNasc = txtDataNasc.getText().trim();
                     boolean convenio = chkConvenio.isSelected();
                     boolean preferencial = chkPreferencial.isSelected();
 
                     Long id = service.cadastrarPaciente(nome, cpf, dataNasc,
-                            convenio, preferencial,
-                            jejum, exame);
+                            convenio, preferencial, jejum, exame);
 
                     JOptionPane.showMessageDialog(this,
                             "Atendimento cadastrado!\nID: " + id,
                             "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    // Paciente existente
                     Paciente paciente = service.buscarPacientePorCpf(cpf);
                     if (paciente == null) {
                         throw new IllegalArgumentException("Paciente não encontrado!");
@@ -197,8 +230,9 @@ public class SwingRecepcao extends JPanel {
     private JPanel criarPainelAtendimentos() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        // Tabela
-        String[] colunas = {"ID", "Paciente", "CPF", "Exame", "Status", "Data"};
+        // Tabela com mais colunas
+        String[] colunas = {"ID Atendimento", "Paciente", "CPF", "Exame", "Jejum", "Status",
+                "Data", "Técnico", "Enfermeiro"};
         modeloTabela = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -207,18 +241,22 @@ public class SwingRecepcao extends JPanel {
         };
 
         tabelaAtendimentos = new JTable(modeloTabela);
+        tabelaAtendimentos.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         JScrollPane scrollPane = new JScrollPane(tabelaAtendimentos);
 
         // Botões
         JPanel btnPanel = new JPanel(new FlowLayout());
 
         JButton btnAtualizar = new JButton("Atualizar");
+        btnAtualizar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnAtualizar.addActionListener(e -> carregarAtendimentos());
 
         JButton btnEmEspera = new JButton("Ver Em Espera");
+        btnEmEspera.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnEmEspera.addActionListener(e -> carregarAtendimentosPorStatus("Em espera"));
 
         JButton btnAtendidos = new JButton("Ver Atendidos");
+        btnAtendidos.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnAtendidos.addActionListener(e -> carregarAtendimentosPorStatus("Atendido"));
 
         btnPanel.add(btnAtualizar);
@@ -234,6 +272,73 @@ public class SwingRecepcao extends JPanel {
         return panel;
     }
 
+    private JPanel criarPainelPacientes() {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        // Inicializar modelos diferentes
+        String[] colunasCompletas = {"ID Paciente", "Nome", "CPF", "Data Nasc.", "Convênio", "Preferencial"};
+        modeloPacientes = new DefaultTableModel(colunasCompletas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        String[] colunasBasicas = {"ID Paciente", "Nome", "CPF", "Data Nasc."};
+        modeloPacientesBasicos = new DefaultTableModel(colunasBasicas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        String[] colunasAdmin = {"ID Paciente", "Nome", "Convênio", "Preferencial"};
+        modeloPacientesAdmin = new DefaultTableModel(colunasAdmin, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        tabelaPacientes = new JTable(modeloPacientes);
+        JScrollPane scrollPane = new JScrollPane(tabelaPacientes);
+
+        // Botões
+        JPanel btnPanel = new JPanel(new FlowLayout());
+
+        JButton btnAtualizar = new JButton("Atualizar");
+        btnAtualizar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnAtualizar.addActionListener(e -> {
+            tabelaPacientes.setModel(modeloPacientes);
+            carregarTodosPacientes();
+        });
+
+        JButton btnDadosBasicos = new JButton("Dados Básicos");
+        btnDadosBasicos.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnDadosBasicos.addActionListener(e -> {
+            tabelaPacientes.setModel(modeloPacientesBasicos);
+            carregarPacientesDadosBasicos();
+        });
+
+        JButton btnDadosAdmin = new JButton("Dados Administrativos");
+        btnDadosAdmin.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnDadosAdmin.addActionListener(e -> {
+            tabelaPacientes.setModel(modeloPacientesAdmin);
+            carregarPacientesDadosAdmin();
+        });
+
+        btnPanel.add(btnAtualizar);
+        btnPanel.add(btnDadosBasicos);
+        btnPanel.add(btnDadosAdmin);
+
+        panel.add(btnPanel, BorderLayout.NORTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        carregarTodosPacientes();
+
+        return panel;
+    }
+
     private JPanel criarPainelHistorico() {
         JPanel panel = new JPanel(new BorderLayout());
 
@@ -241,6 +346,7 @@ public class SwingRecepcao extends JPanel {
         JPanel buscaPanel = new JPanel(new FlowLayout());
         JTextField txtCpfBusca = new JTextField(15);
         JButton btnBuscar = new JButton("Buscar Histórico");
+        btnBuscar.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         buscaPanel.add(new JLabel("CPF:"));
         buscaPanel.add(txtCpfBusca);
@@ -255,6 +361,8 @@ public class SwingRecepcao extends JPanel {
         btnBuscar.addActionListener(e -> {
             try {
                 String cpf = txtCpfBusca.getText().trim();
+
+                // Buscar atendimento completo pelo ID para ter as informações corretas
                 List<Atendimento> historico = service.listarHistoricoExamesPorCpf(cpf);
 
                 StringBuilder sb = new StringBuilder();
@@ -264,16 +372,25 @@ public class SwingRecepcao extends JPanel {
                     sb.append("Nenhum atendimento encontrado para este CPF.\n");
                 } else {
                     for (Atendimento a : historico) {
-                        sb.append("ID: #").append(a.getId()).append("\n");
-                        sb.append("Paciente: ").append(a.getPaciente().getNomeCompleto()).append("\n");
-                        sb.append("Exame: ").append(a.getExame()).append("\n");
+                        sb.append("ID Atendimento: #").append(a.getId()).append("\n");
                         sb.append("Status: ").append(a.getStatus()).append("\n");
-                        sb.append("Data: ").append(a.getDataExame()).append("\n");
-                        sb.append("----------------------------------------\n\n");
+                        sb.append("\tPaciente: ").append(a.getPaciente().getNomeCompleto()).append("\n");
+                        sb.append("\tCPF: ").append(a.getPaciente().getCpfFormatado()).append("\n");
+                        sb.append("\tData Nascimento: ").append(
+                                a.getPaciente().getDataNascimento().format(formatadorData)).append("\n");
+                        sb.append("\tConvênio: ").append(a.getPaciente().isConvenio() ? "Sim" : "Não").append("\n");
+                        sb.append("\tPreferencial: ").append(a.getPaciente().isPreferencial() ? "Sim" : "Não").append("\n");
+                        sb.append("\tExame: ").append(a.getExame()).append("\n");
+                        sb.append("\tJejum (min. 8 horas): ").append(a.isJejum() ? "Sim" : "Não").append("\n");
+                        sb.append("\tData do Exame: ").append(a.getDataExame().format(formatadorDataHora)).append("\n");
+                        sb.append("\tEnfermeiro Responsável: ").append(a.getEnfermeiroResponsavel()).append("\n");
+                        sb.append("\tTécnico Responsável Coleta de Insumos: ").append(a.getResponsavelColeta()).append("\n");
+                        sb.append("------------------------------------------\n\n");
                     }
                 }
 
                 txtHistorico.setText(sb.toString());
+                txtHistorico.setCaretPosition(0);
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this,
@@ -288,20 +405,38 @@ public class SwingRecepcao extends JPanel {
         return panel;
     }
 
+    // Métodos de carregamento permanecem os mesmos...
     private void carregarAtendimentos() {
         try {
             modeloTabela.setRowCount(0);
             List<Atendimento> atendimentos = service.listarTodosAtendimentos();
 
             for (Atendimento a : atendimentos) {
+                String tecnico = "Em espera";
+                String enfermeiro = "Em espera";
+
+                if ("Atendido".equals(a.getStatus())) {
+                    String respColeta = a.getResponsavelColeta();
+                    if (respColeta != null && !respColeta.equals("Em espera")) {
+                        tecnico = respColeta.split(" - ")[0];
+                    }
+
+                    String enfResp = a.getEnfermeiroResponsavel();
+                    if (enfResp != null && !enfResp.equals("Em espera")) {
+                        enfermeiro = enfResp.split(" - ")[0];
+                    }
+                }
+
                 Object[] linha = {
                         a.getId(),
                         a.getPaciente().getNomeCompleto(),
                         a.getPaciente().getCpf(),
                         a.getExame(),
+                        a.isJejum() ? "Sim" : "Não",
                         a.getStatus(),
-                        a.getDataExame().format(
-                                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
+                        a.getDataExame().format(formatadorDataHora),
+                        tecnico,
+                        enfermeiro
                 };
                 modeloTabela.addRow(linha);
             }
@@ -318,20 +453,102 @@ public class SwingRecepcao extends JPanel {
             List<Atendimento> atendimentos = service.listarAtendimentosPorStatus(status);
 
             for (Atendimento a : atendimentos) {
+                String tecnico = "Em espera";
+                String enfermeiro = "Em espera";
+
+                if ("Atendido".equals(a.getStatus())) {
+                    String respColeta = a.getResponsavelColeta();
+                    if (respColeta != null && !respColeta.equals("Em espera")) {
+                        tecnico = respColeta.split(" - ")[0];
+                    }
+
+                    String enfResp = a.getEnfermeiroResponsavel();
+                    if (enfResp != null && !enfResp.equals("Em espera")) {
+                        enfermeiro = enfResp.split(" - ")[0];
+                    }
+                }
+
                 Object[] linha = {
                         a.getId(),
                         a.getPaciente().getNomeCompleto(),
                         a.getPaciente().getCpf(),
                         a.getExame(),
+                        a.isJejum() ? "Sim" : "Não",
                         a.getStatus(),
-                        a.getDataExame().format(
-                                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
+                        a.getDataExame().format(formatadorDataHora),
+                        tecnico,
+                        enfermeiro
                 };
                 modeloTabela.addRow(linha);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
                     "Erro ao carregar atendimentos: " + e.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void carregarTodosPacientes() {
+        try {
+            modeloPacientes.setRowCount(0);
+            List<Paciente> pacientes = service.listarTodosPacientes();
+
+            for (Paciente p : pacientes) {
+                Object[] linha = {
+                        p.getId(),
+                        p.getNomeCompleto(),
+                        p.getCpf(),
+                        p.getDataNascimento().format(formatadorData),
+                        p.isConvenio() ? "Sim" : "Não",
+                        p.isPreferencial() ? "Sim" : "Não"
+                };
+                modeloPacientes.addRow(linha);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Erro ao carregar pacientes: " + e.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void carregarPacientesDadosBasicos() {
+        try {
+            modeloPacientesBasicos.setRowCount(0);
+            List<Paciente> pacientes = service.listarTodosPacientes();
+
+            for (Paciente p : pacientes) {
+                Object[] linha = {
+                        p.getId(),
+                        p.getNomeCompleto(),
+                        p.getCpf(),
+                        p.getDataNascimento().format(formatadorData)
+                };
+                modeloPacientesBasicos.addRow(linha);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Erro ao carregar pacientes: " + e.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void carregarPacientesDadosAdmin() {
+        try {
+            modeloPacientesAdmin.setRowCount(0);
+            List<Paciente> pacientes = service.listarTodosPacientes();
+
+            for (Paciente p : pacientes) {
+                Object[] linha = {
+                        p.getId(),
+                        p.getNomeCompleto(),
+                        p.isConvenio() ? "Sim" : "Não",
+                        p.isPreferencial() ? "Sim" : "Não"
+                };
+                modeloPacientesAdmin.addRow(linha);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Erro ao carregar pacientes: " + e.getMessage(),
                     "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }

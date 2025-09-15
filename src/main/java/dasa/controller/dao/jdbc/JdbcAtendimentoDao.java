@@ -99,10 +99,16 @@ public class JdbcAtendimentoDao implements AtendimentoDao {
     @Override
     public List<Atendimento> listarPorPaciente(int pacienteId) {
         String sql = "SELECT a.*, e.nome as exame_nome, " +
-                "p.nome_completo, p.cpf, p.data_nascimento, p.convenio, p.preferencial " +
+                "p.nome_completo, p.cpf, p.data_nascimento, p.convenio, p.preferencial, " +
+                "CASE WHEN enf.nome IS NOT NULL THEN enf.nome || ' - COREN: ' || enf.coren " +
+                "ELSE NULL END as enfermeiro_info, " +
+                "CASE WHEN tec.nome IS NOT NULL THEN tec.nome || ' - CRBM: ' || tec.crbm " +
+                "ELSE NULL END as tecnico_info " +
                 "FROM dasa_atendimentos a " +
                 "JOIN dasa_exames e ON a.exame_id = e.id " +
                 "JOIN dasa_pacientes p ON a.paciente_id = p.id " +
+                "LEFT JOIN dasa_enfermeiros enf ON a.enfermeiro_coren = enf.coren " +
+                "LEFT JOIN dasa_tecnicos tec ON a.tecnico_crbm = tec.crbm " +
                 "WHERE a.paciente_id = ? " +
                 "ORDER BY a.data_exame ASC";
 
@@ -115,7 +121,7 @@ public class JdbcAtendimentoDao implements AtendimentoDao {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    atendimentos.add(mapearAtendimentoCompleto(rs));
+                    atendimentos.add(mapearAtendimentoCompletoInfo(rs)); // Mudança aqui!
                 }
             }
         } catch (SQLException e) {

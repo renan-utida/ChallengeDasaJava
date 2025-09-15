@@ -5,9 +5,7 @@ import dasa.model.funcionarios.TecnicoLaboratorio;
 import javax.swing.*;
 import java.awt.*;
 
-import dasa.view.ui.swing.setores.SwingAlmoxarifado;
-import dasa.view.ui.swing.setores.SwingEnfermaria;
-import dasa.view.ui.swing.setores.SwingRecepcao;
+import dasa.view.ui.swing.setores.*;
 
 public class SwingMain {
 
@@ -32,14 +30,24 @@ public class SwingMain {
 
     private static void configurarLookAndFeel() {
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            // Usar o Nimbus look and feel para melhor renderização
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
     private static void exibirTelaLogin() {
-        JFrame loginFrame = new JFrame("DASA - Login");
+        JFrame loginFrame = new JFrame("SECAI - Login");
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         loginFrame.setSize(400, 300);
         loginFrame.setLocationRelativeTo(null);
@@ -74,7 +82,7 @@ public class SwingMain {
         panel.add(txtCrbm, gbc);
 
         // Técnicos disponíveis
-        JLabel infoLabel = new JLabel("<html><center>Técnicos disponíveis:<br>" +
+        JLabel infoLabel = new JLabel("<html><center><b>Técnicos disponíveis:</b><br>" +
                 "12345 - João Silva<br>" +
                 "67890 - Maria Santos<br>" +
                 "11223 - Pedro Oliveira</center></html>");
@@ -86,9 +94,10 @@ public class SwingMain {
 
         // Botão Login
         JButton btnLogin = new JButton("Entrar");
-        btnLogin.setBackground(new Color(0, 123, 255));
-        btnLogin.setForeground(Color.BLUE);
+        btnLogin.setBackground(new Color(0, 51, 102));
+        btnLogin.setForeground(Color.WHITE);
         btnLogin.setFont(new Font("Arial", Font.BOLD, 14));
+        btnLogin.setFocusPainted(false);
         gbc.gridy = 4;
         panel.add(btnLogin, gbc);
 
@@ -106,8 +115,38 @@ public class SwingMain {
                     throw new IllegalArgumentException("CRBM não encontrado!");
                 }
 
-                loginFrame.dispose();
-                exibirMenuPrincipal();
+                // Popup de boas-vindas
+                JDialog welcomeDialog = new JDialog(loginFrame,
+                        "Sistema de Escaneamento e Controle Automático de Insumos - SECAI", true);
+                welcomeDialog.setSize(500, 150);
+                welcomeDialog.setLocationRelativeTo(loginFrame);
+
+                JPanel welcomePanel = new JPanel(new BorderLayout());
+                welcomePanel.setBackground(Color.WHITE);
+                welcomePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+                JLabel welcomeMsg = new JLabel("Bem-Vindo ao SECAI, " + tecnicoLogado.getNome() + "!");
+                welcomeMsg.setFont(new Font("Arial", Font.PLAIN, 14));
+                welcomeMsg.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+                JButton btnFechar = new JButton("Fechar");
+                btnFechar.setBackground(new Color(0, 51, 102));
+                btnFechar.setForeground(Color.WHITE);
+                btnFechar.addActionListener(ev -> {
+                    welcomeDialog.dispose();
+                    loginFrame.dispose();
+                    exibirMenuPrincipal();
+                });
+
+                JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+                btnPanel.setBackground(Color.WHITE);
+                btnPanel.add(btnFechar);
+
+                welcomePanel.add(welcomeMsg, BorderLayout.WEST);
+                welcomePanel.add(btnPanel, BorderLayout.SOUTH);
+
+                welcomeDialog.setContentPane(welcomePanel);
+                welcomeDialog.setVisible(true);
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(loginFrame,
@@ -120,9 +159,9 @@ public class SwingMain {
     }
 
     private static void exibirMenuPrincipal() {
-        JFrame frame = new JFrame("DASA - Sistema de Gestão Laboratorial");
+        JFrame frame = new JFrame("SECAI - Sistema de Gestão Laboratorial");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
+        frame.setSize(1000, 600);
         frame.setLocationRelativeTo(null);
 
         // CardLayout para trocar entre telas
@@ -151,43 +190,49 @@ public class SwingMain {
         gbc.weightx = 1.0;
 
         // Cabeçalho
-        JLabel titulo = new JLabel("SISTEMA DASA", SwingConstants.CENTER);
+        JLabel titulo = new JLabel("SECAI - DASA", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 28));
         titulo.setForeground(new Color(0, 51, 102));
         gbc.gridx = 0;
         gbc.gridy = 0;
         panel.add(titulo, gbc);
 
-        JLabel bemVindo = new JLabel("Bem-vindo, " + tecnicoLogado.getNome() + "!",
+        JLabel subtitulo = new JLabel("Sistema de Escaneamento e Controle Automático de Insumos",
                 SwingConstants.CENTER);
-        bemVindo.setFont(new Font("Arial", Font.ITALIC, 16));
+        subtitulo.setFont(new Font("Arial", Font.ITALIC, 16));
         gbc.gridy = 1;
+        panel.add(subtitulo, gbc);
+
+        JLabel bemVindo = new JLabel(tecnicoLogado.getNome() + " | CRBM: " + tecnicoLogado.getCrbm(),
+                SwingConstants.CENTER);
+        bemVindo.setFont(new Font("Arial", Font.BOLD, 16));
+        gbc.gridy = 2;
         panel.add(bemVindo, gbc);
 
         // Botões do Menu
         JButton btnRecepcao = criarBotaoMenu("RECEPÇÃO",
-                new Color(52, 152, 219), "Cadastro e gestão de pacientes");
+                new Color(0, 90, 102), "Cadastro e gestão de pacientes");
         btnRecepcao.addActionListener(e ->
                 ((CardLayout) mainPanel.getLayout()).show(mainPanel, "RECEPCAO"));
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         panel.add(btnRecepcao, gbc);
 
         JButton btnAlmoxarifado = criarBotaoMenu("ALMOXARIFADO",
-                new Color(46, 204, 113), "Controle de estoque e retiradas");
+                new Color(0, 51, 102), "Controle de estoque e retiradas");
         btnAlmoxarifado.addActionListener(e ->
                 ((CardLayout) mainPanel.getLayout()).show(mainPanel, "ALMOXARIFADO"));
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         panel.add(btnAlmoxarifado, gbc);
 
         JButton btnEnfermaria = criarBotaoMenu("ENFERMARIA",
-                new Color(155, 89, 182), "Gestão de enfermeiros e atendimentos");
+                new Color(41, 0, 102), "Gestão de enfermeiros e atendimentos");
         btnEnfermaria.addActionListener(e ->
                 ((CardLayout) mainPanel.getLayout()).show(mainPanel, "ENFERMARIA"));
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         panel.add(btnEnfermaria, gbc);
 
         JButton btnSair = criarBotaoMenu("SAIR",
-                new Color(231, 76, 60), "Encerrar o sistema");
+                new Color(117, 15, 5), "Encerrar o sistema");
         btnSair.addActionListener(e -> {
             int opcao = JOptionPane.showConfirmDialog(panel,
                     "Deseja realmente sair?", "Confirmar Saída",
@@ -196,7 +241,7 @@ public class SwingMain {
                 System.exit(0);
             }
         });
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         panel.add(btnSair, gbc);
 
         return panel;
@@ -211,6 +256,8 @@ public class SwingMain {
         botao.setToolTipText(tooltip);
         botao.setFocusPainted(false);
         botao.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        botao.setOpaque(true);
+        botao.setBorderPainted(true);
 
         // Efeito hover
         botao.addMouseListener(new java.awt.event.MouseAdapter() {

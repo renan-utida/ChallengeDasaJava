@@ -124,6 +124,13 @@ public class RecepcaoService {
     }
 
     /**
+     * Busca Atendimento por ID
+     */
+    public Atendimento buscarAtendimentoPorId(int id) {
+        return atendimentoDao.buscarPorId(id);
+    }
+
+    /**
      * Lista histórico de atendimentos por CPF
      */
     public List<Atendimento> listarHistoricoExamesPorCpf(String cpf) {
