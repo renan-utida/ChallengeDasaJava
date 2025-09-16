@@ -29,17 +29,12 @@ public class SwingEnfermaria extends JPanel {
 
         // Cabeçalho
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(155, 89, 182));
+        headerPanel.setBackground(new Color(41, 0, 102));
 
         JLabel titulo = new JLabel("ENFERMARIA");
         titulo.setFont(new Font("Arial", Font.BOLD, 24));
         titulo.setForeground(Color.WHITE);
         headerPanel.add(titulo);
-
-        JButton btnVoltar = new JButton("← Voltar");
-        btnVoltar.addActionListener(e ->
-                ((CardLayout) mainPanel.getLayout()).show(mainPanel, "MENU"));
-        headerPanel.add(btnVoltar);
 
         add(headerPanel, BorderLayout.NORTH);
 
@@ -51,6 +46,30 @@ public class SwingEnfermaria extends JPanel {
         tabbedPane.addTab("Estatísticas", criarPainelEstatisticas());
 
         add(tabbedPane, BorderLayout.CENTER);
+
+        // Rodapé com botão Voltar
+        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        footerPanel.setBackground(new Color(41, 0, 102));
+        footerPanel.setPreferredSize(new Dimension(800, 40));
+
+        JLabel btnVoltar = new JLabel("← Voltar");
+        btnVoltar.setFont(new Font("Arial", Font.BOLD, 18));
+        btnVoltar.setForeground(Color.WHITE);
+        btnVoltar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnVoltar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ((CardLayout) mainPanel.getLayout()).show(mainPanel, "MENU");
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnVoltar.setForeground(new Color(200, 200, 200));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnVoltar.setForeground(Color.WHITE);
+            }
+        });
+
+        footerPanel.add(btnVoltar);
+        add(footerPanel, BorderLayout.SOUTH);
     }
 
     private JPanel criarPainelEnfermeiros() {
@@ -78,9 +97,13 @@ public class SwingEnfermaria extends JPanel {
                 "Exame de Urina",
                 "Exame de Glicemia"
         });
+        cmbEspecialidade.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         JButton btnFiltrar = new JButton("Filtrar");
+        btnFiltrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         JButton btnTodos = new JButton("Mostrar Todos");
+        btnTodos.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         filterPanel.add(new JLabel("Especialidade:"));
         filterPanel.add(cmbEspecialidade);
@@ -114,8 +137,13 @@ public class SwingEnfermaria extends JPanel {
         topPanel.setBorder(BorderFactory.createTitledBorder("Selecionar Enfermeiro"));
 
         JComboBox<ComboItem> cmbEnfermeiros = new JComboBox<>();
+        cmbEnfermeiros.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         JButton btnCarregar = new JButton("Carregar Enfermeiros");
+        btnCarregar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         JButton btnBuscar = new JButton("Buscar Atendimentos");
+        btnBuscar.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         topPanel.add(btnCarregar);
         topPanel.add(new JLabel("Enfermeiro:"));
@@ -123,7 +151,7 @@ public class SwingEnfermaria extends JPanel {
         topPanel.add(btnBuscar);
 
         // Tabela de atendimentos
-        String[] colunas = {"ID", "Paciente", "Exame", "Data", "Status"};
+        String[] colunas = {"ID Atendimento", "Paciente", "Exame", "Data", "Status"};
         modeloAtendimentos = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -212,8 +240,7 @@ public class SwingEnfermaria extends JPanel {
 
         JButton btnGerar = new JButton("Gerar Estatísticas");
         btnGerar.setFont(new Font("Arial", Font.BOLD, 14));
-        btnGerar.setBackground(new Color(155, 89, 182));
-        btnGerar.setForeground(Color.WHITE);
+        btnGerar.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         JPanel btnPanel = new JPanel(new FlowLayout());
         btnPanel.add(btnGerar);

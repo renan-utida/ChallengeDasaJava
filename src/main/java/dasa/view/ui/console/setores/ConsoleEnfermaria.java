@@ -1,9 +1,8 @@
 package dasa.view.ui.console.setores;
 
-import dasa.model.domain.Atendimento;
+import dasa.model.domain.*;
 import dasa.service.EnfermariaService;
 import dasa.model.funcionarios.Enfermeiro;
-import dasa.model.domain.Paciente;
 import java.util.*;
 
 /**
@@ -108,25 +107,45 @@ public class ConsoleEnfermaria {
 
     private void estatisticasAtendimento() {
         System.out.println("\n=== ESTATÍSTICAS DE ATENDIMENTO ===");
+        System.out.println();
 
         // Por especialidade
         String[] especialidades = {"Hemograma Completo", "Exame de Urina", "Exame de Glicemia"};
 
         for (String esp : especialidades) {
+            System.out.println("Especialidade: " + esp);
+
             List<Enfermeiro> enfermeiros = service.listarEnfermeirosPorEspecialidade(esp);
-            System.out.println("\n" + esp + ":");
             System.out.println("  Enfermeiros disponíveis: " + enfermeiros.size());
 
             int totalAtendimentos = 0;
             for (Enfermeiro e : enfermeiros) {
                 try {
                     int atend = service.contarAtendimentosPorEnfermeiro(e.getCoren());
-                    totalAtendimentos += atend;
+                    if (atend > 0) {
+                        System.out.println("    - " + e.getNome() + ": " + atend + " atendimentos");
+                        totalAtendimentos += atend;
+                    }
                 } catch (Exception ex) {
                     // Enfermeiro não atendeu ainda
                 }
             }
             System.out.println("  Total de atendimentos: " + totalAtendimentos);
+            System.out.println();
+        }
+
+        // Seção adicional: Enfermeiros com atendimentos
+        System.out.println("=== ENFERMEIROS COM ATENDIMENTOS ===");
+        List<Enfermeiro> enfermeirosAtivos = service.listarEnfermeirosQueAtenderam();
+
+        if (enfermeirosAtivos.isEmpty()) {
+            System.out.println("  Nenhum enfermeiro realizou atendimentos ainda.");
+        } else {
+            for (Enfermeiro enf : enfermeirosAtivos) {
+                int count = service.contarAtendimentosPorEnfermeiro(enf.getCoren());
+                System.out.println("  " + enf.getNome() + " (COREN: " + enf.getCoren() +
+                        ") - " + enf.getEspecialidade() + ": " + count + " atendimentos");
+            }
         }
     }
 }

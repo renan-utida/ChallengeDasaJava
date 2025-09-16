@@ -6,6 +6,8 @@ import dasa.model.funcionarios.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -19,6 +21,7 @@ public class SwingAlmoxarifado extends JPanel {
     private DefaultTableModel modeloEstoque;
     private JTable tabelaHistorico;
     private DefaultTableModel modeloHistorico;
+    private static final DateTimeFormatter formatadorDataHora = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     public SwingAlmoxarifado(JPanel mainPanel, AlmoxarifadoService almoxarifadoService,
                              EstoqueService estoqueService, TecnicoLaboratorio tecnicoLogado) {
@@ -35,17 +38,12 @@ public class SwingAlmoxarifado extends JPanel {
 
         // Cabeçalho
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(46, 204, 113));
+        headerPanel.setBackground(new Color(0, 51, 102));
 
         JLabel titulo = new JLabel("ALMOXARIFADO");
         titulo.setFont(new Font("Arial", Font.BOLD, 24));
         titulo.setForeground(Color.WHITE);
         headerPanel.add(titulo);
-
-        JButton btnVoltar = new JButton("← Voltar");
-        btnVoltar.addActionListener(e ->
-                ((CardLayout) mainPanel.getLayout()).show(mainPanel, "MENU"));
-        headerPanel.add(btnVoltar);
 
         add(headerPanel, BorderLayout.NORTH);
 
@@ -55,8 +53,33 @@ public class SwingAlmoxarifado extends JPanel {
         tabbedPane.addTab("Retirar Insumos", criarPainelRetirada());
         tabbedPane.addTab("Estoque", criarPainelEstoque());
         tabbedPane.addTab("Histórico de Retiradas", criarPainelHistorico());
+        tabbedPane.addTab("Histórico por ID", criarPainelHistoricoPorId());
 
         add(tabbedPane, BorderLayout.CENTER);
+
+        // Rodapé com botão Voltar
+        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        footerPanel.setBackground(new Color(0, 51, 102));
+        footerPanel.setPreferredSize(new Dimension(800, 40));
+
+        JLabel btnVoltar = new JLabel("← Voltar");
+        btnVoltar.setFont(new Font("Arial", Font.BOLD, 18));
+        btnVoltar.setForeground(Color.WHITE);
+        btnVoltar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnVoltar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ((CardLayout) mainPanel.getLayout()).show(mainPanel, "MENU");
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnVoltar.setForeground(new Color(200, 200, 200));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnVoltar.setForeground(Color.WHITE);
+            }
+        });
+
+        footerPanel.add(btnVoltar);
+        add(footerPanel, BorderLayout.SOUTH);
     }
 
     private JPanel criarPainelRetirada() {
@@ -67,8 +90,13 @@ public class SwingAlmoxarifado extends JPanel {
         topPanel.setBorder(BorderFactory.createTitledBorder("Selecionar Atendimento"));
 
         JComboBox<ComboItem> cmbAtendimentos = new JComboBox<>();
+        cmbAtendimentos.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         JButton btnCarregar = new JButton("Carregar Atendimentos Em Espera");
+        btnCarregar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         JButton btnProcessar = new JButton("Processar Retirada");
+        btnProcessar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnProcessar.setEnabled(false);
 
         topPanel.add(btnCarregar);
@@ -87,8 +115,12 @@ public class SwingAlmoxarifado extends JPanel {
         // Painel para adicionar insumos
         JPanel addPanel = new JPanel(new FlowLayout());
         JComboBox<ComboItem> cmbInsumos = new JComboBox<>();
+        cmbInsumos.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         JSpinner spnQuantidade = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
+
         JButton btnAdicionar = new JButton("Adicionar à Cesta");
+        btnAdicionar.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         addPanel.add(new JLabel("Insumo:"));
         addPanel.add(cmbInsumos);
@@ -104,6 +136,8 @@ public class SwingAlmoxarifado extends JPanel {
         bottomPanel.setBorder(BorderFactory.createTitledBorder("Enfermeiro Responsável"));
 
         JComboBox<ComboItem> cmbEnfermeiros = new JComboBox<>();
+        cmbEnfermeiros.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         bottomPanel.add(new JLabel("Enfermeiro:"));
         bottomPanel.add(cmbEnfermeiros);
 
@@ -239,7 +273,7 @@ public class SwingAlmoxarifado extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
 
         // Tabela de estoque
-        String[] colunas = {"ID", "Nome", "Código Barras", "Disponível", "Máximo", "Status"};
+        String[] colunas = {"ID Insumo", "Nome", "Código Barras", "Disponível", "Máximo", "Status"};
         modeloEstoque = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -254,8 +288,13 @@ public class SwingAlmoxarifado extends JPanel {
         JPanel controlPanel = new JPanel(new FlowLayout());
 
         JButton btnAtualizar = new JButton("Atualizar");
+        btnAtualizar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         JButton btnAdicionar = new JButton("Adicionar Estoque");
+        btnAdicionar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         JButton btnRelatorio = new JButton("Gerar Relatório");
+        btnRelatorio.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         controlPanel.add(btnAtualizar);
         controlPanel.add(btnAdicionar);
@@ -314,7 +353,7 @@ public class SwingAlmoxarifado extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
 
         // Tabela de histórico
-        String[] colunas = {"ID Atend.", "Data", "Paciente", "Exame", "Técnico", "Enfermeiro"};
+        String[] colunas = {"ID Atendimento", "Data", "Paciente", "Exame", "Técnico", "Enfermeiro"};
         modeloHistorico = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -325,11 +364,19 @@ public class SwingAlmoxarifado extends JPanel {
         tabelaHistorico = new JTable(modeloHistorico);
         JScrollPane scrollPane = new JScrollPane(tabelaHistorico);
 
-        // Botão atualizar
+        // Botões
         JPanel btnPanel = new JPanel(new FlowLayout());
+
         JButton btnAtualizar = new JButton("Atualizar Histórico");
+        btnAtualizar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnAtualizar.addActionListener(e -> carregarHistorico());
+
+        JButton btnGerarRelatorio = new JButton("Gerar Relatório");
+        btnGerarRelatorio.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnGerarRelatorio.addActionListener(e -> gerarRelatorioHistorico());
+
         btnPanel.add(btnAtualizar);
+        btnPanel.add(btnGerarRelatorio);
 
         panel.add(btnPanel, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.CENTER);
@@ -337,6 +384,132 @@ public class SwingAlmoxarifado extends JPanel {
         carregarHistorico();
 
         return panel;
+    }
+
+    private JPanel criarPainelHistoricoPorId() {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        // Painel de busca
+        JPanel buscaPanel = new JPanel(new FlowLayout());
+        JTextField txtIdBusca = new JTextField(15);
+        JButton btnBuscar = new JButton("Buscar Histórico");
+        btnBuscar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        buscaPanel.add(new JLabel("ID do Atendimento:"));
+        buscaPanel.add(txtIdBusca);
+        buscaPanel.add(btnBuscar);
+
+        // Área de texto para histórico
+        JTextArea txtHistorico = new JTextArea();
+        txtHistorico.setEditable(false);
+        txtHistorico.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        JScrollPane scrollPane = new JScrollPane(txtHistorico);
+
+        btnBuscar.addActionListener(e -> {
+            try {
+                int idAtendimento = Integer.parseInt(txtIdBusca.getText().trim());
+
+                List<Map<String, Object>> historico = almoxarifadoService.listarHistoricoCompleto();
+                StringBuilder sb = new StringBuilder();
+                boolean encontrou = false;
+
+                for (Map<String, Object> h : historico) {
+                    if (h.get("atendimento_id").equals(idAtendimento)) {
+                        encontrou = true;
+                        LocalDateTime dataRetirada = (LocalDateTime) h.get("data_retirada");
+
+                        sb.append("ID Atendimento: #").append(h.get("atendimento_id")).append("\n");
+                        sb.append("Data Retirada (").append(dataRetirada.format(formatadorDataHora)).append(")\n");
+                        sb.append("\tPaciente: ").append(h.get("paciente_nome")).append("\n");
+                        sb.append("\tExame: ").append(h.get("exame_nome")).append("\n");
+
+                        @SuppressWarnings("unchecked")
+                        List<Map<String, Object>> itens = (List<Map<String, Object>>) h.get("itens");
+                        if (itens != null) {
+                            for (Map<String, Object> item : itens) {
+                                sb.append("\t").append(item.get("quantidade"))
+                                        .append(" - ").append(item.get("insumo_nome")).append("\n");
+                            }
+                        }
+
+                        sb.append("\t").append(h.get("tecnico_info")).append("\n");
+                        sb.append("\t").append(h.get("enfermeiro_info")).append("\n");
+                        sb.append("========================================\n");
+                    }
+                }
+
+                if (!encontrou) {
+                    sb.append("Nenhuma retirada encontrada para o ID #").append(idAtendimento);
+                }
+
+                txtHistorico.setText(sb.toString());
+                txtHistorico.setCaretPosition(0);
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Digite um ID válido!",
+                        "Erro", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Erro: " + ex.getMessage(),
+                        "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        panel.add(buscaPanel, BorderLayout.NORTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    private void gerarRelatorioHistorico() {
+        try {
+            List<Map<String, Object>> historico = almoxarifadoService.listarHistoricoCompleto();
+            StringBuilder sb = new StringBuilder();
+            sb.append("=== HISTÓRICO DE RETIRADA DE INSUMOS ===\n\n");
+
+            int limite = Math.min(30, historico.size());
+            sb.append("Mostrando os últimos ").append(limite).append(" registros\n\n");
+
+            for (int i = 0; i < limite; i++) {
+                Map<String, Object> h = historico.get(i);
+                LocalDateTime dataRetirada = (LocalDateTime) h.get("data_retirada");
+
+                sb.append("ID Atendimento: #").append(h.get("atendimento_id")).append("\n");
+                sb.append("Data Retirada (").append(dataRetirada.format(formatadorDataHora)).append(")\n");
+                sb.append("\tPaciente: ").append(h.get("paciente_nome")).append("\n");
+                sb.append("\tExame: ").append(h.get("exame_nome")).append("\n");
+
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> itens = (List<Map<String, Object>>) h.get("itens");
+                if (itens != null) {
+                    for (Map<String, Object> item : itens) {
+                        sb.append("\t").append(item.get("quantidade"))
+                                .append(" - ").append(item.get("insumo_nome")).append("\n");
+                    }
+                }
+
+                sb.append("\t").append(h.get("tecnico_info")).append("\n");
+                sb.append("\t").append(h.get("enfermeiro_info")).append("\n");
+                sb.append("========================================\n");
+            }
+
+            JTextArea textArea = new JTextArea(sb.toString());
+            textArea.setEditable(false);
+            textArea.setFont(new Font("Monospaced", Font.PLAIN, 11));
+            textArea.setCaretPosition(0);
+
+            JScrollPane scroll = new JScrollPane(textArea);
+            scroll.setPreferredSize(new Dimension(700, 500));
+
+            JOptionPane.showMessageDialog(this, scroll,
+                    "Relatório de Histórico de Retiradas", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Erro ao gerar relatório: " + e.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void carregarEstoque() {
@@ -379,13 +552,20 @@ public class SwingAlmoxarifado extends JPanel {
             List<Map<String, Object>> historico = almoxarifadoService.listarHistoricoCompleto();
 
             for (Map<String, Object> h : historico) {
+                // Extrair apenas os nomes
+                String tecnicoInfo = (String) h.get("tecnico_info");
+                String enfInfo = (String) h.get("enfermeiro_info");
+
+                String tecnicoNome = tecnicoInfo.replace("Insumos coletados por ", "").trim();
+                String enfNome = enfInfo.replace("Enfermeiro responsável pelo atendimento: ", "").trim();
+
                 Object[] linha = {
                         h.get("atendimento_id"),
                         h.get("data_retirada").toString(),
                         h.get("paciente_nome"),
                         h.get("exame_nome"),
-                        h.get("tecnico_info"),
-                        h.get("enfermeiro_info")
+                        tecnicoNome,
+                        enfNome
                 };
                 modeloHistorico.addRow(linha);
             }
