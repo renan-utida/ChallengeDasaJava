@@ -2,6 +2,9 @@ package dasa.view.ui.console.setores;
 
 import dasa.service.RecepcaoService;
 import dasa.model.domain.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -25,7 +28,8 @@ public class ConsoleRecepcao {
                 System.out.println("2 - Relatório de Atendimentos");
                 System.out.println("3 - Relatório de Pacientes");
                 System.out.println("4 - Histórico de Exames por Paciente");
-                System.out.println("5 - Voltar");
+                System.out.println("5 - Gerenciar Pacientes");
+                System.out.println("6 - Voltar");
                 System.out.print("Opção: ");
 
                 int opcao = scanner.nextInt();
@@ -45,6 +49,9 @@ public class ConsoleRecepcao {
                         historicoExamesPaciente();
                         break;
                     case 5:
+                        gerenciarPacientes();
+                        break;
+                    case 6:
                         return;
                     default:
                         System.out.println("ERRO: Opção inválida!");
@@ -323,6 +330,185 @@ public class ConsoleRecepcao {
             System.out.println("\n=== HISTÓRICO DE ATENDIMENTOS ===");
             for (Atendimento atendimento : historico) {
                 atendimento.exibirDados();
+            }
+
+        } catch (Exception e) {
+            System.out.println("ERRO: " + e.getMessage());
+        }
+    }
+
+    private void gerenciarPacientes() {
+        while (true) {
+            try {
+                System.out.println();
+                System.out.println("=== GERENCIAR PACIENTES ===");
+                System.out.println("1 - Corrigir Dados do Paciente");
+                System.out.println("2 - Excluir Paciente");
+                System.out.println("3 - Voltar");
+                System.out.print("Opção: ");
+
+                int opcao = scanner.nextInt();
+                scanner.nextLine();
+
+                switch (opcao) {
+                    case 1:
+                        corrigirDadosPaciente();
+                        break;
+                    case 2:
+                        excluirPaciente();
+                        break;
+                    case 3:
+                        return;
+                    default:
+                        System.out.println("ERRO: Opção inválida!");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("ERRO: Digite apenas números!");
+                scanner.nextLine();
+            }
+        }
+    }
+
+    private void corrigirDadosPaciente() {
+        System.out.println("\n=== CORRIGIR DADOS DO PACIENTE ===");
+        System.out.println("Qual dado deseja corrigir?");
+        System.out.println("1 - Nome");
+        System.out.println("2 - Data de Nascimento");
+        System.out.println("3 - Convênio");
+        System.out.println("4 - Preferencial");
+        System.out.println("5 - Voltar");
+        System.out.print("Opção: ");
+
+        try {
+            int opcao = scanner.nextInt();
+            scanner.nextLine();
+
+            if (opcao == 5) return;
+
+            // Exibir pacientes conforme o tipo de dado
+            List<Paciente> pacientes = service.listarTodosPacientes();
+            if (pacientes.isEmpty()) {
+                System.out.println("Nenhum paciente cadastrado.");
+                return;
+            }
+
+            System.out.println("\n=== PACIENTES CADASTRADOS ===");
+
+            if (opcao <= 2) { // Dados básicos
+                for (Paciente p : pacientes) {
+                    p.exibirDados("basico");
+                }
+            } else if (opcao <= 4) { // Dados administrativos
+                for (Paciente p : pacientes) {
+                    p.exibirDados("administrativo");
+                }
+            } else {
+                System.out.println("Opção inválida!");
+                return;
+            }
+
+            // Solicitar identificação do paciente
+            System.out.print("\nDigite o ID ou CPF do paciente (0 para cancelar): ");
+            String identificador = scanner.nextLine().trim();
+
+            if (identificador.equals("0")) return;
+
+            // Buscar paciente
+            Paciente paciente = null;
+            if (identificador.matches("\\d+") && identificador.length() <= 5) {
+                // É um ID
+                paciente = service.buscarPacientePorId(Integer.parseInt(identificador));
+            } else {
+                // É um CPF
+                paciente = service.buscarPacientePorCpf(identificador.replaceAll("[^0-9]", ""));
+            }
+
+            if (paciente == null) {
+                System.out.println("ERRO: Paciente não encontrado!");
+                return;
+            }
+
+            // Processar alteração
+            switch (opcao) {
+                case 1: // Nome
+                    System.out.print("Digite o novo nome: ");
+                    String novoNome = scanner.nextLine().trim();
+                    paciente.setNomeCompleto(novoNome);
+                    service.atualizarPaciente(paciente);
+                    System.out.println("✅ Nome atualizado com sucesso!");
+                    break;
+
+                case 2: // Data de Nascimento
+                    String novaData = solicitarDataNascimento();
+                    paciente.setDataNascimento(LocalDate.parse(novaData,
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                    service.atualizarPaciente(paciente);
+                    System.out.println("✅ Data de nascimento atualizada com sucesso!");
+                    break;
+
+                case 3: // Convênio
+                    service.alternarConvenio(paciente.getId());
+                    System.out.println("✅ Convênio alterado para: " +
+                            (!paciente.isConvenio() ? "SIM" : "NÃO"));
+                    break;
+
+                case 4: // Preferencial
+                    service.alternarPreferencial(paciente.getId());
+                    System.out.println("✅ Preferencial alterado para: " +
+                            (!paciente.isPreferencial() ? "SIM" : "NÃO"));
+                    break;
+            }
+
+        } catch (Exception e) {
+            System.out.println("ERRO: " + e.getMessage());
+        }
+    }
+
+    private void excluirPaciente() {
+        try {
+            List<Paciente> pacientes = service.listarTodosPacientes();
+
+            if (pacientes.isEmpty()) {
+                System.out.println("Nenhum paciente cadastrado.");
+                return;
+            }
+
+            System.out.println("\n=== PACIENTES CADASTRADOS ===");
+            for (Paciente p : pacientes) {
+                System.out.printf("ID: %d | Nome: %s | CPF: %s | Data Nasc: %s\n",
+                        p.getId(), p.getNomeCompleto(), p.getCpfFormatado(),
+                        p.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            }
+
+            System.out.print("\nDigite o ID ou CPF do paciente para excluir (0 para cancelar): ");
+            String identificador = scanner.nextLine().trim();
+
+            if (identificador.equals("0")) return;
+
+            // Buscar paciente
+            Paciente paciente = null;
+            if (identificador.matches("\\d+") && identificador.length() <= 5) {
+                paciente = service.buscarPacientePorId(Integer.parseInt(identificador));
+            } else {
+                paciente = service.buscarPacientePorCpf(identificador.replaceAll("[^0-9]", ""));
+            }
+
+            if (paciente == null) {
+                System.out.println("ERRO: Paciente não encontrado!");
+                return;
+            }
+
+            // Confirmação
+            System.out.println("\n=== CONFIRMAR EXCLUSÃO ===");
+            paciente.exibirDados();
+            System.out.print("\n⚠️ ATENÇÃO: Deseja excluir PERMANENTEMENTE este paciente? (S/N): ");
+            String confirmacao = scanner.nextLine().trim().toUpperCase();
+
+            if (confirmacao.equals("S")) {
+                service.excluirPaciente(paciente.getId());
+                System.out.println("✅ Paciente excluído com sucesso!");
+            } else {
+                System.out.println("Exclusão cancelada.");
             }
 
         } catch (Exception e) {

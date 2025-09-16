@@ -168,6 +168,81 @@ public class RecepcaoService {
         return paciente;
     }
 
+    /**
+     * Atualiza dados do paciente
+     */
+    public void atualizarPaciente(Paciente paciente) {
+        if (paciente == null || paciente.getId() <= 0) {
+            throw new IllegalArgumentException("Paciente inválido!");
+        }
+
+        // Validações
+        validarNomeCompleto(paciente.getNomeCompleto());
+        validarDataNascimento(paciente.getDataNascimentoFormatada());
+
+        pacienteDao.atualizar(paciente);
+    }
+
+    /**
+     * Alterna status de convênio do paciente
+     */
+    public void alternarConvenio(int pacienteId) {
+        Paciente paciente = pacienteDao.buscarPorId(pacienteId);
+        if (paciente == null) {
+            throw new IllegalArgumentException("Paciente não encontrado!");
+        }
+
+        paciente.setConvenio(!paciente.isConvenio());
+        pacienteDao.atualizar(paciente);
+    }
+
+    /**
+     * Alterna status preferencial do paciente
+     */
+    public void alternarPreferencial(int pacienteId) {
+        Paciente paciente = pacienteDao.buscarPorId(pacienteId);
+        if (paciente == null) {
+            throw new IllegalArgumentException("Paciente não encontrado!");
+        }
+
+        paciente.setPreferencial(!paciente.isPreferencial());
+        pacienteDao.atualizar(paciente);
+    }
+
+    /**
+     * Exclui paciente e cancela atendimentos em espera
+     */
+    public void excluirPaciente(int pacienteId) {
+        Paciente paciente = pacienteDao.buscarPorId(pacienteId);
+        if (paciente == null) {
+            throw new IllegalArgumentException("Paciente não encontrado!");
+        }
+
+        // Buscar atendimentos do paciente
+        List<Atendimento> atendimentos = atendimentoDao.listarPorPaciente(pacienteId);
+
+        // Cancelar atendimentos "Em espera"
+        for (Atendimento atendimento : atendimentos) {
+            if ("Em espera".equals(atendimento.getStatus())) {
+                atendimentoDao.atualizarStatus(atendimento.getId(), "Cancelado", 0, 0);
+            }
+        }
+
+        pacienteDao.excluir(pacienteId);
+    }
+
+    /**
+     * Exclui paciente por CPF
+     */
+    public void excluirPacientePorCpf(String cpf) {
+        Paciente paciente = pacienteDao.buscarPorCpf(cpf);
+        if (paciente == null) {
+            throw new IllegalArgumentException("Paciente não encontrado com CPF: " + cpf);
+        }
+
+        excluirPaciente(paciente.getId());
+    }
+
     // VALIDAÇÕES PRIVADAS
 
     private void validarNomeCompleto(String nome) {

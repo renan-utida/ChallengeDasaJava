@@ -5,6 +5,7 @@ import dasa.model.domain.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -275,7 +276,7 @@ public class SwingRecepcao extends JPanel {
     private JPanel criarPainelPacientes() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        // Inicializar modelos diferentes
+        // Tabela de pacientes
         String[] colunasCompletas = {"ID Paciente", "Nome", "CPF", "Data Nasc.", "Convênio", "Preferencial"};
         modeloPacientes = new DefaultTableModel(colunasCompletas, 0) {
             @Override
@@ -303,7 +304,7 @@ public class SwingRecepcao extends JPanel {
         tabelaPacientes = new JTable(modeloPacientes);
         JScrollPane scrollPane = new JScrollPane(tabelaPacientes);
 
-        // Botões
+        // Painel de botões superior
         JPanel btnPanel = new JPanel(new FlowLayout());
 
         JButton btnAtualizar = new JButton("Atualizar");
@@ -327,12 +328,213 @@ public class SwingRecepcao extends JPanel {
             carregarPacientesDadosAdmin();
         });
 
+        JButton btnCorrigir = new JButton("Corrigir Dados");
+        btnCorrigir.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        JButton btnExcluir = new JButton("Excluir Paciente");
+        btnExcluir.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnExcluir.setForeground(Color.RED);
+
         btnPanel.add(btnAtualizar);
         btnPanel.add(btnDadosBasicos);
         btnPanel.add(btnDadosAdmin);
+        btnPanel.add(btnCorrigir);
+        btnPanel.add(btnExcluir);
+
+        // Painel de operações (oculto inicialmente)
+        JPanel operacoesPanel = new JPanel();
+        operacoesPanel.setBorder(BorderFactory.createTitledBorder(""));
+        operacoesPanel.setVisible(false);
+
+        // Listener para botão Corrigir
+        btnCorrigir.addActionListener(e -> {
+            operacoesPanel.removeAll();
+            operacoesPanel.setBorder(BorderFactory.createTitledBorder("Corrigir Dados do Paciente"));
+
+            JPanel correcaoPanel = new JPanel(new FlowLayout());
+
+            // ComboBox para tipo de dado
+            JComboBox<String> cmbTipoDado = new JComboBox<>(new String[]{
+                    "Nome", "Data de Nascimento", "Convênio", "Preferencial"
+            });
+            cmbTipoDado.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+            correcaoPanel.add(new JLabel("Tipo de Dado:"));
+            correcaoPanel.add(cmbTipoDado);
+
+            correcaoPanel.add(new JLabel("ID ou CPF:"));
+            JTextField txtId = new JTextField(10);
+            correcaoPanel.add(txtId);
+
+            correcaoPanel.add(new JLabel("Novo Valor:"));
+            JTextField txtNovoValor = new JTextField(15);
+            correcaoPanel.add(txtNovoValor);
+
+            // Listener para ocultar campo de novo valor para convênio/preferencial
+            cmbTipoDado.addActionListener(ev -> {
+                String selecionado = (String) cmbTipoDado.getSelectedItem();
+                boolean mostrarNovoValor = !selecionado.equals("Convênio") &&
+                        !selecionado.equals("Preferencial");
+                txtNovoValor.setVisible(mostrarNovoValor);
+                correcaoPanel.getComponent(4).setVisible(mostrarNovoValor); // Label "Novo Valor"
+            });
+
+            JButton btnConfirmarCorrecao = new JButton("Corrigir Dados");
+            btnConfirmarCorrecao.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btnConfirmarCorrecao.addActionListener(ev -> {
+                try {
+                    String id = txtId.getText().trim();
+                    if (id.isEmpty()) {
+                        throw new IllegalArgumentException("Digite o ID ou CPF!");
+                    }
+
+                    Paciente paciente = null;
+                    if (id.matches("\\d+") && id.length() <= 5) {
+                        paciente = service.buscarPacientePorId(Integer.parseInt(id));
+                    } else {
+                        paciente = service.buscarPacientePorCpf(id.replaceAll("[^0-9]", ""));
+                    }
+
+                    if (paciente == null) {
+                        throw new IllegalArgumentException("Paciente não encontrado!");
+                    }
+
+                    String tipoDado = (String) cmbTipoDado.getSelectedItem();
+
+                    switch (tipoDado) {
+                        case "Nome":
+                            String novoNome = txtNovoValor.getText().trim();
+                            if (novoNome.isEmpty()) {
+                                throw new IllegalArgumentException("Digite o novo nome!");
+                            }
+                            paciente.setNomeCompleto(novoNome);
+                            service.atualizarPaciente(paciente);
+                            JOptionPane.showMessageDialog(this, "Nome atualizado com sucesso!",
+                                    "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                            break;
+
+                        case "Data de Nascimento":
+                            String novaData = txtNovoValor.getText().trim();
+                            if (!novaData.matches("\\d{2}/\\d{2}/\\d{4}")) {
+                                throw new IllegalArgumentException("Data deve estar no formato dd/MM/yyyy!");
+                            }
+                            paciente.setDataNascimento(LocalDate.parse(novaData, formatadorData));
+                            service.atualizarPaciente(paciente);
+                            JOptionPane.showMessageDialog(this, "Data atualizada com sucesso!",
+                                    "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                            break;
+
+                        case "Convênio":
+                            service.alternarConvenio(paciente.getId());
+                            JOptionPane.showMessageDialog(this,
+                                    "Convênio alterado para: " + (!paciente.isConvenio() ? "SIM" : "NÃO"),
+                                    "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                            break;
+
+                        case "Preferencial":
+                            service.alternarPreferencial(paciente.getId());
+                            JOptionPane.showMessageDialog(this,
+                                    "Preferencial alterado para: " + (!paciente.isPreferencial() ? "SIM" : "NÃO"),
+                                    "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                            break;
+                    }
+
+                    // Atualizar tabela
+                    btnAtualizar.doClick();
+                    txtId.setText("");
+                    txtNovoValor.setText("");
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this,
+                            "Erro: " + ex.getMessage(),
+                            "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            });
+
+            correcaoPanel.add(btnConfirmarCorrecao);
+
+            operacoesPanel.add(correcaoPanel);
+            operacoesPanel.setVisible(true);
+            operacoesPanel.revalidate();
+            operacoesPanel.repaint();
+        });
+
+        // Listener para botão Excluir
+        btnExcluir.addActionListener(e -> {
+            operacoesPanel.removeAll();
+            operacoesPanel.setBorder(BorderFactory.createTitledBorder("Excluir Paciente"));
+
+            JPanel exclusaoPanel = new JPanel(new FlowLayout());
+
+            exclusaoPanel.add(new JLabel("ID ou CPF do Paciente:"));
+            JTextField txtIdExcluir = new JTextField(15);
+            exclusaoPanel.add(txtIdExcluir);
+
+            JButton btnConfirmarExclusao = new JButton("Excluir Paciente");
+            btnConfirmarExclusao.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btnConfirmarExclusao.setForeground(Color.RED);
+
+            btnConfirmarExclusao.addActionListener(ev -> {
+                try {
+                    String id = txtIdExcluir.getText().trim();
+                    if (id.isEmpty()) {
+                        throw new IllegalArgumentException("Digite o ID ou CPF!");
+                    }
+
+                    Paciente paciente = null;
+                    if (id.matches("\\d+") && id.length() <= 5) {
+                        paciente = service.buscarPacientePorId(Integer.parseInt(id));
+                    } else {
+                        paciente = service.buscarPacientePorCpf(id.replaceAll("[^0-9]", ""));
+                    }
+
+                    if (paciente == null) {
+                        throw new IllegalArgumentException("Paciente não encontrado!");
+                    }
+
+                    // Confirmação
+                    String mensagem = String.format(
+                            "Confirmar exclusão permanente?\n\n" +
+                                    "ID: %d\nNome: %s\nCPF: %s\nData Nasc: %s\nConvênio: %s\nPreferencial: %s\n\n" +
+                                    "Atendimentos 'Em espera' serão cancelados.",
+                            paciente.getId(),
+                            paciente.getNomeCompleto(),
+                            paciente.getCpfFormatado(),
+                            paciente.getDataNascimento().format(formatadorData),
+                            paciente.isConvenio() ? "Sim" : "Não",
+                            paciente.isPreferencial() ? "Sim" : "Não"
+                    );
+
+                    int opcao = JOptionPane.showConfirmDialog(this, mensagem,
+                            "Confirmar Exclusão", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+                    if (opcao == JOptionPane.YES_OPTION) {
+                        service.excluirPaciente(paciente.getId());
+                        JOptionPane.showMessageDialog(this,
+                                "Paciente excluído e atendimentos em espera cancelados!",
+                                "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                        txtIdExcluir.setText("");
+                        btnAtualizar.doClick();
+                    }
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this,
+                            "Erro: " + ex.getMessage(),
+                            "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            });
+
+            exclusaoPanel.add(btnConfirmarExclusao);
+
+            operacoesPanel.add(exclusaoPanel);
+            operacoesPanel.setVisible(true);
+            operacoesPanel.revalidate();
+            operacoesPanel.repaint();
+        });
 
         panel.add(btnPanel, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.CENTER);
+        panel.add(operacoesPanel, BorderLayout.SOUTH);
 
         carregarTodosPacientes();
 
