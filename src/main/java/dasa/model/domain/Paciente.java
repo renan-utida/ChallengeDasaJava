@@ -14,6 +14,7 @@ public class Paciente {
     private String nomeCompleto;
     private String cpf;
     private LocalDate dataNascimento;
+    private String statusPaciente = "Ativo";
     private LocalDateTime dataExame;
     private boolean convenio;
     private boolean preferencial;
@@ -93,6 +94,7 @@ public class Paciente {
         System.out.println("\tData Nascimento: " + dataNascimento.format(dateFormatter));
         System.out.println("\tConvenio: " + (convenio ? "Sim" : "Não"));
         System.out.println("\tPreferencial: " + (preferencial ? "Sim" : "Não"));
+        System.out.println("\tStatus Paciente: " + statusPaciente);
         System.out.println("========================================================");
     }
 
@@ -112,6 +114,7 @@ public class Paciente {
             case "administrativo":
                 System.out.println("\tConvenio: " + (convenio ? "Sim" : "Não"));
                 System.out.println("\tPreferencial: " + (preferencial ? "Sim" : "Não"));
+                System.out.println("\tStatus Paciente: " + statusPaciente);
                 break;
 
             default:
@@ -133,6 +136,9 @@ public class Paciente {
 
     public LocalDate getDataNascimento() { return dataNascimento; }
     public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
+
+    public String getStatusPaciente(){ return statusPaciente; }
+    public void setStatusPaciente(String statusPaciente) { this.statusPaciente = statusPaciente; }
 
     public LocalDateTime getDataExame() { return dataExame; }
     public void setDataExame(LocalDateTime dataExame) { this.dataExame = dataExame; }

@@ -5,8 +5,6 @@ import dasa.controller.dao.PacienteDao;
 import dasa.model.domain.Paciente;
 
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +13,7 @@ public class JdbcPacienteDao implements PacienteDao {
     @Override
     public Long salvar(Paciente paciente) {
         String sql = "INSERT INTO dasa_pacientes (nome_completo, cpf, data_nascimento, " +
-                "convenio, preferencial) VALUES (?, ?, ?, ?, ?)";
+                "convenio, preferencial, status_paciente) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = OracleConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, new String[]{"ID"})) {
@@ -25,6 +23,7 @@ public class JdbcPacienteDao implements PacienteDao {
             ps.setDate(3, Date.valueOf(paciente.getDataNascimento()));
             ps.setString(4, paciente.isConvenio() ? "S" : "N");
             ps.setString(5, paciente.isPreferencial() ? "S" : "N");
+            ps.setString(6, "Ativo");
 
             ps.executeUpdate();
 
@@ -100,7 +99,7 @@ public class JdbcPacienteDao implements PacienteDao {
     @Override
     public void atualizar(Paciente paciente) {
         String sql = "UPDATE dasa_pacientes SET nome_completo = ?, cpf = ?, " +
-                "data_nascimento = ?, convenio = ?, preferencial = ? WHERE id = ?";
+                "data_nascimento = ?, convenio = ?, preferencial = ?, status_paciente = ? WHERE id = ?";
 
         try (Connection conn = OracleConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -110,7 +109,8 @@ public class JdbcPacienteDao implements PacienteDao {
             ps.setDate(3, Date.valueOf(paciente.getDataNascimento()));
             ps.setString(4, paciente.isConvenio() ? "S" : "N");
             ps.setString(5, paciente.isPreferencial() ? "S" : "N");
-            ps.setInt(6, paciente.getId());
+            ps.setString(6, paciente.getStatusPaciente());
+            ps.setInt(7, paciente.getId());
 
             ps.executeUpdate();
 
@@ -158,6 +158,7 @@ public class JdbcPacienteDao implements PacienteDao {
         p.setDataNascimento(rs.getDate("data_nascimento").toLocalDate());
         p.setConvenio("S".equals(rs.getString("convenio")));
         p.setPreferencial("S".equals(rs.getString("preferencial")));
+        p.setStatusPaciente(rs.getString("status_paciente"));
         return p;
     }
 }

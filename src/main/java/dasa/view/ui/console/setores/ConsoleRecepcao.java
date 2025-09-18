@@ -166,8 +166,15 @@ public class ConsoleRecepcao {
                 return;
             }
 
+            if ("Inativo".equals(paciente.getStatusPaciente())) {
+                System.out.println("ERRO: Paciente está inativo! Não é possível criar novos atendimentos.");
+                System.out.println("É necessário reativar o paciente antes de criar novos atendimentos.");
+                return;
+            }
+
             System.out.println("\nPaciente encontrado: " + paciente.getNomeCompleto());
             System.out.println("CPF: " + paciente.getCpfFormatado());
+            System.out.println("Status Paciente: " + paciente.getStatusPaciente());
 
             // Solicita dados do novo exame
             boolean jejum = solicitarOpcaoBoolean("Em Jejum (min. 8 horas)");
@@ -343,8 +350,9 @@ public class ConsoleRecepcao {
                 System.out.println();
                 System.out.println("=== GERENCIAR PACIENTES ===");
                 System.out.println("1 - Corrigir Dados do Paciente");
-                System.out.println("2 - Excluir Paciente");
-                System.out.println("3 - Voltar");
+                System.out.println("2 - Desativar Paciente");
+                System.out.println("3 - Reativar Paciente");
+                System.out.println("4 - Voltar");
                 System.out.print("Opção: ");
 
                 int opcao = scanner.nextInt();
@@ -355,9 +363,12 @@ public class ConsoleRecepcao {
                         corrigirDadosPaciente();
                         break;
                     case 2:
-                        excluirPaciente();
+                        desativarPaciente();
                         break;
                     case 3:
+                        reativarPaciente();
+                        break;
+                    case 4:
                         return;
                     default:
                         System.out.println("ERRO: Opção inválida!");
@@ -464,28 +475,39 @@ public class ConsoleRecepcao {
         }
     }
 
-    private void excluirPaciente() {
+    private void desativarPaciente() {
         try {
             List<Paciente> pacientes = service.listarTodosPacientes();
+
+            // Filtrar apenas os pacientes ativos
+
+            List<Paciente> pacientesAtivos = new ArrayList<>();
+            for (Paciente p : pacientes) {
+                if ("Ativo".equals(p.getStatusPaciente())) {
+                    pacientesAtivos.add(p);
+                }
+            }
 
             if (pacientes.isEmpty()) {
                 System.out.println("Nenhum paciente cadastrado.");
                 return;
             }
 
-            System.out.println("\n=== PACIENTES CADASTRADOS ===");
-            for (Paciente p : pacientes) {
-                System.out.printf("ID: %d | Nome: %s | CPF: %s | Data Nasc: %s\n",
-                        p.getId(), p.getNomeCompleto(), p.getCpfFormatado(),
-                        p.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            System.out.println("\n=== PACIENTES ATIVOS ===");
+            for (Paciente p : pacientesAtivos) {
+                if ("Ativo".equals(p.getStatusPaciente())) {
+                    System.out.printf("ID: %d | Nome: %s | CPF: %s | Data Nasc: %s | Status: %s\n",
+                            p.getId(), p.getNomeCompleto(), p.getCpfFormatado(),
+                            p.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                            p.getStatusPaciente());
+                }
             }
 
-            System.out.print("\nDigite o ID ou CPF do paciente para excluir (0 para cancelar): ");
+            System.out.print("\nDigite o ID ou CPF do paciente para desativar (0 para cancelar): ");
             String identificador = scanner.nextLine().trim();
 
             if (identificador.equals("0")) return;
 
-            // Buscar paciente
             Paciente paciente = null;
             if (identificador.matches("\\d+") && identificador.length() <= 5) {
                 paciente = service.buscarPacientePorId(Integer.parseInt(identificador));
@@ -498,17 +520,95 @@ public class ConsoleRecepcao {
                 return;
             }
 
-            // Confirmação
-            System.out.println("\n=== CONFIRMAR EXCLUSÃO ===");
+            if ("Inativo".equals(paciente.getStatusPaciente())) {
+                System.out.println("ERRO: Paciente já está inativo!");
+                return;
+            }
+
+            System.out.println("\n=== CONFIRMAR DESATIVAÇÃO ===");
             paciente.exibirDados();
-            System.out.print("\n⚠️ ATENÇÃO: Deseja excluir PERMANENTEMENTE este paciente? (S/N): ");
+            System.out.print("\n⚠️ ATENÇÃO: Deseja DESATIVAR este paciente? (S/N): ");
             String confirmacao = scanner.nextLine().trim().toUpperCase();
 
             if (confirmacao.equals("S")) {
-                service.excluirPaciente(paciente.getId());
-                System.out.println("✅ Paciente excluído com sucesso!");
+                service.desativarPaciente(paciente.getId());
+                System.out.println("✅ Paciente desativado com sucesso!");
+                System.out.println("Atendimentos em espera foram cancelados.");
             } else {
-                System.out.println("Exclusão cancelada.");
+                System.out.println("Desativação cancelada.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("ERRO: " + e.getMessage());
+        }
+    }
+
+    private void reativarPaciente() {
+        try {
+            List<Paciente> pacientes = service.listarTodosPacientes();
+
+            // Filtrar apenas pacientes inativos
+            List<Paciente> pacientesInativos = new ArrayList<>();
+            for (Paciente p : pacientes) {
+                if ("Inativo".equals(p.getStatusPaciente())) {
+                    pacientesInativos.add(p);
+                }
+            }
+
+            if (pacientes.isEmpty()) {
+                System.out.println("Nenhum paciente cadastrado.");
+                return;
+            }
+
+            System.out.println("\n=== PACIENTES INATIVOS ===");
+            boolean temInativo = false;
+            for (Paciente p : pacientesInativos) {
+                if ("Inativo".equals(p.getStatusPaciente())) {
+                    System.out.printf("ID: %d | Nome: %s | CPF: %s | Data Nasc: %s | Status: %s\n",
+                            p.getId(), p.getNomeCompleto(), p.getCpfFormatado(),
+                            p.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                            p.getStatusPaciente());
+                    temInativo = true;
+                }
+            }
+
+            if (!temInativo) {
+                System.out.println("Nenhum paciente inativo encontrado.");
+                return;
+            }
+
+            System.out.print("\nDigite o ID ou CPF do paciente para reativar (0 para cancelar): ");
+            String identificador = scanner.nextLine().trim();
+
+            if (identificador.equals("0")) return;
+
+            Paciente paciente = null;
+            if (identificador.matches("\\d+") && identificador.length() <= 5) {
+                paciente = service.buscarPacientePorId(Integer.parseInt(identificador));
+            } else {
+                paciente = service.buscarPacientePorCpf(identificador.replaceAll("[^0-9]", ""));
+            }
+
+            if (paciente == null) {
+                System.out.println("ERRO: Paciente não encontrado!");
+                return;
+            }
+
+            if ("Ativo".equals(paciente.getStatusPaciente())) {
+                System.out.println("ERRO: Paciente já está ativo!");
+                return;
+            }
+
+            System.out.println("\n=== CONFIRMAR REATIVAÇÃO ===");
+            paciente.exibirDados();
+            System.out.print("\nDeseja REATIVAR este paciente? (S/N): ");
+            String confirmacao = scanner.nextLine().trim().toUpperCase();
+
+            if (confirmacao.equals("S")) {
+                service.reativarPaciente(paciente.getId());
+                System.out.println("✅ Paciente reativado com sucesso!");
+            } else {
+                System.out.println("Reativação cancelada.");
             }
 
         } catch (Exception e) {

@@ -17,7 +17,7 @@ public class JdbcAtendimentoDao implements AtendimentoDao {
 
     @Override
     public Long salvar(Atendimento atendimento) {
-        String sql = "INSERT INTO dasa_atendimentos (paciente_id, exame_id, jejum, status) " +
+        String sql = "INSERT INTO dasa_atendimentos (paciente_id, exame_id, jejum, status_atendimento) " +
                 "VALUES (?, ?, ?, ?)";
 
         try (Connection conn = OracleConnectionFactory.getConnection();
@@ -143,7 +143,7 @@ public class JdbcAtendimentoDao implements AtendimentoDao {
                 "JOIN dasa_pacientes p ON a.paciente_id = p.id " +
                 "LEFT JOIN dasa_enfermeiros enf ON a.enfermeiro_coren = enf.coren " +
                 "LEFT JOIN dasa_tecnicos tec ON a.tecnico_crbm = tec.crbm " +
-                "WHERE a.status = ? " +
+                "WHERE a.status_atendimento = ? " +
                 "ORDER BY a.data_exame";
 
         List<Atendimento> atendimentos = new ArrayList<>();
@@ -166,15 +166,25 @@ public class JdbcAtendimentoDao implements AtendimentoDao {
 
     @Override
     public void atualizarStatus(int id, String status, int enfermeiroCoren, int tecnicoCrbm) {
-        String sql = "UPDATE dasa_atendimentos SET status = ?, enfermeiro_coren = ?, " +
+        String sql = "UPDATE dasa_atendimentos SET status_atendimento = ?, enfermeiro_coren = ?, " +
                 "tecnico_crbm = ? WHERE id = ?";
 
         try (Connection conn = OracleConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, status);
-            ps.setInt(2, enfermeiroCoren);
-            ps.setInt(3, tecnicoCrbm);
+            // Se for 0, setar NULL
+            if (enfermeiroCoren > 0) {
+                ps.setInt(2, enfermeiroCoren);
+            } else {
+                ps.setNull(2, Types.INTEGER);
+            }
+
+            if (tecnicoCrbm > 0) {
+                ps.setInt(3, tecnicoCrbm);
+            } else {
+                ps.setNull(3, Types.INTEGER);
+            }
             ps.setInt(4, id);
 
             ps.executeUpdate();
@@ -192,7 +202,7 @@ public class JdbcAtendimentoDao implements AtendimentoDao {
                 rs.getString("exame_nome"),
                 rs.getTimestamp("data_exame").toLocalDateTime(),
                 "S".equals(rs.getString("jejum")),
-                rs.getString("status"),
+                rs.getString("status_atendimento"),
                 "Em espera",
                 "Em espera"
         );
@@ -258,7 +268,7 @@ public class JdbcAtendimentoDao implements AtendimentoDao {
                 "FROM dasa_atendimentos a " +
                 "JOIN dasa_exames e ON a.exame_id = e.id " +
                 "JOIN dasa_pacientes p ON a.paciente_id = p.id " +
-                "WHERE a.enfermeiro_coren = ? AND a.status = 'Atendido' " +
+                "WHERE a.enfermeiro_coren = ? AND a.status_atendimento = 'Atendido' " +
                 "ORDER BY a.data_exame DESC";
 
         List<Atendimento> atendimentos = new ArrayList<>();

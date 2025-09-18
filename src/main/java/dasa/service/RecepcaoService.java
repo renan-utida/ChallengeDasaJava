@@ -76,16 +76,9 @@ public class RecepcaoService {
             throw new IllegalArgumentException("Paciente não encontrado!");
         }
 
-        // Cria novo registro com os dados do paciente existente
-        Paciente novoExame = new Paciente(
-                paciente.getNomeCompleto(),
-                paciente.getCpf(),
-                paciente.getDataNascimentoFormatada(),
-                paciente.isConvenio(),
-                paciente.isPreferencial(),
-                jejum,
-                nomeExame
-        );
+        if ("Inativo".equals(paciente.getStatusPaciente())) {
+            throw new IllegalArgumentException("Não é possível criar atendimento para paciente inativo!");
+        }
 
         validarExame(nomeExame);
 
@@ -138,6 +131,11 @@ public class RecepcaoService {
         if (paciente == null) {
             return new ArrayList<>();
         }
+
+        if ("Inativo".equals(paciente.getStatusPaciente())) {
+            throw new IllegalArgumentException("Paciente está inativo! Não é possível visualizar histórico.");
+        }
+
         return atendimentoDao.listarPorPaciente(paciente.getId());
     }
 
@@ -210,37 +208,64 @@ public class RecepcaoService {
     }
 
     /**
-     * Exclui paciente e cancela atendimentos em espera
+     * Desativa paciente (soft delete) e cancela atendimentos em espera
      */
-    public void excluirPaciente(int pacienteId) {
+    public void desativarPaciente(int pacienteId) {
         Paciente paciente = pacienteDao.buscarPorId(pacienteId);
         if (paciente == null) {
             throw new IllegalArgumentException("Paciente não encontrado!");
         }
 
-        // Buscar atendimentos do paciente
-        List<Atendimento> atendimentos = atendimentoDao.listarPorPaciente(pacienteId);
+        if ("Inativo".equals(paciente.getStatusPaciente())) {
+            throw new IllegalArgumentException("Paciente já está inativo!");
+        }
 
         // Cancelar atendimentos "Em espera"
+        List<Atendimento> atendimentos = atendimentoDao.listarPorPaciente(pacienteId);
         for (Atendimento atendimento : atendimentos) {
             if ("Em espera".equals(atendimento.getStatus())) {
                 atendimentoDao.atualizarStatus(atendimento.getId(), "Cancelado", 0, 0);
             }
         }
 
-        pacienteDao.excluir(pacienteId);
+        // Desativar paciente
+        paciente.setStatusPaciente("Inativo");
+        pacienteDao.atualizar(paciente);
     }
 
     /**
-     * Exclui paciente por CPF
+     * Reativa paciente
      */
-    public void excluirPacientePorCpf(String cpf) {
+    public void reativarPaciente(int pacienteId) {
+        Paciente paciente = pacienteDao.buscarPorId(pacienteId);
+        if (paciente == null) {
+            throw new IllegalArgumentException("Paciente não encontrado!");
+        }
+
+        if ("Ativo".equals(paciente.getStatusPaciente())) {
+            throw new IllegalArgumentException("Paciente já está ativo!");
+        }
+
+        paciente.setStatusPaciente("Ativo");
+        pacienteDao.atualizar(paciente);
+    }
+
+    public void desativarPacientePorCpf(String cpf) {
         Paciente paciente = pacienteDao.buscarPorCpf(cpf);
         if (paciente == null) {
             throw new IllegalArgumentException("Paciente não encontrado com CPF: " + cpf);
         }
 
-        excluirPaciente(paciente.getId());
+        desativarPaciente(paciente.getId());
+    }
+
+    public void reativarPacientePorCpf(String cpf) {
+        Paciente paciente = pacienteDao.buscarPorCpf(cpf);
+        if (paciente == null) {
+            throw new IllegalArgumentException("Paciente não encontrado com CPF: " + cpf);
+        }
+
+        reativarPaciente(paciente.getId());
     }
 
     // VALIDAÇÕES PRIVADAS

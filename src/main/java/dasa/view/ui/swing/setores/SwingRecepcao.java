@@ -202,6 +202,16 @@ public class SwingRecepcao extends JPanel {
                         throw new IllegalArgumentException("Paciente não encontrado!");
                     }
 
+                    if ("Inativo".equals(paciente.getStatusPaciente())) {
+                        JOptionPane.showMessageDialog(this,
+                                "Paciente está inativo!\n\n" +
+                                        "É necessário reativar o paciente antes de criar novos atendimentos.\n" +
+                                        "Vá em: Aba Pacientes > Reativar Paciente",
+                                "Paciente Inativo",
+                                JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+
                     Long id = service.cadastrarNovoExameParaPaciente(
                             paciente.getId(), jejum, exame);
 
@@ -276,8 +286,8 @@ public class SwingRecepcao extends JPanel {
     private JPanel criarPainelPacientes() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        // Tabela de pacientes
-        String[] colunasCompletas = {"ID Paciente", "Nome", "CPF", "Data Nasc.", "Convênio", "Preferencial"};
+        // Tabela de pacientes - adicionar coluna Status
+        String[] colunasCompletas = {"ID Paciente", "Nome", "CPF", "Data Nascimento", "Convênio", "Preferencial", "Status Paciente"};
         modeloPacientes = new DefaultTableModel(colunasCompletas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -285,7 +295,7 @@ public class SwingRecepcao extends JPanel {
             }
         };
 
-        String[] colunasBasicas = {"ID Paciente", "Nome", "CPF", "Data Nasc."};
+        String[] colunasBasicas = {"ID Paciente", "Nome", "CPF", "Data Nascimento"};
         modeloPacientesBasicos = new DefaultTableModel(colunasBasicas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -293,7 +303,7 @@ public class SwingRecepcao extends JPanel {
             }
         };
 
-        String[] colunasAdmin = {"ID Paciente", "Nome", "Convênio", "Preferencial"};
+        String[] colunasAdmin = {"ID Paciente", "Nome", "Convênio", "Preferencial", "Status Paciente"};
         modeloPacientesAdmin = new DefaultTableModel(colunasAdmin, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -331,15 +341,20 @@ public class SwingRecepcao extends JPanel {
         JButton btnCorrigir = new JButton("Corrigir Dados");
         btnCorrigir.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        JButton btnExcluir = new JButton("Excluir Paciente");
-        btnExcluir.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnExcluir.setForeground(Color.RED);
+        JButton btnDesativar = new JButton("Desativar Paciente");
+        btnDesativar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnDesativar.setForeground(Color.RED);
+
+        JButton btnReativar = new JButton("Reativar Paciente");
+        btnReativar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnReativar.setForeground(new Color(0, 130, 0)); // Verde
 
         btnPanel.add(btnAtualizar);
         btnPanel.add(btnDadosBasicos);
         btnPanel.add(btnDadosAdmin);
         btnPanel.add(btnCorrigir);
-        btnPanel.add(btnExcluir);
+        btnPanel.add(btnDesativar);
+        btnPanel.add(btnReativar);
 
         // Painel de operações (oculto inicialmente)
         JPanel operacoesPanel = new JPanel();
@@ -353,7 +368,6 @@ public class SwingRecepcao extends JPanel {
 
             JPanel correcaoPanel = new JPanel(new FlowLayout());
 
-            // ComboBox para tipo de dado
             JComboBox<String> cmbTipoDado = new JComboBox<>(new String[]{
                     "Nome", "Data de Nascimento", "Convênio", "Preferencial"
             });
@@ -370,13 +384,12 @@ public class SwingRecepcao extends JPanel {
             JTextField txtNovoValor = new JTextField(15);
             correcaoPanel.add(txtNovoValor);
 
-            // Listener para ocultar campo de novo valor para convênio/preferencial
             cmbTipoDado.addActionListener(ev -> {
                 String selecionado = (String) cmbTipoDado.getSelectedItem();
                 boolean mostrarNovoValor = !selecionado.equals("Convênio") &&
                         !selecionado.equals("Preferencial");
                 txtNovoValor.setVisible(mostrarNovoValor);
-                correcaoPanel.getComponent(4).setVisible(mostrarNovoValor); // Label "Novo Valor"
+                correcaoPanel.getComponent(4).setVisible(mostrarNovoValor);
             });
 
             JButton btnConfirmarCorrecao = new JButton("Corrigir Dados");
@@ -439,7 +452,6 @@ public class SwingRecepcao extends JPanel {
                             break;
                     }
 
-                    // Atualizar tabela
                     btnAtualizar.doClick();
                     txtId.setText("");
                     txtNovoValor.setText("");
@@ -452,31 +464,35 @@ public class SwingRecepcao extends JPanel {
             });
 
             correcaoPanel.add(btnConfirmarCorrecao);
-
             operacoesPanel.add(correcaoPanel);
             operacoesPanel.setVisible(true);
             operacoesPanel.revalidate();
             operacoesPanel.repaint();
         });
 
-        // Listener para botão Excluir
-        btnExcluir.addActionListener(e -> {
+        // Listener para botão Desativar
+        btnDesativar.addActionListener(e -> {
+
+            // Carrega apenas pacientes ativos na tabela
+            tabelaPacientes.setModel(modeloPacientes);
+            carregarPacientesAtivos();
+
             operacoesPanel.removeAll();
-            operacoesPanel.setBorder(BorderFactory.createTitledBorder("Excluir Paciente"));
+            operacoesPanel.setBorder(BorderFactory.createTitledBorder("Desativar Paciente"));
 
-            JPanel exclusaoPanel = new JPanel(new FlowLayout());
+            JPanel desativarPanel = new JPanel(new FlowLayout());
 
-            exclusaoPanel.add(new JLabel("ID ou CPF do Paciente:"));
-            JTextField txtIdExcluir = new JTextField(15);
-            exclusaoPanel.add(txtIdExcluir);
+            desativarPanel.add(new JLabel("ID ou CPF do Paciente:"));
+            JTextField txtIdDesativar = new JTextField(15);
+            desativarPanel.add(txtIdDesativar);
 
-            JButton btnConfirmarExclusao = new JButton("Excluir Paciente");
-            btnConfirmarExclusao.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            btnConfirmarExclusao.setForeground(Color.RED);
+            JButton btnConfirmarDesativar = new JButton("Desativar Paciente");
+            btnConfirmarDesativar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btnConfirmarDesativar.setForeground(Color.RED);
 
-            btnConfirmarExclusao.addActionListener(ev -> {
+            btnConfirmarDesativar.addActionListener(ev -> {
                 try {
-                    String id = txtIdExcluir.getText().trim();
+                    String id = txtIdDesativar.getText().trim();
                     if (id.isEmpty()) {
                         throw new IllegalArgumentException("Digite o ID ou CPF!");
                     }
@@ -492,28 +508,33 @@ public class SwingRecepcao extends JPanel {
                         throw new IllegalArgumentException("Paciente não encontrado!");
                     }
 
-                    // Confirmação
+                    if ("Inativo".equals(paciente.getStatusPaciente())) {
+                        throw new IllegalArgumentException("Paciente já está inativo!");
+                    }
+
                     String mensagem = String.format(
-                            "Confirmar exclusão permanente?\n\n" +
-                                    "ID: %d\nNome: %s\nCPF: %s\nData Nasc: %s\nConvênio: %s\nPreferencial: %s\n\n" +
+                            "Confirmar desativação do paciente?\n\n" +
+                                    "ID Paciente: %d\nNome: %s\nCPF: %s\nData Nasc: %s\n" +
+                                    "Convênio: %s\nPreferencial: %s\nStatus: %s\n\n" +
                                     "Atendimentos 'Em espera' serão cancelados.",
                             paciente.getId(),
                             paciente.getNomeCompleto(),
                             paciente.getCpfFormatado(),
                             paciente.getDataNascimento().format(formatadorData),
                             paciente.isConvenio() ? "Sim" : "Não",
-                            paciente.isPreferencial() ? "Sim" : "Não"
+                            paciente.isPreferencial() ? "Sim" : "Não",
+                            paciente.getStatusPaciente()
                     );
 
                     int opcao = JOptionPane.showConfirmDialog(this, mensagem,
-                            "Confirmar Exclusão", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                            "Confirmar Desativação", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
                     if (opcao == JOptionPane.YES_OPTION) {
-                        service.excluirPaciente(paciente.getId());
+                        service.desativarPaciente(paciente.getId());
                         JOptionPane.showMessageDialog(this,
-                                "Paciente excluído e atendimentos em espera cancelados!",
+                                "Paciente desativado com sucesso!\nAtendimentos em espera foram cancelados.",
                                 "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-                        txtIdExcluir.setText("");
+                        txtIdDesativar.setText("");
                         btnAtualizar.doClick();
                     }
 
@@ -524,9 +545,87 @@ public class SwingRecepcao extends JPanel {
                 }
             });
 
-            exclusaoPanel.add(btnConfirmarExclusao);
+            desativarPanel.add(btnConfirmarDesativar);
+            operacoesPanel.add(desativarPanel);
+            operacoesPanel.setVisible(true);
+            operacoesPanel.revalidate();
+            operacoesPanel.repaint();
+        });
 
-            operacoesPanel.add(exclusaoPanel);
+        // Listener para botão Reativar
+        btnReativar.addActionListener(e -> {
+
+            // Carrega apenas pacientes inativos na tabela
+            tabelaPacientes.setModel(modeloPacientes);
+            carregarPacientesInativos();
+
+            operacoesPanel.removeAll();
+            operacoesPanel.setBorder(BorderFactory.createTitledBorder("Reativar Paciente"));
+
+            JPanel reativarPanel = new JPanel(new FlowLayout());
+
+            reativarPanel.add(new JLabel("ID ou CPF do Paciente:"));
+            JTextField txtIdReativar = new JTextField(15);
+            reativarPanel.add(txtIdReativar);
+
+            JButton btnConfirmarReativar = new JButton("Reativar Paciente");
+            btnConfirmarReativar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btnConfirmarReativar.setForeground(new Color(0, 128, 0));
+
+            btnConfirmarReativar.addActionListener(ev -> {
+                try {
+                    String id = txtIdReativar.getText().trim();
+                    if (id.isEmpty()) {
+                        throw new IllegalArgumentException("Digite o ID ou CPF!");
+                    }
+
+                    Paciente paciente = null;
+                    if (id.matches("\\d+") && id.length() <= 5) {
+                        paciente = service.buscarPacientePorId(Integer.parseInt(id));
+                    } else {
+                        paciente = service.buscarPacientePorCpf(id.replaceAll("[^0-9]", ""));
+                    }
+
+                    if (paciente == null) {
+                        throw new IllegalArgumentException("Paciente não encontrado!");
+                    }
+
+                    if ("Ativo".equals(paciente.getStatusPaciente())) {
+                        throw new IllegalArgumentException("Paciente já está ativo!");
+                    }
+
+                    String mensagem = String.format(
+                            "Confirmar reativação do paciente?\n\n" +
+                                    "ID: %d\nNome: %s\nCPF: %s\nData Nascimento: %s\n" +
+                                    "Status Atual: %s",
+                            paciente.getId(),
+                            paciente.getNomeCompleto(),
+                            paciente.getCpfFormatado(),
+                            paciente.getDataNascimento().format(formatadorData),
+                            paciente.getStatusPaciente()
+                    );
+
+                    int opcao = JOptionPane.showConfirmDialog(this, mensagem,
+                            "Confirmar Reativação", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                    if (opcao == JOptionPane.YES_OPTION) {
+                        service.reativarPaciente(paciente.getId());
+                        JOptionPane.showMessageDialog(this,
+                                "Paciente reativado com sucesso!",
+                                "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                        txtIdReativar.setText("");
+                        btnAtualizar.doClick();
+                    }
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this,
+                            "Erro: " + ex.getMessage(),
+                            "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            });
+
+            reativarPanel.add(btnConfirmarReativar);
+            operacoesPanel.add(reativarPanel);
             operacoesPanel.setVisible(true);
             operacoesPanel.revalidate();
             operacoesPanel.repaint();
@@ -537,7 +636,6 @@ public class SwingRecepcao extends JPanel {
         panel.add(operacoesPanel, BorderLayout.SOUTH);
 
         carregarTodosPacientes();
-
         return panel;
     }
 
@@ -607,7 +705,8 @@ public class SwingRecepcao extends JPanel {
         return panel;
     }
 
-    // Métodos de carregamento permanecem os mesmos...
+    // Métodos de carregamento
+
     private void carregarAtendimentos() {
         try {
             modeloTabela.setRowCount(0);
@@ -617,7 +716,10 @@ public class SwingRecepcao extends JPanel {
                 String tecnico = "Em espera";
                 String enfermeiro = "Em espera";
 
-                if ("Atendido".equals(a.getStatus())) {
+                if ("Cancelado".equals(a.getStatus())) {
+                    tecnico = "Cancelado";
+                    enfermeiro = "Cancelado";
+                } else if ("Atendido".equals(a.getStatus())) {
                     String respColeta = a.getResponsavelColeta();
                     if (respColeta != null && !respColeta.equals("Em espera")) {
                         tecnico = respColeta.split(" - ")[0];
@@ -702,7 +804,8 @@ public class SwingRecepcao extends JPanel {
                         p.getCpf(),
                         p.getDataNascimento().format(formatadorData),
                         p.isConvenio() ? "Sim" : "Não",
-                        p.isPreferencial() ? "Sim" : "Não"
+                        p.isPreferencial() ? "Sim" : "Não",
+                        p.getStatusPaciente()
                 };
                 modeloPacientes.addRow(linha);
             }
@@ -744,9 +847,62 @@ public class SwingRecepcao extends JPanel {
                         p.getId(),
                         p.getNomeCompleto(),
                         p.isConvenio() ? "Sim" : "Não",
-                        p.isPreferencial() ? "Sim" : "Não"
+                        p.isPreferencial() ? "Sim" : "Não",
+                        p.getStatusPaciente()
                 };
                 modeloPacientesAdmin.addRow(linha);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Erro ao carregar pacientes: " + e.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void carregarPacientesAtivos() {
+        try {
+            modeloPacientes.setRowCount(0);
+            List<Paciente> pacientes = service.listarTodosPacientes();
+
+            for (Paciente p : pacientes) {
+                if ("Ativo".equals(p.getStatusPaciente())) {
+                    Object[] linha = {
+                            p.getId(),
+                            p.getNomeCompleto(),
+                            p.getCpf(),
+                            p.getDataNascimento().format(formatadorData),
+                            p.isConvenio() ? "Sim" : "Não",
+                            p.isPreferencial() ? "Sim" : "Não",
+                            p.getStatusPaciente()
+                    };
+                    modeloPacientes.addRow(linha);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Erro ao carregar pacientes: " + e.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void carregarPacientesInativos() {
+        try {
+            modeloPacientes.setRowCount(0);
+            List<Paciente> pacientes = service.listarTodosPacientes();
+
+            for (Paciente p : pacientes) {
+                if ("Inativo".equals(p.getStatusPaciente())) {
+                    Object[] linha = {
+                            p.getId(),
+                            p.getNomeCompleto(),
+                            p.getCpf(),
+                            p.getDataNascimento().format(formatadorData),
+                            p.isConvenio() ? "Sim" : "Não",
+                            p.isPreferencial() ? "Sim" : "Não",
+                            p.getStatusPaciente()
+                    };
+                    modeloPacientes.addRow(linha);
+                }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,

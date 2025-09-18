@@ -55,7 +55,8 @@ SELECT
     cpf as cpf_formatado,
     TO_CHAR(data_nascimento, 'DD/MM/YYYY') as data_nasc,
     convenio,
-    preferencial
+    preferencial,
+    status_paciente
 FROM dasa_pacientes
 ORDER BY id;
 
@@ -67,7 +68,7 @@ SELECT
     e.nome as exame,
     TO_CHAR(a.data_exame, 'DD/MM/YYYY HH24:MI') as data_exame,
     a.jejum,
-    a.status,
+    a.status_atendimento,
     NVL(TO_CHAR(a.enfermeiro_coren), 'Em espera') as enfermeiro,
     NVL(TO_CHAR(a.tecnico_crbm), 'Em espera') as tecnico
 FROM dasa_atendimentos a

@@ -88,10 +88,12 @@ CREATE TABLE dasa_pacientes (
     data_nascimento         DATE NOT NULL,
     convenio                VARCHAR2(1) DEFAULT 'N' NOT NULL,
     preferencial            VARCHAR2(1) DEFAULT 'N' NOT NULL,
+    status_paciente         VARCHAR2(10) DEFAULT 'Ativo' NOT NULL,
     CONSTRAINT pk_paciente PRIMARY KEY (id),
     CONSTRAINT uk_paciente_cpf UNIQUE (cpf),
     CONSTRAINT ck_paciente_convenio CHECK (convenio IN ('S', 'N')),
-    CONSTRAINT ck_paciente_preferencial CHECK (preferencial IN ('S', 'N'))
+    CONSTRAINT ck_paciente_preferencial CHECK (preferencial IN ('S', 'N')),
+    CONSTRAINT ck_paciente_status CHECK (status_paciente IN ('Ativo', 'Inativo'))
 );
 
 
@@ -104,7 +106,7 @@ CREATE TABLE dasa_atendimentos (
     exame_id                NUMBER(3) NOT NULL,
     data_exame              TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     jejum                   VARCHAR2(1) DEFAULT 'N' NOT NULL,
-    status                  VARCHAR2(20) DEFAULT 'Em espera' NOT NULL,
+    status_atendimento      VARCHAR2(20) DEFAULT 'Em espera' NOT NULL,
     enfermeiro_coren        NUMBER(6),
     tecnico_crbm            NUMBER(5),
     CONSTRAINT pk_atendimento PRIMARY KEY (id),
