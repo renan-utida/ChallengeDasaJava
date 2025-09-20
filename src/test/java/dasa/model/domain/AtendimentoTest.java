@@ -4,7 +4,7 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 
-@DisplayName("Testes da classe Atendimento")
+@DisplayName("Testes - classe Atendimento")
 public class AtendimentoTest {
 
     private Atendimento atendimento;
