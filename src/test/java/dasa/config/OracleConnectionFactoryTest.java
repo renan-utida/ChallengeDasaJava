@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-@DisplayName("Testes da OracleConnectionFactory")
+@DisplayName("Testes - OracleConnectionFactory")
 public class OracleConnectionFactoryTest {
 
     private String originalUrl;

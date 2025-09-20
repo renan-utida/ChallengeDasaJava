@@ -60,7 +60,7 @@ SELECT
 FROM dasa_pacientes
 ORDER BY id;
 
--- Query para visualizar atendimentos:
+-- Query melhorada para visualizar atendimentos com tratamento correto de status
 SELECT
     a.id,
     p.nome_completo,
@@ -69,9 +69,21 @@ SELECT
     TO_CHAR(a.data_exame, 'DD/MM/YYYY HH24:MI') as data_exame,
     a.jejum,
     a.status_atendimento,
-    NVL(TO_CHAR(a.enfermeiro_coren), 'Em espera') as enfermeiro,
-    NVL(TO_CHAR(a.tecnico_crbm), 'Em espera') as tecnico
+    CASE
+        WHEN a.status_atendimento = 'Cancelado' THEN 'Cancelado'
+        WHEN a.status_atendimento = 'Em espera' THEN 'Em espera'
+        WHEN a.enfermeiro_coren IS NOT NULL THEN enf.nome || ' - COREN: ' || a.enfermeiro_coren
+        ELSE 'Em espera'
+    END as enfermeiro,
+    CASE
+        WHEN a.status_atendimento = 'Cancelado' THEN 'Cancelado'
+        WHEN a.status_atendimento = 'Em espera' THEN 'Em espera'
+        WHEN a.tecnico_crbm IS NOT NULL THEN tec.nome || ' - CRBM: ' || a.tecnico_crbm
+        ELSE 'Em espera'
+    END as tecnico
 FROM dasa_atendimentos a
 JOIN dasa_pacientes p ON a.paciente_id = p.id
 JOIN dasa_exames e ON a.exame_id = e.id
+LEFT JOIN dasa_enfermeiros enf ON a.enfermeiro_coren = enf.coren
+LEFT JOIN dasa_tecnicos tec ON a.tecnico_crbm = tec.crbm
 ORDER BY a.id;

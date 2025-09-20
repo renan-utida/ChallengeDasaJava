@@ -8,7 +8,6 @@ import java.time.format.DateTimeFormatter;
  */
 public class Paciente {
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private int id;
     private String nomeCompleto;
@@ -28,24 +27,6 @@ public class Paciente {
         this.preferencial = preferencial;
         this.statusPaciente = "Ativo";
     }
-
-//    // Construtor completo (para carregar do banco)
-//    public Paciente(int id, String nomeCompleto, String cpf, String dataNascimentoStr,
-//                    String dataExameStr, boolean convenio, boolean preferencial, boolean jejum,
-//                    String exame, String status, String enfermeiroResponsavel, String responsavelColeta) {
-//        this.id = id;
-//        this.nomeCompleto = nomeCompleto;
-//        this.cpf = cpf;
-//        this.dataNascimento = LocalDate.parse(dataNascimentoStr, dateFormatter);
-//        this.dataExame = LocalDateTime.parse(dataExameStr, dateTimeFormatter);
-//        this.convenio = convenio;
-//        this.preferencial = preferencial;
-//        this.jejum = jejum;
-//        this.exame = exame;
-//        this.status = status;
-//        this.enfermeiroResponsavel = enfermeiroResponsavel;
-//        this.responsavelColeta = responsavelColeta;
-//    }
 
     // Construtor vazio
     public Paciente() {
