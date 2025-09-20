@@ -1,5 +1,6 @@
 package dasa.view.ui.swing.setores;
 
+import dasa.service.AlmoxarifadoService;
 import dasa.service.EnfermariaService;
 import dasa.model.funcionarios.Enfermeiro;
 import dasa.model.domain.Atendimento;
@@ -12,14 +13,16 @@ public class SwingEnfermaria extends JPanel {
 
     private JPanel mainPanel;
     private EnfermariaService service;
+    private AlmoxarifadoService almoxarifadoService;
     private JTable tabelaEnfermeiros;
     private DefaultTableModel modeloEnfermeiros;
     private JTable tabelaAtendimentos;
     private DefaultTableModel modeloAtendimentos;
 
-    public SwingEnfermaria(JPanel mainPanel, EnfermariaService service) {
+    public SwingEnfermaria(JPanel mainPanel, EnfermariaService service, AlmoxarifadoService almoxarifadoService) {
         this.mainPanel = mainPanel;
         this.service = service;
+        this.almoxarifadoService = almoxarifadoService;
         configurarTela();
     }
 
@@ -151,7 +154,7 @@ public class SwingEnfermaria extends JPanel {
         topPanel.add(btnBuscar);
 
         // Tabela de atendimentos
-        String[] colunas = {"ID Atendimento", "Paciente", "Exame", "Data", "Status"};
+        String[] colunas = {"ID Atendimento", "Paciente", "Exame", "Data", "Jejum", "Status", "Técnico"};
         modeloAtendimentos = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -203,13 +206,27 @@ public class SwingEnfermaria extends JPanel {
                 List<Atendimento> atendimentos = service.listarAtendimentosPorEnfermeiro(item.id);
 
                 for (Atendimento a : atendimentos) {
+                    String tecnico = "Em espera";
+
+                    // Verificar se o responsável pela coleta está preenchido
+                    if ("Atendido".equals(a.getStatus())) {
+                        String respColeta = a.getResponsavelColeta();
+                        if (respColeta != null && !respColeta.equals("Em espera") && !respColeta.equals("Cancelado")) {
+                            tecnico = respColeta; // Já vem formatado como "Nome - CRBM: xxxxx"
+                        }
+                    } else if ("Cancelado".equals(a.getStatus())) {
+                        tecnico = "Cancelado";
+                    }
+
                     Object[] linha = {
                             a.getId(),
                             a.getPaciente().getNomeCompleto(),
                             a.getExame(),
                             a.getDataExame().format(
                                     java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
-                            a.getStatus()
+                            a.isJejum() ? "Sim": "Não",
+                            a.getStatus(),
+                            tecnico
                     };
                     modeloAtendimentos.addRow(linha);
                 }

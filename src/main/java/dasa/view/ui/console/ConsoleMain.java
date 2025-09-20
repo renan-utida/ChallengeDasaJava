@@ -102,7 +102,7 @@ public class ConsoleMain {
         ConsoleAlmoxarifado consoleAlmoxarifado = new ConsoleAlmoxarifado(
                 scanner, almoxarifadoService, estoqueService, tecnicoLogado
         );
-        ConsoleEnfermaria consoleEnfermaria = new ConsoleEnfermaria(scanner, enfermariaService);
+        ConsoleEnfermaria consoleEnfermaria = new ConsoleEnfermaria(scanner, enfermariaService, almoxarifadoService);
 
         while (true) {
             try {

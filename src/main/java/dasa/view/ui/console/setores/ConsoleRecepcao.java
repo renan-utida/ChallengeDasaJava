@@ -382,7 +382,23 @@ public class ConsoleRecepcao {
 
     private void corrigirDadosPaciente() {
         System.out.println("\n=== CORRIGIR DADOS DO PACIENTE ===");
-        System.out.println("Qual dado deseja corrigir?");
+
+        // Primeiro mostra apenas pacientes ATIVOS
+        List<Paciente> pacientes = service.listarTodosPacientes();
+        List<Paciente> pacientesAtivos = new ArrayList<>();
+
+        for (Paciente p : pacientes) {
+            if ("Ativo".equals(p.getStatusPaciente())) {
+                pacientesAtivos.add(p);
+            }
+        }
+
+        if (pacientesAtivos.isEmpty()) {
+            System.out.println("Nenhum paciente ativo cadastrado.");
+            return;
+        }
+
+        System.out.println("\nQual dado deseja corrigir?");
         System.out.println("1 - Nome");
         System.out.println("2 - Data de Nascimento");
         System.out.println("3 - Convênio");
@@ -396,21 +412,14 @@ public class ConsoleRecepcao {
 
             if (opcao == 5) return;
 
-            // Exibir pacientes conforme o tipo de dado
-            List<Paciente> pacientes = service.listarTodosPacientes();
-            if (pacientes.isEmpty()) {
-                System.out.println("Nenhum paciente cadastrado.");
-                return;
-            }
-
-            System.out.println("\n=== PACIENTES CADASTRADOS ===");
+            System.out.println("\n=== PACIENTES ATIVOS ===");
 
             if (opcao <= 2) { // Dados básicos
-                for (Paciente p : pacientes) {
+                for (Paciente p : pacientesAtivos) {
                     p.exibirDados("basico");
                 }
             } else if (opcao <= 4) { // Dados administrativos
-                for (Paciente p : pacientes) {
+                for (Paciente p : pacientesAtivos) {
                     p.exibirDados("administrativo");
                 }
             } else {
@@ -436,6 +445,13 @@ public class ConsoleRecepcao {
 
             if (paciente == null) {
                 System.out.println("ERRO: Paciente não encontrado!");
+                return;
+            }
+
+            // Verificar se o paciente está ativo
+            if (!"Ativo".equals(paciente.getStatusPaciente())) {
+                System.out.println("ERRO: Não é permitido alterar dados de pacientes inativos!");
+                System.out.println("Reative o paciente antes de fazer alterações.");
                 return;
             }
 

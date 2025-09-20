@@ -95,15 +95,6 @@ public class JdbcPacienteDaoTest {
     }
 
     @Test
-    @DisplayName("Deve validar que método excluir existe")
-    public void testValidarQueMetodoExcluirExiste() {
-        // Testa apenas se o metodo existe sem executar
-        assertDoesNotThrow(() -> {
-            dao.getClass().getMethod("excluir", int.class);
-        }, "Método excluir deve existir");
-    }
-
-    @Test
     @DisplayName("Deve obter próximo ID sem modificar dados")
     public void testObterProximoIdSemModificarDados() {
         // When & Then - Este metodo apenas consulta sequence, não modifica dados

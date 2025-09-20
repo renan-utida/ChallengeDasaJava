@@ -49,7 +49,7 @@ public class SwingMain {
     private static void exibirTelaLogin() {
         JFrame loginFrame = new JFrame("SECAI - Login");
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        loginFrame.setSize(400, 300);
+        loginFrame.setSize(400, 350);
         loginFrame.setLocationRelativeTo(null);
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -161,7 +161,7 @@ public class SwingMain {
     private static void exibirMenuPrincipal() {
         JFrame frame = new JFrame("SECAI - Sistema de Gestão Laboratorial");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 600);
+        frame.setSize(1200, 600);
         frame.setLocationRelativeTo(null);
 
         // CardLayout para trocar entre telas
@@ -175,7 +175,7 @@ public class SwingMain {
         mainPanel.add(new SwingRecepcao(mainPanel, recepcaoService), "RECEPCAO");
         mainPanel.add(new SwingAlmoxarifado(mainPanel, almoxarifadoService,
                     estoqueService, tecnicoLogado), "ALMOXARIFADO");
-        mainPanel.add(new SwingEnfermaria(mainPanel, enfermariaService), "ENFERMARIA");
+        mainPanel.add(new SwingEnfermaria(mainPanel, enfermariaService, almoxarifadoService), "ENFERMARIA");
 
         frame.setContentPane(mainPanel);
         frame.setVisible(true);

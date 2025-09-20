@@ -1,6 +1,7 @@
 package dasa.view.ui.console.setores;
 
 import dasa.model.domain.*;
+import dasa.service.AlmoxarifadoService;
 import dasa.service.EnfermariaService;
 import dasa.model.funcionarios.Enfermeiro;
 import java.util.*;
@@ -11,10 +12,12 @@ import java.util.*;
 public class ConsoleEnfermaria {
     private Scanner scanner;
     private EnfermariaService service;
+    private AlmoxarifadoService almoxarifadoService;
 
-    public ConsoleEnfermaria(Scanner scanner, EnfermariaService service) {
+    public ConsoleEnfermaria(Scanner scanner, EnfermariaService service, AlmoxarifadoService almoxarifadoService) {
         this.scanner = scanner;
         this.service = service;
+        this.almoxarifadoService = almoxarifadoService;
     }
 
     public void exibirMenu() {

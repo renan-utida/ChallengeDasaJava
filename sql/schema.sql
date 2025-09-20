@@ -120,7 +120,7 @@ CREATE TABLE dasa_atendimentos (
         REFERENCES dasa_tecnicos(crbm),
     CONSTRAINT ck_atendimento_jejum CHECK (jejum IN ('S', 'N')),
     CONSTRAINT ck_atendimento_status
-        CHECK (status IN ('Em espera', 'Atendido', 'Cancelado'))
+        CHECK (status_atendimento IN ('Em espera', 'Atendido', 'Cancelado'))
 );
 
 -- =====================================================
@@ -160,7 +160,7 @@ CREATE TABLE dasa_itens_retirada (
 -- ÍNDICES PARA PERFORMANCE
 -- =====================================================
 CREATE INDEX idx_atendimento_paciente ON dasa_atendimentos(paciente_id);
-CREATE INDEX idx_atendimento_status ON dasa_atendimentos(status);
+CREATE INDEX idx_atendimento_status ON dasa_atendimentos(status_atendimento);
 CREATE INDEX idx_atendimento_data ON dasa_atendimentos(data_exame);
 CREATE INDEX idx_historico_data ON dasa_historico_retiradas(data_retirada);
 CREATE INDEX idx_insumo_nome ON dasa_insumos(nome);

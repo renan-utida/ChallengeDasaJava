@@ -1,4 +1,4 @@
-    SET ECHO ON
+SET ECHO ON
 
 -- =====================================================
 -- SCRIPT DE CARGA INICIAL - SISTEMA DASA

@@ -15,54 +15,41 @@ public class Paciente {
     private String cpf;
     private LocalDate dataNascimento;
     private String statusPaciente = "Ativo";
-    private LocalDateTime dataExame;
     private boolean convenio;
     private boolean preferencial;
-    private boolean jejum;
-    private String exame;
-    private String status;
-    private String enfermeiroResponsavel;
-    private String responsavelColeta;
 
     // Construtor para novo paciente
     public Paciente(String nomeCompleto, String cpf, String dataNascimentoStr,
-                    boolean convenio, boolean preferencial, boolean jejum, String exame) {
+                    boolean convenio, boolean preferencial) {
         this.nomeCompleto = nomeCompleto;
         this.cpf = cpf;
         this.dataNascimento = LocalDate.parse(dataNascimentoStr, dateFormatter);
-        this.dataExame = LocalDateTime.now();
         this.convenio = convenio;
         this.preferencial = preferencial;
-        this.jejum = jejum;
-        this.exame = exame;
-        this.status = "Em espera";
-        this.enfermeiroResponsavel = "Em espera";
-        this.responsavelColeta = "Em espera";
+        this.statusPaciente = "Ativo";
     }
 
-    // Construtor completo (para carregar do banco)
-    public Paciente(int id, String nomeCompleto, String cpf, String dataNascimentoStr,
-                    String dataExameStr, boolean convenio, boolean preferencial, boolean jejum,
-                    String exame, String status, String enfermeiroResponsavel, String responsavelColeta) {
-        this.id = id;
-        this.nomeCompleto = nomeCompleto;
-        this.cpf = cpf;
-        this.dataNascimento = LocalDate.parse(dataNascimentoStr, dateFormatter);
-        this.dataExame = LocalDateTime.parse(dataExameStr, dateTimeFormatter);
-        this.convenio = convenio;
-        this.preferencial = preferencial;
-        this.jejum = jejum;
-        this.exame = exame;
-        this.status = status;
-        this.enfermeiroResponsavel = enfermeiroResponsavel;
-        this.responsavelColeta = responsavelColeta;
-    }
+//    // Construtor completo (para carregar do banco)
+//    public Paciente(int id, String nomeCompleto, String cpf, String dataNascimentoStr,
+//                    String dataExameStr, boolean convenio, boolean preferencial, boolean jejum,
+//                    String exame, String status, String enfermeiroResponsavel, String responsavelColeta) {
+//        this.id = id;
+//        this.nomeCompleto = nomeCompleto;
+//        this.cpf = cpf;
+//        this.dataNascimento = LocalDate.parse(dataNascimentoStr, dateFormatter);
+//        this.dataExame = LocalDateTime.parse(dataExameStr, dateTimeFormatter);
+//        this.convenio = convenio;
+//        this.preferencial = preferencial;
+//        this.jejum = jejum;
+//        this.exame = exame;
+//        this.status = status;
+//        this.enfermeiroResponsavel = enfermeiroResponsavel;
+//        this.responsavelColeta = responsavelColeta;
+//    }
 
     // Construtor vazio
     public Paciente() {
-        this.status = "Em espera";
-        this.enfermeiroResponsavel = "Em espera";
-        this.responsavelColeta = "Em espera";
+        this.statusPaciente = "Ativo";
     }
 
     /**
@@ -78,11 +65,6 @@ public class Paciente {
      * Formata data de nascimento para manter compatibilidade com string
     */
     public String getDataNascimentoFormatada() { return dataNascimento.format(dateFormatter); }
-
-    /**
-     * Formata data do exame para manter compatibilidade com string
-     */
-    public String getDataExameFormatada() { return dataExame.format(dateTimeFormatter); }
 
     /**
      * Exibe os dados do paciente formatados
@@ -140,31 +122,9 @@ public class Paciente {
     public String getStatusPaciente(){ return statusPaciente; }
     public void setStatusPaciente(String statusPaciente) { this.statusPaciente = statusPaciente; }
 
-    public LocalDateTime getDataExame() { return dataExame; }
-    public void setDataExame(LocalDateTime dataExame) { this.dataExame = dataExame; }
-
     public boolean isConvenio() { return convenio; }
     public void setConvenio(boolean convenio) { this.convenio = convenio; }
 
     public boolean isPreferencial() { return preferencial; }
     public void setPreferencial(boolean preferencial) { this.preferencial = preferencial; }
-
-    public boolean isJejum() { return jejum; }
-    public void setJejum(boolean jejum) { this.jejum = jejum; }
-
-    public String getExame() { return exame; }
-    public void setExame(String exame) { this.exame = exame; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public String getEnfermeiroResponsavel() { return enfermeiroResponsavel; }
-    public void setEnfermeiroResponsavel(String enfermeiroResponsavel) {
-        this.enfermeiroResponsavel = enfermeiroResponsavel;
-    }
-
-    public String getResponsavelColeta() { return responsavelColeta; }
-    public void setResponsavelColeta(String responsavelColeta) {
-        this.responsavelColeta = responsavelColeta;
-    }
 }

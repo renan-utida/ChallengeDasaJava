@@ -228,16 +228,26 @@ public class JdbcAtendimentoDao implements AtendimentoDao {
         String enfermeiroInfo = rs.getString("enfermeiro_info");
         String tecnicoInfo = rs.getString("tecnico_info");
 
-        // Se não houver info, mantém "Em espera"
-        if (enfermeiroInfo != null && !enfermeiroInfo.contains("null")) {
-            atendimento.setEnfermeiroResponsavel(enfermeiroInfo);
-        } else {
-            atendimento.setEnfermeiroResponsavel("Em espera");
-        }
+        // Se o status for "Cancelado", mostra "Cancelado" para enfermeiro e técnico
+        if ("Cancelado".equals(atendimento.getStatus())) {
+            atendimento.setEnfermeiroResponsavel("Cancelado");
+            atendimento.setResponsavelColeta("Cancelado");
+        } else if ("Atendido".equals(atendimento.getStatus())) {
+            // Se não houver info ou for null, mantém "Em espera"
+            if (enfermeiroInfo != null && !enfermeiroInfo.contains("null")) {
+                atendimento.setEnfermeiroResponsavel(enfermeiroInfo);
+            } else {
+                atendimento.setEnfermeiroResponsavel("Em espera");
+            }
 
-        if (tecnicoInfo != null && !tecnicoInfo.contains("null")) {
-            atendimento.setResponsavelColeta(tecnicoInfo);
+            if (tecnicoInfo != null && !tecnicoInfo.contains("null")) {
+                atendimento.setResponsavelColeta(tecnicoInfo);
+            } else {
+                atendimento.setResponsavelColeta("Em espera");
+            }
         } else {
+            // Status "Em espera"
+            atendimento.setEnfermeiroResponsavel("Em espera");
             atendimento.setResponsavelColeta("Em espera");
         }
 
@@ -264,10 +274,16 @@ public class JdbcAtendimentoDao implements AtendimentoDao {
     @Override
     public List<Atendimento> listarPorEnfermeiro(int coren) {
         String sql = "SELECT a.*, e.nome as exame_nome, " +
-                "p.nome_completo, p.cpf, p.data_nascimento, p.convenio, p.preferencial " +
+                "p.nome_completo, p.cpf, p.data_nascimento, p.convenio, p.preferencial, " +
+                "CASE WHEN enf.nome IS NOT NULL THEN enf.nome || ' - COREN: ' || enf.coren " +
+                "ELSE NULL END as enfermeiro_info, " +
+                "CASE WHEN tec.nome IS NOT NULL THEN tec.nome || ' - CRBM: ' || tec.crbm " +
+                "ELSE NULL END as tecnico_info " +
                 "FROM dasa_atendimentos a " +
                 "JOIN dasa_exames e ON a.exame_id = e.id " +
                 "JOIN dasa_pacientes p ON a.paciente_id = p.id " +
+                "LEFT JOIN dasa_enfermeiros enf ON a.enfermeiro_coren = enf.coren " +
+                "LEFT JOIN dasa_tecnicos tec ON a.tecnico_crbm = tec.crbm " +
                 "WHERE a.enfermeiro_coren = ? AND a.status_atendimento = 'Atendido' " +
                 "ORDER BY a.data_exame DESC";
 
@@ -280,7 +296,7 @@ public class JdbcAtendimentoDao implements AtendimentoDao {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    atendimentos.add(mapearAtendimentoCompleto(rs));
+                    atendimentos.add(mapearAtendimentoCompletoInfo(rs));
                 }
             }
         } catch (SQLException e) {
@@ -288,6 +304,4 @@ public class JdbcAtendimentoDao implements AtendimentoDao {
         }
         return atendimentos;
     }
-
-
 }
