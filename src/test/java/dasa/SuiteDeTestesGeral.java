@@ -5,7 +5,7 @@ import org.junit.platform.suite.api.Suite;
 
 // Roda todos os testes dentro dos pacotes indicados
 @Suite
-@SelectPackages({"dasa.config", "dasa.controller"})
+@SelectPackages({"dasa.config", "dasa.controller", "dasa.model", "dasa.service"})
 public class SuiteDeTestesGeral {
     // Nenhum código necessário aqui
 }
