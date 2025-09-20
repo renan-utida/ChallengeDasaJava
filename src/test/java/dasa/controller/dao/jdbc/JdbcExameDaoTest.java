@@ -1,6 +1,5 @@
 package dasa.controller.dao.jdbc;
 
-import dasa.controller.dao.jdbc.JdbcExameDao;
 import dasa.model.domain.Exame;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;

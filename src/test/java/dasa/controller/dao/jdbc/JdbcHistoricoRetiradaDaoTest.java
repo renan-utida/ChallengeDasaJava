@@ -1,6 +1,5 @@
 package dasa.controller.dao.jdbc;
 
-import dasa.controller.dao.jdbc.JdbcHistoricoRetiradaDao;
 import dasa.model.domain.Insumo;
 import dasa.model.domain.ItemCesta;
 import org.junit.jupiter.api.*;

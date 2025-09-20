@@ -1,12 +1,10 @@
 package dasa.controller.dao.jdbc;
 
-import dasa.controller.dao.jdbc.JdbcAtendimentoDao;
 import dasa.model.domain.Atendimento;
 import dasa.model.domain.Paciente;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @DisplayName("Testes - JdbcAtendimentoDao com Mock")
 public class JdbcAtendimentoDaoTest {

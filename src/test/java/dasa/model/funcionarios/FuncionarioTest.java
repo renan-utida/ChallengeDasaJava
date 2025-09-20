@@ -1,6 +1,5 @@
 package dasa.model.funcionarios;
 
-import dasa.model.funcionarios.*;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 

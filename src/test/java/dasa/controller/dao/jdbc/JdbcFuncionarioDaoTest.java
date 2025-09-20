@@ -1,6 +1,5 @@
 package dasa.controller.dao.jdbc;
 
-import dasa.controller.dao.jdbc.JdbcFuncionarioDao;
 import dasa.model.funcionarios.Enfermeiro;
 import dasa.model.funcionarios.TecnicoLaboratorio;
 import org.junit.jupiter.api.*;
