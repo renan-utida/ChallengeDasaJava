@@ -608,13 +608,13 @@ mvn test -Dtest="dasa.controller.dao.jdbc.*Test"
 🧪 Suite de Testes Centralizada
 ├── ⚙️ config (6 testes)
 │   └── ✅ OracleCOnnectionFactoryTest (6 testes)
-├── 🗂️ controller/dao/jdbc (46 testes)
+├── 🗂️ controller/dao/jdbc (45 testes)
 │   ├── ✅ JdbcAtendimentoDaoTest (7 testes)
 │   ├── ✅ JdbcExameDaoTest (6 testes)
 │   ├── ✅ JdbcFuncionarioDaoTest (8 testes)
 │   ├── ✅ JdbcHistoricoRetiradaDaoTest (8 testes)
 │   ├── ✅ JdbcInsumoDaoTest (8 testes)
-│   └── ✅ JdbcPacienteDaoTest (9 testes)
+│   └── ✅ JdbcPacienteDaoTest (8 testes)
 ├── 🧩 model (49 testes)
 │   ├── 🏥 domain/ (27 testes)
 │   │   ├── ✅ AtendimentoTest (5 testes)
@@ -632,7 +632,7 @@ mvn test -Dtest="dasa.controller.dao.jdbc.*Test"
     ├── ✅ EstoqueServiceTest (6 testes)
     └── ✅ RecepcaoServiceTest (9 testes)
 
-🛠 Total de Testes: 129 testes
+🛠 Total de Testes: 128 testes
 ```
 
 ### **🎯 Técnicas Avançadas de Teste**
@@ -724,7 +724,7 @@ mvn test -Dtest="dasa.controller.dao.jdbc.*Test"
 @Suite
 @SelectPackages({"dasa.config", "dasa.controller", "dasa.model", "dasa.service"})
 public class SuiteDeTestesGeral {
-    // Executa todos os 129 testes organizadamente
+    // Executa todos os 128 testes organizadamente
 }
 ```
 
