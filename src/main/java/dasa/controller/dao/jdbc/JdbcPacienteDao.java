@@ -78,6 +78,7 @@ public class JdbcPacienteDao implements PacienteDao {
         return null;
     }
 
+    // LIST ALL
     @Override
     public List<Paciente> listarTodos() {
         String sql = "SELECT * FROM dasa_pacientes ORDER BY id ASC";

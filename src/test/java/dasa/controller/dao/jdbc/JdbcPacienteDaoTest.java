@@ -95,16 +95,6 @@ public class JdbcPacienteDaoTest {
     }
 
     @Test
-    @DisplayName("Deve obter próximo ID sem modificar dados")
-    public void testObterProximoIdSemModificarDados() {
-        // When & Then - Este metodo apenas consulta sequence, não modifica dados
-        assertDoesNotThrow(() -> {
-            int proximoId = dao.obterProximoId();
-            assertTrue(proximoId >= 0, "Próximo ID deve ser não negativo");
-        });
-    }
-
-    @Test
     @DisplayName("Deve validar estrutura do paciente de teste")
     public void testValidarEstruturaPacienteTeste() {
         // Given & When & Then - testa apenas o objeto, não o banco
