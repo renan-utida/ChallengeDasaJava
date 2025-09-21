@@ -804,10 +804,6 @@ public void exibirDados(String categoria) {  } // 🏷️ Por categoria específ
 - 🟡 **Protected:** Compartilhamento controlado na hierarquia
 - 🟢 **Public:** Interface pública bem definida com getters/setters
 
-- Atributos privados
-- Acesso via getters/setters
-- Validações internas
-
 ## **📊 Métricas do Projeto**
 
 - **Linhas de código:** 8.000+
