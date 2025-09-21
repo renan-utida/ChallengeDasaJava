@@ -2,8 +2,8 @@
 
 ## **📋 Índice**
 
-- [Sobre o Projeto](#sobre-o-projeto)
-- [Arquitetura](#arquitetura)
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Arquitetura](#-arquitetura)
 - [Tecnologias](#tecnologias)
 - [Funcionalidades Principais](#funcionalidades-principais)
 - [Mapeamento de Exames e Insumos](#mapeamento-de-exames-e-insumos)
