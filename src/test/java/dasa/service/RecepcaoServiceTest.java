@@ -1,5 +1,6 @@
 package dasa.service;
 
+import com.dasa.service.RecepcaoService;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 

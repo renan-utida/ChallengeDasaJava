@@ -1,8 +1,8 @@
-package dasa.view.ui.console.setores;
+package com.dasa.view.ui.console.setores;
 
-import dasa.service.*;
-import dasa.model.domain. *;
-import dasa.model.funcionarios. *;
+import com.dasa.service.*;
+import com.dasa.model.domain. *;
+import com.dasa.model.funcionarios. *;
 import java.util.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

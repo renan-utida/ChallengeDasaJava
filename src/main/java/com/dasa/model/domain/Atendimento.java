@@ -1,22 +1,74 @@
-package dasa.model.domain;
+package com.dasa.model.domain;
+
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Classe para representar os atendimentos realizados pelos pacientes
+ * Funciona com JDBC (Console/Swing) E JPA (REST API)
+ */
+@Entity
+@Table(name = "dasa_atendimentos")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Atendimento {
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_atendimento")
+    @SequenceGenerator(
+            name = "seq_atendimento",
+            sequenceName = "seq_atendimento_id",
+            allocationSize = 1
+    )
+    @Column(name = "id")
     private int id;
+
+    @Column(name = "paciente_id", nullable = false)
     private int pacienteId;
+
+    /**
+     * Relacionamento ManyToOne com Paciente
+     * FetchType.LAZY = carrega apenas quando acessar getPaciente()
+     * insertable/updatable = false porque pacienteId já controla isso
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "paciente_id", insertable = false, updatable = false)
     private Paciente paciente; // Referência ao paciente
+
+    /**
+     * ATENÇÃO: exame_id no banco, mas usamos String exame no código
+     * Mantém String para compatibilidade JDBC
+     */
+    @Column(name = "exame_id", insertable = false, updatable = false)
+    @Transient
     private String exame;
+
+    @Column(name = "data_exame", nullable = false)
     private LocalDateTime dataExame;
+
+    @Column(name = "jejum", length = 1, nullable = false)
     private boolean jejum;
+
+    @Column(name = "status_atendimento", length = 20)
     private String status;
+
+    @Column(name = "enfermeiro_coren")
     private String enfermeiroResponsavel;
+
+    @Column(name = "tecnico_crbm")
     private String responsavelColeta;
 
-    // Construtor para novo atendimento
+
+    // Construtores mantidos para compatibilidade JDBC/Console/Swing
+
+    /**
+     * Construtor para novo atendimento (Console/Swing)
+     */
     public Atendimento(int pacienteId, String exame, boolean jejum) {
         this.pacienteId = pacienteId;
         this.exame = exame;
@@ -27,7 +79,9 @@ public class Atendimento {
         this.responsavelColeta = "Em espera";
     }
 
-    // Construtor completo
+    /**
+     * Construtor completo (JDBC)
+     */
     public Atendimento(int id, int pacienteId, String exame, LocalDateTime dataExame,
                        boolean jejum, String status, String enfermeiroResponsavel,
                        String responsavelColeta) {
@@ -41,6 +95,9 @@ public class Atendimento {
         this.responsavelColeta = responsavelColeta;
     }
 
+    /**
+     * Exibe dados formatados (Console/Swing)
+     */
     public void exibirDados() {
         System.out.println("ID Atendimento: #" + id);
         System.out.println("Status: " + status);
@@ -58,37 +115,5 @@ public class Atendimento {
         System.out.println("\tEnfermeiro Responsável: " + enfermeiroResponsavel);
         System.out.println("\tResponsável Coleta de Insumos: " + responsavelColeta);
         System.out.println("========================================================");
-    }
-
-    // Getters e Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-
-    public int getPacienteId() { return pacienteId; }
-    public void setPacienteId(int pacienteId) { this.pacienteId = pacienteId; }
-
-    public Paciente getPaciente() { return paciente; }
-    public void setPaciente(Paciente paciente) { this.paciente = paciente; }
-
-    public String getExame() { return exame; }
-    public void setExame(String exame) { this.exame = exame; }
-
-    public LocalDateTime getDataExame() { return dataExame; }
-    public void setDataExame(LocalDateTime dataExame) { this.dataExame = dataExame; }
-
-    public boolean isJejum() { return jejum; }
-    public void setJejum(boolean jejum) { this.jejum = jejum; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public String getEnfermeiroResponsavel() { return enfermeiroResponsavel; }
-    public void setEnfermeiroResponsavel(String enfermeiroResponsavel) {
-        this.enfermeiroResponsavel = enfermeiroResponsavel;
-    }
-
-    public String getResponsavelColeta() { return responsavelColeta; }
-    public void setResponsavelColeta(String responsavelColeta) {
-        this.responsavelColeta = responsavelColeta;
     }
 }

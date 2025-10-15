@@ -1,7 +1,7 @@
-package dasa.view.ui.swing.setores;
+package com.dasa.view.ui.swing.setores;
 
-import dasa.service.RecepcaoService;
-import dasa.model.domain.*;
+import com.dasa.service.RecepcaoService;
+import com.dasa.model.domain.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;

@@ -1,5 +1,6 @@
 package dasa.service;
 
+import com.dasa.service.EstoqueService;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 

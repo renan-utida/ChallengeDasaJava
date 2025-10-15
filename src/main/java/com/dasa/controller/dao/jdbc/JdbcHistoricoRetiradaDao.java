@@ -1,14 +1,14 @@
-package com.dasa.dao.jdbc;
+package com.dasa.controller.dao.jdbc;
 
 import com.dasa.config.OracleConnectionFactory;
-import com.dasa.repository.HistoricoRepository;
+import com.dasa.controller.dao.HistoricoDao;
 import com.dasa.model.domain.ItemCesta;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class JdbcHistoricoRetiradaDao implements HistoricoRepository {
+public class JdbcHistoricoRetiradaDao implements HistoricoDao {
 
     @Override
     public void salvarRetirada(int atendimentoId, LocalDateTime dataRetirada,

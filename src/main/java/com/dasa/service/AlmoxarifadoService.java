@@ -1,10 +1,9 @@
-package dasa.service;
+package com.dasa.service;
 
-import dasa.controller.dao.*;
-import dasa.controller.dao.jdbc.*;
-import dasa.model.funcionarios.TecnicoLaboratorio;
-import dasa.model.funcionarios.Enfermeiro;
-import dasa.model.domain.*;
+import com.dasa.controller.dao.*;
+import com.dasa.controller.dao.jdbc.*;
+import com.dasa.model.domain.*;
+import com.dasa.model.funcionarios.*;
 
 import java.time.LocalDateTime;
 import java.util.*;

@@ -1,14 +1,14 @@
-package com.dasa.dao.jdbc;
+package com.dasa.controller.dao.jdbc;
 
 import com.dasa.config.OracleConnectionFactory;
-import com.dasa.repository.ExameRepository;
+import com.dasa.controller.dao.ExameDao;
 import com.dasa.model.domain.Exame;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JdbcExameDao implements ExameRepository {
+public class JdbcExameDao implements ExameDao {
 
     @Override
     public Exame buscarPorId(int id) {

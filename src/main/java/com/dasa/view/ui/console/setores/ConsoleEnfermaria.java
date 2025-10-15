@@ -1,9 +1,9 @@
-package dasa.view.ui.console.setores;
+package com.dasa.view.ui.console.setores;
 
-import dasa.model.domain.*;
-import dasa.service.AlmoxarifadoService;
-import dasa.service.EnfermariaService;
-import dasa.model.funcionarios.Enfermeiro;
+import com.dasa.model.domain.*;
+import com.dasa.service.AlmoxarifadoService;
+import com.dasa.service.EnfermariaService;
+import com.dasa.model.funcionarios.Enfermeiro;
 import java.util.*;
 
 /**

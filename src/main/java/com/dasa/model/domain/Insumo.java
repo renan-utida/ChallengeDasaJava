@@ -1,29 +1,38 @@
-package dasa.model.domain;
+package com.dasa.model.domain;
+
+import jakarta.persistence.*;
+import lombok.*;
 
 /**
  * Classe para representar materiais/insumos do laboratório
+ * Funciona com JDBC (Console/Swing) E JPA (REST API)
  */
+@Entity
+@Table(name = "dasa_insumos")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Insumo {
+
+    @Id
+    @Column(name = "id")
     private int id;
+
+    @Column(name = "nome", length = 100, nullable = false)
     private String nome;
+
+    @Column(name = "codigo_barras", unique = true, nullable = false)
     private int codigoBarras;
+
+    @Column(name = "quantidade_disponivel", nullable = false)
     private int quantidadeDisponivel;
+
+    @Column(name = "quantidade_maxima", nullable = false)
     private int quantidadeMaxima;
-
-    // Construtor completo
-    public Insumo(int id, String nome, int codigoBarras, int quantidadeDisponivel, int quantidadeMaxima) {
-        this.id = id;
-        this.nome = nome;
-        this.codigoBarras = codigoBarras;
-        this.quantidadeDisponivel = quantidadeDisponivel;
-        this.quantidadeMaxima = quantidadeMaxima;
-    }
-
-    // Construtor vazio
-    public Insumo() {}
 
     /**
      * Adiciona quantidade ao estoque se não ultrapassar o máximo
+     * Lógica de negócio mantida (JDBC/Console/Swing)
      */
     public boolean adicionarQuantidade(int quantidade) {
         if (quantidadeDisponivel + quantidade <= quantidadeMaxima) {
@@ -35,6 +44,7 @@ public class Insumo {
 
     /**
      * Remove quantidade do estoque se houver disponível
+     * Lógica de negócio mantida (JDBC/Console/Swing)
      */
     public boolean removerQuantidade(int quantidade) {
         if (quantidadeDisponivel >= quantidade) {
@@ -45,7 +55,7 @@ public class Insumo {
     }
 
     /**
-     * Exibe os dados do insumo formatados
+     * Exibe os dados do insumo formatados (Console/Swing)
      */
     public void exibirDados() {
         System.out.println("ID Insumo: " + id + " - Nome Insumo: " + nome);
@@ -53,25 +63,5 @@ public class Insumo {
         System.out.println("\tQuantidade Disponível: " + quantidadeDisponivel);
         System.out.println("\tQuantidade Máxima: " + quantidadeMaxima);
         System.out.println("=============================================================");
-    }
-
-    // Getters e Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
-
-    public int getCodigoBarras() { return codigoBarras; }
-    public void setCodigoBarras(int codigoBarras) { this.codigoBarras = codigoBarras; }
-
-    public int getQuantidadeDisponivel() { return quantidadeDisponivel; }
-    public void setQuantidadeDisponivel(int quantidadeDisponivel) {
-        this.quantidadeDisponivel = quantidadeDisponivel;
-    }
-
-    public int getQuantidadeMaxima() { return quantidadeMaxima; }
-    public void setQuantidadeMaxima(int quantidadeMaxima) {
-        this.quantidadeMaxima = quantidadeMaxima;
     }
 }

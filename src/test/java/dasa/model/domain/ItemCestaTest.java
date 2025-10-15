@@ -1,5 +1,7 @@
 package dasa.model.domain;
 
+import com.dasa.model.domain.Insumo;
+import com.dasa.model.domain.ItemCesta;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,9 +1,9 @@
-package dasa.view.ui.swing.setores;
+package com.dasa.view.ui.swing.setores;
 
-import dasa.service.AlmoxarifadoService;
-import dasa.service.EnfermariaService;
-import dasa.model.funcionarios.Enfermeiro;
-import dasa.model.domain.Atendimento;
+import com.dasa.service.AlmoxarifadoService;
+import com.dasa.service.EnfermariaService;
+import com.dasa.model.funcionarios.Enfermeiro;
+import com.dasa.model.domain.Atendimento;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;

@@ -1,9 +1,9 @@
-package com.dasa.repository;
+package com.dasa.controller.dao;
 
 import com.dasa.model.domain.Exame;
 import java.util.List;
 
-public interface ExameRepository {
+public interface ExameDao {
     Exame buscarPorId(int id);
     Exame buscarPorNome(String nome);
     List<Exame> listarTodos();

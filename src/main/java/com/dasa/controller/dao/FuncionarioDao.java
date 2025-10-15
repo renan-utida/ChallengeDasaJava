@@ -1,10 +1,10 @@
-package com.dasa.repository;
+package com.dasa.controller.dao;
 
 import com.dasa.model.funcionarios.TecnicoLaboratorio;
 import com.dasa.model.funcionarios.Enfermeiro;
 import java.util.List;
 
-public interface FuncionarioRepository {
+public interface FuncionarioDao {
     // Técnicos
     TecnicoLaboratorio buscarTecnicoPorCrbm(int crbm);
     List<TecnicoLaboratorio> listarTodosTecnicos();

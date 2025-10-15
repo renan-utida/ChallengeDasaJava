@@ -1,5 +1,6 @@
 package dasa.model.domain;
 
+import com.dasa.model.domain.Exame;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 

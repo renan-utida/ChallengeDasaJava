@@ -1,11 +1,11 @@
-package dasa.view.ui.swing;
+package com.dasa.view.ui.swing;
 
-import dasa.service.*;
-import dasa.model.funcionarios.TecnicoLaboratorio;
+import com.dasa.service.*;
+import com.dasa.model.funcionarios.TecnicoLaboratorio;
 import javax.swing.*;
 import java.awt.*;
 
-import dasa.view.ui.swing.setores.*;
+import com.dasa.view.ui.swing.setores.*;
 
 public class SwingMain {
 

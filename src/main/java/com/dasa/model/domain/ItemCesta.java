@@ -1,24 +1,20 @@
-package dasa.model.domain;
+package com.dasa.model.domain;
+
+import lombok.*;
 
 /**
  * Classe para representar um item na cesta de retirada
+ * NÃO é @Entity - usado apenas em memória
+ * Os dados são salvos em dasa_itens_retirada via HistoricoDao
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemCesta {
     private Insumo insumo;
     private int quantidade;
 
-    public ItemCesta(Insumo insumo, int quantidade) {
-        this.insumo = insumo;
-        this.quantidade = quantidade;
-    }
-
-    // Getters e Setters
-    public Insumo getInsumo() { return insumo; }
-    public void setInsumo(Insumo insumo) { this.insumo = insumo; }
-
-    public int getQuantidade() { return quantidade; }
-    public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
-
+    @Override
     public String toString() {
         return quantidade + " - " + insumo.getNome();
     }

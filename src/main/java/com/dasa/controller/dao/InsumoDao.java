@@ -1,9 +1,9 @@
-package com.dasa.repository;
+package com.dasa.controller.dao;
 
 import com.dasa.model.domain.Insumo;
 import java.util.List;
 
-public interface InsumoRepository {
+public interface InsumoDao {
     // READ
     Insumo buscarPorId(int id);
     Insumo buscarPorCodigoBarras(int codigoBarras);

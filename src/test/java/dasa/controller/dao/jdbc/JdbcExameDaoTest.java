@@ -1,18 +1,18 @@
 package dasa.controller.dao.jdbc;
 
-import com.dasa.repository.jdbc.JdbcExameRepository;
+import com.dasa.controller.dao.jdbc.JdbcExameDao;
 import com.dasa.model.domain.Exame;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Testes - JdbcExameDao com Mock")
-public class JdbcExameRepositoryTest {
+public class JdbcExameDaoTest {
 
-    private JdbcExameRepository dao;
+    private JdbcExameDao dao;
 
     @BeforeEach
     public void setUp() {
-        dao = new JdbcExameRepository();
+        dao = new JdbcExameDao();
     }
 
     @Test

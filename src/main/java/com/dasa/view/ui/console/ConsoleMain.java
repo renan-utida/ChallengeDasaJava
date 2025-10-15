@@ -1,8 +1,8 @@
-package dasa.view.ui.console;
+package com.dasa.view.ui.console;
 
-import dasa.service.*;
-import dasa.view.ui.console.setores.*;
-import dasa.model.funcionarios.TecnicoLaboratorio;
+import com.dasa.service.*;
+import com.dasa.view.ui.console.setores.*;
+import com.dasa.model.funcionarios.TecnicoLaboratorio;
 import java.util.*;
 
 /**

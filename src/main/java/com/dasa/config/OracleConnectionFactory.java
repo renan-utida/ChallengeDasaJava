@@ -1,4 +1,4 @@
-package dasa.config;
+package com.dasa.config;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,13 +14,13 @@ import java.util.Properties;
 public class OracleConnectionFactory {
 
     public static Connection getConnection() throws SQLException {
-        String URL  = System.getenv().getOrDefault("ORACLE_URL", "jdbc:oracle:thin:@oracle.fiap.com.br:1521:orcl");
-        String USER = System.getenv().getOrDefault("ORACLE_USER", "RM558540");
-        String PASS = System.getenv().getOrDefault("ORACLE_PASSWORD", "160203");
+        String url  = System.getenv().getOrDefault("ORACLE_URL", "jdbc:oracle:thin:@oracle.fiap.com.br:1521:orcl");
+        String user = System.getenv().getOrDefault("ORACLE_USER", "RM558540");
+        String pass = System.getenv().getOrDefault("ORACLE_PASSWORD", "160203");
 
         Properties props = new Properties();
-        props.setProperty("user", USER);
-        props.setProperty("password", PASS);
-        return DriverManager.getConnection(URL, props);
+        props.setProperty("user", user);
+        props.setProperty("password", pass);
+        return DriverManager.getConnection(url, props);
     }
 }

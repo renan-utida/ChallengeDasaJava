@@ -1,5 +1,6 @@
 package dasa.model.funcionarios;
 
+import com.dasa.model.funcionarios.TecnicoLaboratorio;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.ByteArrayOutputStream;

@@ -1,23 +1,54 @@
-package dasa.model.domain;
+package com.dasa.model.domain;
 
+import jakarta.persistence.*;
+import lombok.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 /**
  * Classe para representar os pacientes - Entidade de domínio
+ * Funciona com JDBC (Console/Swing) E JPA (REST API)
  */
+@Entity
+@Table(name = "dasa_pacientes")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class Paciente {
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_paciente")
+    @SequenceGenerator(
+            name = "seq_paciente",
+            sequenceName = "seq_paciente_id",
+            allocationSize = 1
+    )
+    @Column(name = "id")
     private int id;
+
+    @Column(name = "nome_completo", length = 120, nullable = false)
     private String nomeCompleto;
+
+    @Column(name = "cpf", length = 11, unique = true, nullable = false)
     private String cpf;
+
+    @Column(name = "data_nascimento", nullable = false)
     private LocalDate dataNascimento;
+
+    @Column(name = "status_paciente", length = 10)
     private String statusPaciente = "Ativo";
+
+    @Column(name = "convenio", length = 1, nullable = false)
     private boolean convenio;
+
+    @Column(name = "preferencial", length = 1, nullable = false)
     private boolean preferencial;
 
-    // Construtor para novo paciente
+    /**
+     * Construtor para novo paciente (Jdbc/Console/Swing)
+     */
     public Paciente(String nomeCompleto, String cpf, String dataNascimentoStr,
                     boolean convenio, boolean preferencial) {
         this.nomeCompleto = nomeCompleto;
@@ -28,14 +59,11 @@ public class Paciente {
         this.statusPaciente = "Ativo";
     }
 
-    // Construtor vazio
-    public Paciente() {
-        this.statusPaciente = "Ativo";
-    }
-
     /**
      * Formata CPF para exibição
+     * @Transient = NÃO persiste no banco (metodo calculado)
      */
+    @Transient
     public String getCpfFormatado() {
         if (cpf == null || cpf.length() != 11) return cpf;
         return cpf.substring(0, 3) + "." + cpf.substring(3, 6) + "." +
@@ -44,11 +72,13 @@ public class Paciente {
 
     /**
      * Formata data de nascimento para manter compatibilidade com string
+     * @Transient = metodo auxiliar, não é coluna do banco
     */
+    @Transient
     public String getDataNascimentoFormatada() { return dataNascimento.format(dateFormatter); }
 
     /**
-     * Exibe os dados do paciente formatados
+     * Exibe os dados do paciente formatados (Console/Swing)
      */
     public void exibirDados() {
         System.out.println("ID Paciente: #" + id);
@@ -62,7 +92,7 @@ public class Paciente {
     }
 
     /**
-     * Sobrecarga: Exibe dados do paciente filtrados por categoria
+     * Sobrecarga: Exibe dados do paciente filtrados por categoria (Console/Swing)
      * @param categoria "basico", "administrativo"
      */
     public void exibirDados(String categoria) {
@@ -86,26 +116,4 @@ public class Paciente {
         }
         System.out.println("========================================");
     }
-
-    // Getters e Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-
-    public String getNomeCompleto() { return nomeCompleto; }
-    public void setNomeCompleto(String nomeCompleto) { this.nomeCompleto = nomeCompleto; }
-
-    public String getCpf() { return cpf; }
-    public void setCpf(String cpf) { this.cpf = cpf; }
-
-    public LocalDate getDataNascimento() { return dataNascimento; }
-    public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
-
-    public String getStatusPaciente(){ return statusPaciente; }
-    public void setStatusPaciente(String statusPaciente) { this.statusPaciente = statusPaciente; }
-
-    public boolean isConvenio() { return convenio; }
-    public void setConvenio(boolean convenio) { this.convenio = convenio; }
-
-    public boolean isPreferencial() { return preferencial; }
-    public void setPreferencial(boolean preferencial) { this.preferencial = preferencial; }
 }

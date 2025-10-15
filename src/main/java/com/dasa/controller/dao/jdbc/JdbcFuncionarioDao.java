@@ -1,7 +1,7 @@
-package com.dasa.dao.jdbc;
+package com.dasa.controller.dao.jdbc;
 
 import com.dasa.config.OracleConnectionFactory;
-import com.dasa.repository.FuncionarioRepository;
+import com.dasa.controller.dao.FuncionarioDao;
 import com.dasa.model.funcionarios.TecnicoLaboratorio;
 import com.dasa.model.funcionarios.Enfermeiro;
 
@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JdbcFuncionarioDao implements FuncionarioRepository {
+public class JdbcFuncionarioDao implements FuncionarioDao {
 
     @Override
     public TecnicoLaboratorio buscarTecnicoPorCrbm(int crbm) {
