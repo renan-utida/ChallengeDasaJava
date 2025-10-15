@@ -1,5 +1,6 @@
 package com.dasa.model.domain;
 
+import com.dasa.model.converters.BooleanToSimNaoConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -52,6 +53,7 @@ public class Atendimento {
     private LocalDateTime dataExame;
 
     @Column(name = "jejum", length = 1, nullable = false)
+    @Convert(converter = BooleanToSimNaoConverter.class)
     private boolean jejum;
 
     @Column(name = "status_atendimento", length = 20)

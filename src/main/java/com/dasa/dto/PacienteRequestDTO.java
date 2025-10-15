@@ -1,6 +1,7 @@
 package com.dasa.dto;
 
 import com.dasa.dto.validation.CPF;
+import com.dasa.dto.validation.PastDate;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 

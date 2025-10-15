@@ -90,7 +90,7 @@
       "url": "{{ base_url }}/api/pacientes",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"nomeCompleto\": \"Paciente Exemplo\",\n  \"cpf\": \"000.000.000-00\",\n  \"dataNascimento\": \"1990-05-10\",\n  \"statusPaciente\": \"Ativo\",\n  \"convenio\": true,\n  \"preferencial\": false\n}"
+        "text": "{\n  \"nomeCompleto\": \"Paciente Exemplo\",\n  \"cpf\": \"000.000.000-00\",\n  \"dataNascimento\": \"10/05/1990\",\n  \"statusPaciente\": \"Ativo\",\n  \"convenio\": true,\n  \"preferencial\": false\n}"
       },
       "parameters": [],
       "headers": []
@@ -104,7 +104,7 @@
       "url": "{{ base_url }}/api/pacientes/1",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"nomeCompleto\": \"Paciente Atualizado\",\n  \"cpf\": \"111.111.111-11\",\n  \"dataNascimento\": \"1988-02-20\",\n  \"statusPaciente\": \"Ativo\",\n  \"convenio\": false,\n  \"preferencial\": true\n}"
+        "text": "{\n  \"nomeCompleto\": \"Paciente Atualizado\",\n  \"cpf\": \"111.111.111-11\",\n  \"dataNascimento\": \"20/02/1988\",\n  \"statusPaciente\": \"Ativo\",\n  \"convenio\": false,\n  \"preferencial\": true\n}"
       },
       "parameters": [],
       "headers": []

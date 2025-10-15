@@ -1,5 +1,6 @@
 package com.dasa.model.domain;
 
+import com.dasa.model.converters.BooleanToSimNaoConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.*;
@@ -41,9 +42,11 @@ public class Paciente {
     private String statusPaciente = "Ativo";
 
     @Column(name = "convenio", length = 1, nullable = false)
+    @Convert(converter = BooleanToSimNaoConverter.class)
     private boolean convenio;
 
     @Column(name = "preferencial", length = 1, nullable = false)
+    @Convert(converter = BooleanToSimNaoConverter.class)
     private boolean preferencial;
 
     /**

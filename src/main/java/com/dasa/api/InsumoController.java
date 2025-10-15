@@ -2,9 +2,12 @@ package com.dasa.api;
 
 import com.dasa.controller.dao.InsumoDao;
 import com.dasa.controller.dao.jdbc.JdbcInsumoDao;
+import com.dasa.dto.InsumoUpdateDTO;
 import com.dasa.model.domain.Insumo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,24 +55,85 @@ public class InsumoController {
 
     @Operation(summary = "Atualizar quantidade absoluta")
     @PutMapping("/{id}/quantidade")
-    public ResponseEntity<Map<String,Object>> atualizarQuantidade(@PathVariable int id, @RequestParam int valor) {
-        dao.atualizarQuantidade(id, valor);
-        return ResponseEntity.ok(Map.of("id", id, "quantidade", valor));
+    public ResponseEntity<Map<String, Object>> atualizarQuantidade(
+            @PathVariable int id,
+            @Valid @RequestBody InsumoUpdateDTO dto) {
+
+        Insumo insumo = dao.buscarPorId(id);
+        if (insumo == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        dao.atualizarQuantidade(id, dto.getQuantidade());
+
+        return ResponseEntity.ok(Map.of(
+                "id", id,
+                "quantidade", dto.getQuantidade(),
+                "nome", insumo.getNome()
+        ));
     }
 
     @Operation(summary = "Adicionar ao estoque")
     @PostMapping("/{id}/adicionar")
-    public ResponseEntity<Map<String,Object>> adicionar(@PathVariable int id, @RequestParam int quantidade) {
+    public ResponseEntity<Map<String, Object>> adicionar(
+            @PathVariable int id,
+            @RequestParam @Min(value = 1, message = "Quantidade deve ser no mínimo 1") int quantidade) {
+
+        Insumo insumo = dao.buscarPorId(id);
+        if (insumo == null) {
+            return ResponseEntity.notFound().build();
+        }
+
         boolean ok = dao.adicionarQuantidade(id, quantidade);
-        return ok ? ResponseEntity.ok(Map.of("id", id, "adicionado", quantidade))
-                : ResponseEntity.badRequest().body(Map.of("erro", "Quantidade excede o máximo permitido"));
+
+        if (!ok) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "erro", "Quantidade excede o máximo permitido",
+                    "quantidadeAtual", insumo.getQuantidadeDisponivel(),
+                    "quantidadeMaxima", insumo.getQuantidadeMaxima()
+            ));
+        }
+
+        // Atualiza o objeto
+        insumo = dao.buscarPorId(id);
+
+        return ResponseEntity.ok(Map.of(
+                "id", id,
+                "adicionado", quantidade,
+                "quantidadeAtual", insumo.getQuantidadeDisponivel(),
+                "nome", insumo.getNome()
+        ));
     }
 
     @Operation(summary = "Remover do estoque")
     @PostMapping("/{id}/remover")
-    public ResponseEntity<Map<String,Object>> remover(@PathVariable int id, @RequestParam int quantidade) {
+    public ResponseEntity<Map<String, Object>> remover(
+            @PathVariable int id,
+            @RequestParam @Min(value = 1, message = "Quantidade deve ser no mínimo 1") int quantidade) {
+
+        Insumo insumo = dao.buscarPorId(id);
+        if (insumo == null) {
+            return ResponseEntity.notFound().build();
+        }
+
         boolean ok = dao.removerQuantidade(id, quantidade);
-        return ok ? ResponseEntity.ok(Map.of("id", id, "removido", quantidade))
-                : ResponseEntity.badRequest().body(Map.of("erro", "Quantidade ficaria negativa"));
+
+        if (!ok) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "erro", "Quantidade insuficiente em estoque",
+                    "quantidadeDisponivel", insumo.getQuantidadeDisponivel(),
+                    "quantidadeSolicitada", quantidade
+            ));
+        }
+
+        // Atualiza o objeto
+        insumo = dao.buscarPorId(id);
+
+        return ResponseEntity.ok(Map.of(
+                "id", id,
+                "removido", quantidade,
+                "quantidadeAtual", insumo.getQuantidadeDisponivel(),
+                "nome", insumo.getNome()
+        ));
     }
 }
