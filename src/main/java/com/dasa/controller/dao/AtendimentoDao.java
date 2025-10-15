@@ -1,9 +1,9 @@
-package dasa.controller.dao;
+package com.dasa.repository;
 
-import dasa.model.domain.Atendimento;
+import com.dasa.model.domain.Atendimento;
 import java.util.List;
 
-public interface AtendimentoDao {
+public interface AtendimentoRepository {
     // CREATE
     Long salvar(Atendimento atendimento);
 

@@ -1,14 +1,14 @@
-package dasa.controller.dao.jdbc;
+package com.dasa.dao.jdbc;
 
-import dasa.config.OracleConnectionFactory;
-import dasa.controller.dao.InsumoDao;
-import dasa.model.domain.Insumo;
+import com.dasa.config.OracleConnectionFactory;
+import com.dasa.repository.InsumoRepository;
+import com.dasa.model.domain.Insumo;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JdbcInsumoDao implements InsumoDao {
+public class JdbcInsumoDao implements InsumoRepository {
 
     @Override
     public Insumo buscarPorId(int id) {

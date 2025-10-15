@@ -1,19 +1,20 @@
 package dasa.controller.dao.jdbc;
 
-import dasa.model.domain.Atendimento;
-import dasa.model.domain.Paciente;
+import com.dasa.repository.jdbc.JdbcAtendimentoRepository;
+import com.dasa.model.domain.Atendimento;
+import com.dasa.model.domain.Paciente;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
 
 @DisplayName("Testes - JdbcAtendimentoDao com Mock")
-public class JdbcAtendimentoDaoTest {
+public class JdbcAtendimentoRepositoryTest {
 
-    private JdbcAtendimentoDao dao;
+    private JdbcAtendimentoRepository dao;
 
     @BeforeEach
     public void setUp() {
-        dao = new JdbcAtendimentoDao();
+        dao = new JdbcAtendimentoRepository();
     }
 
     @Test

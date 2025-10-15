@@ -1,19 +1,18 @@
-package dasa.controller.dao.jdbc;
+package com.dasa.dao.jdbc;
 
-import dasa.config.OracleConnectionFactory;
-import dasa.controller.dao.AtendimentoDao;
-import dasa.controller.dao.PacienteDao;
-import dasa.model.domain.Atendimento;
-import dasa.model.domain.Paciente;
+import com.dasa.config.OracleConnectionFactory;
+import com.dasa.repository.AtendimentoRepository;
+import com.dasa.repository.PacienteRepository;
+import com.dasa.model.domain.Atendimento;
+import com.dasa.model.domain.Paciente;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JdbcAtendimentoDao implements AtendimentoDao {
+public class JdbcAtendimentoDao implements AtendimentoRepository {
 
-    private PacienteDao pacienteDao = new JdbcPacienteDao();
+    private PacienteRepository pacienteRepository = new JdbcPacienteDao();
 
     @Override
     public Long salvar(Atendimento atendimento) {

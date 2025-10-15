@@ -1,18 +1,19 @@
 package dasa.controller.dao.jdbc;
 
-import dasa.model.funcionarios.Enfermeiro;
-import dasa.model.funcionarios.TecnicoLaboratorio;
+import com.dasa.repository.jdbc.JdbcFuncionarioRepository;
+import com.dasa.model.funcionarios.Enfermeiro;
+import com.dasa.model.funcionarios.TecnicoLaboratorio;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Testes - JdbcFuncionarioDao com Mock")
-public class JdbcFuncionarioDaoTest {
+public class JdbcFuncionarioRepositoryTest {
 
-    private JdbcFuncionarioDao dao;
+    private JdbcFuncionarioRepository dao;
 
     @BeforeEach
     public void setUp() {
-        dao = new JdbcFuncionarioDao();
+        dao = new JdbcFuncionarioRepository();
     }
 
     @Test

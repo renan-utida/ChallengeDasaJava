@@ -1,18 +1,19 @@
 package dasa.controller.dao.jdbc;
 
-import dasa.model.domain.Insumo;
+import com.dasa.repository.jdbc.JdbcInsumoRepository;
+import com.dasa.model.domain.Insumo;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
 @DisplayName("Testes - JdbcInsumoDao com Mock")
-public class JdbcInsumoDaoTest {
+public class JdbcInsumoRepositoryTest {
 
-    private JdbcInsumoDao dao;
+    private JdbcInsumoRepository dao;
 
     @BeforeEach
     public void setUp() {
-        dao = new JdbcInsumoDao();
+        dao = new JdbcInsumoRepository();
     }
 
     @Test

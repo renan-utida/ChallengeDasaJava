@@ -1,6 +1,7 @@
 package dasa.controller.dao.jdbc;
 
-import dasa.model.domain.Paciente;
+import com.dasa.repository.jdbc.JdbcPacienteRepository;
+import com.dasa.model.domain.Paciente;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -10,14 +11,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 @DisplayName("Teste - JdbcPacienteDao (Somente Leitura)")
-public class JdbcPacienteDaoTest {
+public class JdbcPacienteRepositoryTest {
 
-    private JdbcPacienteDao dao;
+    private JdbcPacienteRepository dao;
     private Paciente pacienteTeste;
 
     @BeforeEach
     public void setUp() {
-        dao = new JdbcPacienteDao();
+        dao = new JdbcPacienteRepository();
         pacienteTeste = criarPacienteTeste();
     }
 

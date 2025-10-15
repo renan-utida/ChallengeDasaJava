@@ -1,0 +1,260 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-10-14T13:43:58.321582Z",
+  "__export_source": "chatgpt-generated",
+  "resources": [
+    {
+      "_id": "wrk_96421998f0ed4",
+      "parentId": null,
+      "_type": "workspace",
+      "name": "Challenge Dasa Java API",
+      "description": "Coleção Insomnia para endpoints (Pacientes, Insumos, Exames)."
+    },
+    {
+      "_id": "env_327c9939aff24",
+      "parentId": "wrk_96421998f0ed4",
+      "_type": "environment",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8080"
+      }
+    },
+    {
+      "_id": "fld_5e84050037894",
+      "parentId": "wrk_96421998f0ed4",
+      "_type": "request_group",
+      "name": "API",
+      "description": ""
+    },
+    {
+      "_id": "fld_8e53116cb7ef4",
+      "parentId": "fld_5e84050037894",
+      "_type": "request_group",
+      "name": "Pacientes",
+      "description": ""
+    },
+    {
+      "_id": "fld_2c29e9efd4524",
+      "parentId": "fld_5e84050037894",
+      "_type": "request_group",
+      "name": "Insumos",
+      "description": ""
+    },
+    {
+      "_id": "fld_9aa166b0fdc44",
+      "parentId": "fld_5e84050037894",
+      "_type": "request_group",
+      "name": "Exames",
+      "description": ""
+    },
+    {
+      "_id": "req_eaa2b62c57b04",
+      "parentId": "fld_8e53116cb7ef4",
+      "_type": "request",
+      "name": "Listar pacientes",
+      "method": "GET",
+      "url": "{{ base_url }}/api/pacientes",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_30d73c3769324",
+      "parentId": "fld_8e53116cb7ef4",
+      "_type": "request",
+      "name": "Buscar por ID",
+      "method": "GET",
+      "url": "{{ base_url }}/api/pacientes/1",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_67c76721e19f4",
+      "parentId": "fld_8e53116cb7ef4",
+      "_type": "request",
+      "name": "Buscar por CPF",
+      "method": "GET",
+      "url": "{{ base_url }}/api/pacientes/cpf/000.000.000-00",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_9fd90cf9f1e14",
+      "parentId": "fld_8e53116cb7ef4",
+      "_type": "request",
+      "name": "Criar paciente",
+      "method": "POST",
+      "url": "{{ base_url }}/api/pacientes",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nomeCompleto\": \"Paciente Exemplo\",\n  \"cpf\": \"000.000.000-00\",\n  \"dataNascimento\": \"1990-05-10\",\n  \"statusPaciente\": \"Ativo\",\n  \"convenio\": true,\n  \"preferencial\": false\n}"
+      },
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_36087aea880c4",
+      "parentId": "fld_8e53116cb7ef4",
+      "_type": "request",
+      "name": "Atualizar paciente",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/pacientes/1",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nomeCompleto\": \"Paciente Atualizado\",\n  \"cpf\": \"111.111.111-11\",\n  \"dataNascimento\": \"1988-02-20\",\n  \"statusPaciente\": \"Ativo\",\n  \"convenio\": false,\n  \"preferencial\": true\n}"
+      },
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_8f70f1f201654",
+      "parentId": "fld_8e53116cb7ef4",
+      "_type": "request",
+      "name": "Excluir paciente",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/pacientes/1",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_1a617744575e4",
+      "parentId": "fld_2c29e9efd4524",
+      "_type": "request",
+      "name": "Listar insumos",
+      "method": "GET",
+      "url": "{{ base_url }}/api/insumos",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_48635d35506a4",
+      "parentId": "fld_2c29e9efd4524",
+      "_type": "request",
+      "name": "Buscar por ID",
+      "method": "GET",
+      "url": "{{ base_url }}/api/insumos/1",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_5a0876a8b1204",
+      "parentId": "fld_2c29e9efd4524",
+      "_type": "request",
+      "name": "Buscar por Código de Barras",
+      "method": "GET",
+      "url": "{{ base_url }}/api/insumos/codigo/123456",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_354e3f9d1ea54",
+      "parentId": "fld_2c29e9efd4524",
+      "_type": "request",
+      "name": "Listar por Tipo",
+      "method": "GET",
+      "url": "{{ base_url }}/api/insumos/tipo/agulha",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_edad5a1ffc2c4",
+      "parentId": "fld_2c29e9efd4524",
+      "_type": "request",
+      "name": "Listar por Exame",
+      "method": "GET",
+      "url": "{{ base_url }}/api/insumos/exame/Hemocultura",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_115b7c02fe384",
+      "parentId": "fld_2c29e9efd4524",
+      "_type": "request",
+      "name": "Atualizar Quantidade (absoluta)",
+      "method": "PUT",
+      "url": "{{ base_url }}/api/insumos/1/quantidade",
+      "body": {},
+      "parameters": [
+        {
+          "name": "valor",
+          "value": "100"
+        }
+      ],
+      "headers": []
+    },
+    {
+      "_id": "req_b3dc5386b0bd4",
+      "parentId": "fld_2c29e9efd4524",
+      "_type": "request",
+      "name": "Adicionar ao estoque",
+      "method": "POST",
+      "url": "{{ base_url }}/api/insumos/1/adicionar",
+      "body": {},
+      "parameters": [
+        {
+          "name": "quantidade",
+          "value": "10"
+        }
+      ],
+      "headers": []
+    },
+    {
+      "_id": "req_2af5ca07cfdc4",
+      "parentId": "fld_2c29e9efd4524",
+      "_type": "request",
+      "name": "Remover do estoque",
+      "method": "POST",
+      "url": "{{ base_url }}/api/insumos/1/remover",
+      "body": {},
+      "parameters": [
+        {
+          "name": "quantidade",
+          "value": "5"
+        }
+      ],
+      "headers": []
+    },
+    {
+      "_id": "req_01d11e54d70a4",
+      "parentId": "fld_9aa166b0fdc44",
+      "_type": "request",
+      "name": "Listar exames",
+      "method": "GET",
+      "url": "{{ base_url }}/api/exames",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_3adbea2e71fd4",
+      "parentId": "fld_9aa166b0fdc44",
+      "_type": "request",
+      "name": "Buscar por ID",
+      "method": "GET",
+      "url": "{{ base_url }}/api/exames/1",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    },
+    {
+      "_id": "req_703c4be903724",
+      "parentId": "fld_9aa166b0fdc44",
+      "_type": "request",
+      "name": "Buscar por Nome",
+      "method": "GET",
+      "url": "{{ base_url }}/api/exames/nome/Hemocultura",
+      "body": {},
+      "parameters": [],
+      "headers": []
+    }
+  ]
+}

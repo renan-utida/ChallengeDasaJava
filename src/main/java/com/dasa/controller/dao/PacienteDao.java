@@ -1,9 +1,9 @@
-package dasa.controller.dao;
+package com.dasa.repository;
 
-import dasa.model.domain.Paciente;
+import com.dasa.model.domain.Paciente;
 import java.util.List;
 
-public interface PacienteDao {
+public interface PacienteRepository {
     // CREATE
     Long salvar(Paciente paciente);
 

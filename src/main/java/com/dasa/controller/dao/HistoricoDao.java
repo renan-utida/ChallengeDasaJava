@@ -1,10 +1,10 @@
-package dasa.controller.dao;
+package com.dasa.repository;
 
-import dasa.model.domain.ItemCesta;
+import com.dasa.model.domain.ItemCesta;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public interface HistoricoDao {
+public interface HistoricoRepository {
 
     // CREATE
     void salvarRetirada(int atendimentoId, LocalDateTime dataRetirada,
