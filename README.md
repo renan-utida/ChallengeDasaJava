@@ -288,11 +288,11 @@ O projeto implementa uma **arquitetura híbrida inovadora:**
 │                   ├── 📄 SwingEnfermaria.java			# GUI enfermaria
 │                   └── 📄 SwingRecepcao.java			# GUI recepção
 │
-├── 📂 src/main/resources/                              # ⚙️ Recursos da aplicação
+├── 📂 resources			                            # ⚙️ Recursos da aplicação
 │   ├── 📄 application.properties                       # Config Spring Boot
 │   ├── 📄 application-dev.properties                   # Perfil desenvolvimento (H2)
-│   ├── 📄 application-prod.properties                  # Perfil produção (Oracle)
-│   └── 📄 insomnia-challenge-dasa-java.json       		# Collection Insomnia
+│   └── 📄 application-prod.properties                  # Perfil produção (Oracle)
+│   
 │
 ├── 📂 sql/												# 🗄️ Scripts do banco
 │   ├── 📄 schema.sql									# Estrutura das tabelas
@@ -342,6 +342,7 @@ O projeto implementa uma **arquitetura híbrida inovadora:**
 │       ├── 📄 EstoqueServiceTest.java
 │       └── 📄 RecepcaoServiceTest.java
 │
+├── 📄 insomnia-challenge-dasa-java.json       			# Collection Insomnia
 ├── 📄 README.md										# 📖 Documentação
 └── 📄 pom.xml											# ⚙️ Configuração Maven                     
 ```
