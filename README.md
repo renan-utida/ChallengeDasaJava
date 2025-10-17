@@ -873,56 +873,56 @@ POST http://localhost:8080/api/insumos/3081/adicionar?quantidade=50
 
 ## **🧪 Sistema de Testes**
 
-### **📊 Cobertura Total: 221+ Testes**
+### **📊 Cobertura Total: 250+ Testes**
 ```
 🧪 Suite de Testes Completa
 ├── ⚙️ config/ (6 testes)
-│   └── ✅ OracleConnectionFactoryTest
+│   └── ✅ OracleConnectionFactoryTest (6)
 │
-├── 🌐 api/ (36 testes) ⭐ NOVO
-│   ├── ✅ ExameControllerTest (8 testes)
-│   ├── ✅ InsumoControllerTest (14 testes)
-│   ├── ✅ PacienteControllerTest (12 testes)
-│   └── ✅ PingControllerTest (6 testes)
+├── 🌐 api/ (46 testes)
+│   ├── ✅ ExameControllerTest (8)
+│   ├── ✅ InsumoControllerTest (16)
+│   ├── ✅ PacienteControllerTest (16)
+│   └── ✅ PingControllerTest (6)
 │
 ├── 🗂️ controller/dao/jdbc/ (45 testes)
-│   ├── ✅ JdbcAtendimentoDaoTest
-│   ├── ✅ JdbcExameDaoTest
-│   ├── ✅ JdbcFuncionarioDaoTest
-│   ├── ✅ JdbcHistoricoRetiradaDaoTest
-│   ├── ✅ JdbcInsumoDaoTest
-│   └── ✅ JdbcPacienteDaoTest
+│   ├── ✅ JdbcAtendimentoDaoTest (7)
+│   ├── ✅ JdbcExameDaoTest (6)
+│   ├── ✅ JdbcFuncionarioDaoTest (8)
+│   ├── ✅ JdbcHistoricoRetiradaDaoTest (8)
+│   ├── ✅ JdbcInsumoDaoTest (8)
+│   └── ✅ JdbcPacienteDaoTest (8)
 │
-├── 📦 dto/ (54 testes) ⭐ NOVO
-│   ├── ✅ AtendimentoRequestDTOTest (12 testes)
-│   ├── ✅ InsumoUpdateDTOTest (8 testes)
-│   ├── ✅ PacienteRequestDTOTest (14 testes)
-│   ├── ✅ PacienteResponseDTOTest (8 testes)
-│   └── 📂 validation/
-│       ├── ✅ CPFValidatorTest (12 testes)
-│       └── ✅ PastDateValidatorTest (12 testes)
+├── 📦 dto/ (67 testes) 
+│   ├── ✅ AtendimentoRequestDTOTest (12)
+│   ├── ✅ InsumoUpdateDTOTest (8)
+│   ├── ✅ PacienteRequestDTOTest (13)
+│   ├── ✅ PacienteResponseDTOTest (10)
+│   └── 📂 validation/ (24 testes)
+│       ├── ✅ CPFValidatorTest (12)
+│       └── ✅ PastDateValidatorTest (12)
 │
 ├── 🧩 model/ (61 testes)
-│   ├── 🔄 converters/ (12 testes) ⭐ NOVO
-│   │   └── ✅ BooleanToSimNaoConverterTest
+│   ├── 🔄 converters/ (12 testes)
+│   │   └── ✅ BooleanToSimNaoConverterTest (12)
 │   ├── 🏥 domain/ (27 testes)
-│   │   ├── ✅ AtendimentoTest
-│   │   ├── ✅ ExameTest
-│   │   ├── ✅ InsumoTest
-│   │   ├── ✅ ItemCestaTest
-│   │   └── ✅ PacienteTest
-│   └── 👨‍⚕️ funcionarios/ (22 testes)
-│       ├── ✅ EnfermeiroTest
-│       ├── ✅ FuncionarioTest
-│       └── ✅ TecnicoLaboratorioTest
+│   │   ├── ✅ AtendimentoTest (5)
+│   │   ├── ✅ ExameTest (4)
+│   │   ├── ✅ InsumoTest (7)
+│   │   ├── ✅ ItemCestaTest (4)
+│   │   └── ✅ PacienteTest (7)
+│   └── 👨‍⚕️ funcionarios/ (21 testes)
+│       ├── ✅ EnfermeiroTest (8)
+│       ├── ✅ FuncionarioTest (4)
+│       └── ✅ TecnicoLaboratorioTest (9)
 │
-└── 🛠️ service/ (27 testes)
-    ├── ✅ AlmoxarifadoServiceTest
-    ├── ✅ EnfermariaServiceTest
-    ├── ✅ EstoqueServiceTest
-    └── ✅ RecepcaoServiceTest
+└── 🛠️ service/ (28 testes)
+    ├── ✅ AlmoxarifadoServiceTest (7)
+    ├── ✅ EnfermariaServiceTest (6)
+    ├── ✅ EstoqueServiceTest (6)
+    └── ✅ RecepcaoServiceTest (9)
 
-📊 TOTAL: 221 testes automatizados
+📊 TOTAL: 252 testes automatizados
 ✅ Cobertura: ~95% do código
 ```
 
@@ -1217,10 +1217,10 @@ public class Paciente {
 
 | Métrica | Quantidade |
 |---------|------------|
-| **Linhas de código** | 16.000+ |
+| **Linhas de código** | 14.000+ |
 | **Classes Java** | 58 |
 | **Interfaces** | 9 |
-| **Testes automatizados** | 221 |
+| **Testes automatizados** | 252 |
 | **Tabelas no banco** | 8 |
 | **Endpoints REST** | 17 |
 | **DTOs** | 4 |
