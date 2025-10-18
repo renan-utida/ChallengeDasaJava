@@ -1265,7 +1265,7 @@ public class Paciente {
 
 ### **🏆 Diferencial Técnico**
 - 📚 **Arquitetura dual** (JDBC + JPA)
-- 🧪 **221 testes** automatizados
+- 🧪 **252 testes** automatizados
 - 📖 **Swagger UI** documentado
 - 🚀 **Qualidade de código** profissional
 - 🎨 **3 interfaces** independentes
