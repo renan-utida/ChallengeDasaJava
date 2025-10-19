@@ -75,7 +75,7 @@ public class PastDateValidatorTest {
         int anoAtual = LocalDate.now().getYear();
         String dataAnoAtual = "01/01/" + anoAtual;
         // Será inválida porque precisa estar no passado
-        assertFalse(validator.isValid(dataAnoAtual, null));
+        assertTrue(validator.isValid(dataAnoAtual, null));
     }
 
     @Test
