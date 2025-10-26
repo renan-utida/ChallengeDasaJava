@@ -1278,6 +1278,28 @@ Este projeto foi desenvolvido como parte do **Challenge DASA 2025** para a disci
 
 ---
 
+## **📹 Links Vídeos do Projeto no Youtube**
+
+### **📈 Vídeo Pitch:**
+Link: [Pitch_SECAI_Dasa](https://youtu.be/AdvdoL7uGr8)
+
+### **🏗️ Arquitetura do nosso Projeto:**
+Link: [Arquitetura_SECAI_Dasa](https://youtu.be/NJvyzohynpQ)
+
+### **🖥️ Funcionamento do Console:**
+Link: [Console_SECAI_Dasa](https://youtu.be/ZBXXT7ZUlQE)
+
+### **🎨 Funcionamento da interface gráfica - Swing:**
+Link: [Swing_SECAI_Dasa](https://youtu.be/l3Qtbj8CVzQ)
+
+### **🌐 Testando os endpoints da REST API usando Insomnia:**
+Link: [REST_API_SECAI_Dasa](https://youtu.be/Xo6xEcQwf7g)
+
+### **📚 Documentação interativa usando o Swagger UI:**
+Link: [Swagger_UI_SECAI_Dasa](https://youtu.be/CTDzXlWNh6A)
+
+---
+
 
 ## **👥 Equipe**
 
